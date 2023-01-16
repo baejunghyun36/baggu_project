@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    hibernate:
+#      create : 매번 테이블 새롭게 생성
+#      update : 변경 필요한 경우에만 alter, 테이블 없을 경우 create
+#      create-drop : 매번 테이블 생성 후 작업 종류 직전 생성 테이블 삭제
+#      validate : 테이블에 대한 유효성 검사
+#      create로 바꾸지 마라 진짜.
+      ddl-auto: create
+    properties:
+      hibernate:
+#        show_sql: true
+        format_sql: true
+#      open-in-view: false
+
+  datasource:
+    driverClassName: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/baggu?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: A708
+
+#console color change
+  output:
+    ansi:
+      enabled: always
+
+#log설정
+logging:
+  level:
+    org.hibernate.SQL: debug
+#    org.hibernate.type: trace
+
