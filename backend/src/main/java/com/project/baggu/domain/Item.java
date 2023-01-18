@@ -56,6 +56,15 @@ public class Item extends BaseTimeEntity {
   @Column(name = "user_request_count")
   private int userRequestCount;
 
+  @Column(name = "si")
+  private String si;
+
+  @Column(name = "gu")
+  private String gu;
+
+  @Column(name = "dong")
+  private String dong;
+
   @LastModifiedDate
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "modified_at")
