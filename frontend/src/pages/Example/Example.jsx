@@ -1,9 +1,5 @@
 import React from 'react';
 
-/*
-
-*/
-
 function Example() {
   return (
     <div className="p-2 grid gap-2 h-[680px] overflow-scroll">

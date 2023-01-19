@@ -9,7 +9,10 @@ import location from '../../assets/icons/location.svg';
 function TopBar1() {
   const town = '역삼동';
   return (
-    <div id="top-bar-1" className="flex justify-between p-2 border-b-grey1">
+    <div
+      id="top-bar-1"
+      className="flex justify-between p-2 border-b border-grey1 h-[60px]"
+    >
       <div>
         {/* 동네설정 url은 임시 */}
         <Link to="/town" className="flex items-center">

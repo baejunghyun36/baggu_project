@@ -5,6 +5,8 @@ import Start from 'pages/Start/Start';
 import Example from 'pages/Example/Example';
 import TopBar1 from 'components/common/TopBar1';
 import BottomNav from 'components/common/BottomNav';
+import BottomBar from 'components/common/BottomBar';
+import Modal from 'components/common/Modal';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/start" element={<Start />} />
         <Route path="/example" element={<Example />} />
       </Routes>
+      <Modal />
+      <BottomBar />
       <BottomNav />
     </BrowserRouter>
   );
