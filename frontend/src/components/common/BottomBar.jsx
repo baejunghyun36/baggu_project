@@ -27,7 +27,7 @@ function BottomBar() {
           className={`${liked ? '' : 'hidden'}`}
         />
       </div>
-      <Button title={'바꾸신청'} className="default" />
+      <Button title="바꾸신청" className="default" />
     </div>
   );
 }
