@@ -17,21 +17,21 @@ function BottomNav() {
 
   return (
     <div className="flex flex-wrap justify-center gap-2 fixed bottom-0 bg-white border-t w-full h-[98px] p-1">
-      <Link to="/home" className="h-fit">
+      <Link to="/" className="h-fit">
         <div className="flex flex-col items-center">
           <img
             src={home}
             alt="nav button to home"
-            className={`${location === '/home' ? 'hidden' : ''}`}
+            className={`${location === '/' ? 'hidden' : ''}`}
           />
           <img
             src={home_active}
             alt="nav button to home"
-            className={`${location === '/home' ? '' : 'hidden'}`}
+            className={`${location === '/' ? '' : 'hidden'}`}
           />
           <span
             className={`${
-              location === '/home' ? 'text-primary' : 'text-grey3'
+              location === '/' ? 'text-primary' : 'text-grey3'
             } font-pretendard text-sub-bold `}
           >
             홈
