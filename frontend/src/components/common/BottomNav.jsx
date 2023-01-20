@@ -1,7 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-// import styled from 'styled-components';
-// import tw from 'twin.macro';
 
 // icons
 import home from '../../assets/icons/nav_home.svg';
@@ -14,17 +12,12 @@ import chat_active from '../../assets/icons/nav_chat_active.svg';
 import myProfile from '../../assets/icons/nav_myProfile.svg';
 import myProfile_active from '../../assets/icons/nav_myprofile_active.svg';
 
-// const StyledBottomNav = styled.div.attrs({
-//   className:
-//     'flex flex-wrap justify-center gap-2 fixed bottom-0 bg-white border-t w-full h-[98px] p-1',
-// })`
-//   & a {
-//     ${tw`h-fit`}
-//   }
-// `;
-
 function BottomNav() {
-  let location = useLocation().pathname;
+  // 온보딩 페이지에서 상단바 숨기기
+  const location = useLocation().pathname;
+  if (location.startsWith('/start')) {
+    return null;
+  }
 
   return (
     <div className="flex flex-wrap justify-center gap-2 fixed bottom-0 bg-white border-t w-full h-[98px] p-1">
@@ -70,12 +63,12 @@ function BottomNav() {
           </span>
         </div>
       </Link>
-      <Link to="/item/create" className="h-fit">
+      <Link className="h-fit">
         <div className="flex flex-col items-center">
           <img src={itemCreate} alt="button to create article" />
         </div>
       </Link>
-      <Link to="/chat" className="h-fit">
+      <Link to="/item/create" className="h-fit">
         <div className="flex flex-col items-center">
           <img
             src={chat}
