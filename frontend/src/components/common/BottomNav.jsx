@@ -70,7 +70,7 @@ function BottomNav() {
           </span>
         </div>
       </Link>
-      <Link className="h-fit">
+      <Link to="/item/create" className="h-fit">
         <div className="flex flex-col items-center">
           <img src={itemCreate} alt="button to create article" />
         </div>

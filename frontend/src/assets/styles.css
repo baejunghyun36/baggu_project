@@ -583,6 +583,9 @@ video {
 .rounded-full {
   border-radius: 9999px;
 }
+.border-0 {
+  border-width: 0px;
+}
 .border {
   border-width: 0.5px;
 }
@@ -716,6 +719,9 @@ video {
 .text-tiny-bold {
   font-size: 12px;
   font-weight: 500;
+}
+.text-\[26px\] {
+  font-size: 26px;
 }
 .text-h3 {
   font-size: 20px;
