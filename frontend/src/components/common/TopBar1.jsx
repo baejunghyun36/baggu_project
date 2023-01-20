@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 // icon
 import search from '../../assets/icons/search.svg';
@@ -8,6 +8,12 @@ import location from '../../assets/icons/location.svg';
 
 function TopBar1() {
   const town = '역삼동';
+
+  // 온보딩 페이지에서 상단바 숨기기
+  const location = useLocation().pathname;
+  if (location.startsWith('/start')) {
+    return null;
+  }
   return (
     <div
       id="top-bar-1"
