@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 // icon
 import search from '../../assets/icons/search.svg';
 import notification from '../../assets/icons/notification.svg';
-import location from '../../assets/icons/location.svg';
+import locationIcon from '../../assets/icons/location.svg';
 
 function TopBar1() {
   const town = '역삼동';
@@ -22,7 +22,11 @@ function TopBar1() {
       <div>
         {/* 동네설정 url은 임시 */}
         <Link to="/town" className="flex items-center">
-          <img src={location} alt="icon-search" className="w-[40px] h-[40px]" />
+          <img
+            src={locationIcon}
+            alt="icon-search"
+            className="w-[40px] h-[40px]"
+          />
           <span className="font-pretendard text-h3 text-primary">{town}</span>
         </Link>
       </div>
