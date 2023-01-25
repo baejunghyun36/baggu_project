@@ -89,6 +89,8 @@ function BottomNav() {
           </span>
         </div>
       </Link>
+      {/* 유저 id 받아온 이후 수정 */}
+      {/* <Link to={`/myprofile/${user.id}`} className="h-fit"> */}
       <Link to="/myprofile" className="h-fit">
         <div className="flex flex-col items-center">
           <img

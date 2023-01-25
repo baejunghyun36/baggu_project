@@ -75,7 +75,6 @@ function StartTown() {
     //   navigate('/start/town');
     // }
   };
-
   return (
     <Wrapper>
       <TopBar2 pageTitle="" />

@@ -10,6 +10,8 @@ import BottomNav from 'components/common/BottomNav';
 import BottomBar from 'components/common/BottomBar';
 import Item from 'pages/Item/Item';
 import ItemCreate from 'pages/Item/ItemCreate';
+import MyBaggu from 'pages/MyBaggu/MyBaggu';
+import MyProfile from 'pages/MyProfile/MyProfile';
 function App() {
   return (
     <BrowserRouter className="App">
@@ -24,6 +26,8 @@ function App() {
         <Route path="/example" element={<Example />} />
         <Route path="/item/:id" element={<Item />} />
         <Route path="/item/create" element={<ItemCreate />} />
+        <Route path="/mybaggu" element={<MyBaggu />} />
+        <Route path="/myprofile" element={<MyProfile />} />
       </Routes>
       <BottomBar />
       <BottomNav />
