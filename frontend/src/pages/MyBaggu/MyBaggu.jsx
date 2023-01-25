@@ -15,7 +15,12 @@ function MyBaggu() {
   useEffect(() => {
     getMovies();
   }, []);
-  return <ProductList movies={movies} />;
+
+  return (
+    <div>
+      <ProductList movies={movies} />
+    </div>
+  );
 }
 
 export default MyBaggu;
