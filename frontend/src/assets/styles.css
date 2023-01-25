@@ -531,6 +531,9 @@ video {
 .h-\[12px\] {
   height: 12px;
 }
+.h-\[200px\] {
+  height: 200px;
+}
 .w-6 {
   width: 48px;
 }
@@ -607,6 +610,10 @@ video {
 .border-b {
   border-bottom-width: 0.5px;
 }
+.border-grey3 {
+  --tw-border-opacity: 1;
+  border-color: rgb(128 128 128 / var(--tw-border-opacity));
+}
 .border-black {
   --tw-border-opacity: 1;
   border-color: rgb(34 34 34 / var(--tw-border-opacity));
@@ -674,6 +681,9 @@ video {
 .bg-success {
   --tw-bg-opacity: 1;
   background-color: rgb(253 243 123 / var(--tw-bg-opacity));
+}
+.fill-black {
+  fill: #222222;
 }
 .object-cover {
   object-fit: cover;
