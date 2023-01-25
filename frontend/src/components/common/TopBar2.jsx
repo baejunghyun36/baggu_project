@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // icon
 import arrow_back from '../../assets/icons/arrow_back.svg';
@@ -10,7 +10,11 @@ function TopBar2({ pageTitle }) {
   const handleGoBack = () => {
     navigate(-1);
   };
-
+  // 회원가입 완료 후 숨기기
+  const location = useLocation().pathname;
+  if (location.startsWith('/start/ready')) {
+    return null;
+  }
   return (
     <div
       id="top-bar-2"

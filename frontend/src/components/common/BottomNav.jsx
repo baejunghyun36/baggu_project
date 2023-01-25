@@ -13,9 +13,9 @@ import myProfile from '../../assets/icons/nav_myProfile.svg';
 import myProfile_active from '../../assets/icons/nav_myprofile_active.svg';
 
 function BottomNav() {
-  // 온보딩 페이지에서 상단바 숨기기
+  // 온보딩 페이지에서 하단바 숨기기
   const location = useLocation().pathname;
-  if (location.startsWith('/start')) {
+  if (location.startsWith('/start') || location.startsWith('/item')) {
     return null;
   }
 
