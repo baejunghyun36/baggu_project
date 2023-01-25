@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "trade_fn")
+@Table(name = "trade_fin")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,13 +32,26 @@ public class TradeFin extends BaseTimeEntity {
   @Column(name = "receive_item_idx")
   private Long receiveItemIdx;
 
-  @Column(name = "receive_comment")
-  private String requestComment;
+  @Column(name = "receive_nickname")
+  private String receiveNickname;
+
+  @Column(name = "request_item_idx")
+  private Long requestItemIdx;
+
+  @Column(name = "request_nickname")
+  private String requestNickname;
 
   @Column(name = "is_valid")
   private boolean isValid = true;
 
+  @Column(name = "request_userIdx")
+  private Long requestUserIdx;
+
+  @Column(name = "receive_userIdx")
+  private Long receiveUserIdx;
+
   @JsonIgnore
   @OneToMany(mappedBy = "tradeFin")
   private List<Heart> hearts = new ArrayList<>();
+
 }

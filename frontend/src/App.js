@@ -15,6 +15,12 @@ import MyProfile from 'pages/MyProfile/MyProfile';
 import StartCategory from 'pages/Start/StartCategory';
 import StartReady from 'pages/Start/StartReady';
 import StartIntroduce from 'pages/Start/StartIntroduce';
+import MyProfileEdit from 'pages/MyProfile/MyProfileEdit';
+import Baggu from 'pages/MyProfile/Baggu';
+import Myreview from 'pages/MyProfile/Myreview';
+import Favorite from 'pages/MyProfile/Favorite';
+import ProfileTown from 'pages/MyProfile/ProfileTown';
+
 function App() {
   return (
     <BrowserRouter className="App">
@@ -34,6 +40,11 @@ function App() {
         <Route path="/item/create" element={<ItemCreate />} />
         <Route path="/mybaggu" element={<MyBaggu />} />
         <Route path="/myprofile" element={<MyProfile />} />
+        <Route path="/myprofile/edit" element={<MyProfileEdit />} />
+        <Route path="/myprofile/:id/baggu" element={<Baggu />} />
+        <Route path="/myprofile/:id/myreview" element={<Myreview />} />
+        <Route path="/myprofile/:id/favorite" element={<Favorite />} />
+        <Route path="/myprofile/:id/town" element={<ProfileTown />} />
       </Routes>
       <BottomBar />
       <BottomNav />

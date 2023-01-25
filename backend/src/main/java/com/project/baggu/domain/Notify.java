@@ -40,6 +40,9 @@ public class Notify extends BaseTimeEntity {
   @Column(name = "read_state")
   private boolean readState;
 
+  @Column(name = "title")
+  private String title;
+
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user_idx")
   private User user;

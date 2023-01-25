@@ -50,7 +50,7 @@ public class TradeRequest extends BaseTimeEntity {
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user_idx")
-  private User requestUserIdx;
+  private User requestUser;
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "item_idx")

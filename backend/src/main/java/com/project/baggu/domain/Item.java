@@ -3,11 +3,14 @@ import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.baggu.domain.enumType.CategoryType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,6 +47,9 @@ public class Item extends BaseTimeEntity {
   @Column(name = "state")
   private int state;
 
+  @Column(name = "trade_item_idx")
+  private Long tradeItemIdx;
+
   @Column(name = "view_count")
   private int viewCount;
 
@@ -51,10 +57,20 @@ public class Item extends BaseTimeEntity {
   private boolean isValid = true;
 
   @Column(name = "category")
-  private int category;
+  @Enumerated(EnumType.ORDINAL)
+  private CategoryType category;
 
   @Column(name = "user_request_count")
   private int userRequestCount;
+
+  @Column(name = "si")
+  private String si;
+
+  @Column(name = "gu")
+  private String gu;
+
+  @Column(name = "dong")
+  private String dong;
 
   @LastModifiedDate
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -63,7 +79,7 @@ public class Item extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToOne(mappedBy = "item")
-  private ReviewUser reviewUser;
+  private ReviewText reviewText;
 
   @JsonIgnore
   @OneToMany(mappedBy = "item")
@@ -81,4 +97,6 @@ public class Item extends BaseTimeEntity {
     this.user = user;
     user.getItems().add(this);
   }
+
+
 }

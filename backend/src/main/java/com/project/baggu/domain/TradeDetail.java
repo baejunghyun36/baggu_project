@@ -26,8 +26,8 @@ public class TradeDetail extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "trade_idx")
-  private Long tradeIdx;
+  @Column(name = "trade_detail_idx")
+  private Long tradeDetailIdx;
 
   @Column(name = "trade_state")
   private int tradeState;

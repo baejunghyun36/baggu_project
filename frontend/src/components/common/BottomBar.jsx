@@ -34,6 +34,7 @@ function BottomBar() {
           className={`${liked ? '' : 'hidden'}`}
         />
       </div>
+      {/* 사용자와 게시글 작성자 정보를 비교하여 title 변경 */}
       <Button title="바꾸신청" className="default" />
     </div>
   );
