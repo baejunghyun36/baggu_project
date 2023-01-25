@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Button from './Button';
+import { useLocation } from 'react-router-dom';
 
 // icons
 import heart_unliked from '../../assets/icons/heart_unliked.svg';
@@ -12,6 +13,12 @@ function BottomBar() {
   const likeHandler = () => {
     setLiked(!liked);
   };
+
+  // 온보딩 페이지에서 상단바 숨기기
+  const location = useLocation().pathname;
+  if (location.startsWith('/start')) {
+    return null;
+  }
 
   return (
     <div className="flex flex-wrap justify-between gap-2 fixed bottom-0 bg-white border-t w-full h-[98px] px-4 py-2">

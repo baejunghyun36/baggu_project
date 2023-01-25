@@ -1,52 +1,109 @@
 import React from 'react';
 import tw from 'twin.macro';
+import styled from 'styled-components';
+import { useState } from 'react';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // components
 import TopBar2 from 'components/common/TopBar2';
-import styled from 'styled-components';
-import { useState } from 'react';
 import FormSubmitBtn from 'components/common/FormSubmitBtn';
 
+// styled component
 const Wrapper = styled.div`
   ${tw`w-full h-full border-0 flex flex-col text-[26px]`}
 `;
 
+const TextContainer = styled.div`
+  ${tw`flex-col p-4 pb-2`}
+
+  & {
+    span {
+      ${tw`font-extrabold text-primary`}
+    }
+  }
+`;
+
+const InputContainer = styled.div`
+  ${tw`flex-col pt-2 pb-2 px-4`}
+
+  & {
+    input {
+      ${tw`w-full rounded-lg mb-1 p-1 box-border h-6 text-main`}
+      ${props =>
+        props.isValid
+          ? tw`focus:outline focus:outline-primary`
+          : tw`focus:outline focus:outline-negative`}
+    }
+    p {
+      ${tw`text-negative text-tiny`}
+    }
+  }
+`;
+
+const BtnContainer = styled.div`
+  ${tw`flex pt-2 pb-2 px-4 fixed bottom-0 w-full`}
+`;
+
 function StartNickname() {
   const [nickname, setNickname] = useState('');
-  const [isValid, setIsValid] = useState(false);
+  const [nicknameMessage, setNicknameMessage] = useState('');
   const [isTouched, setIsTouched] = useState(false);
+  const [isNicknameValid, setIsNicknameValid] = useState(false);
 
   // input이 입력될 때마다 유효성 검사를 진행
   // 입력 중간에 유효성이 통과되면 제출버튼 활성화
-  const changeInputHandler = e => {
-    setIsTouched(true);
+  const onChangeInput = useCallback(e => {
+    // setIsTouched(true);
     setNickname(e.target.value);
+    setIsTouched(true);
 
-    if (nickname.trim() === '') {
-      setIsValid(false);
+    if (e.target.value.trim() === '') {
+      setIsNicknameValid(false);
+      setNicknameMessage('닉네임을 입력해주세요.');
+      return;
+    } else if (
+      e.target.value.trim().length < 2 ||
+      e.target.value.trim().length > 10
+    ) {
+      setIsNicknameValid(false);
+      setNicknameMessage('2글자 이상 5글자 미만으로 입력해주세요.');
       return;
     } else {
-      setIsValid(true);
+      setNicknameMessage('');
+      setIsNicknameValid(true);
+    }
+  });
+
+  const navigate = useNavigate();
+  const clickHandler = () => {
+    // {nickname : nickname}으로 중앙저장소에 저장
+    if (isValid) {
+      console.log({ nickname: nickname });
+      navigate('/start/town');
     }
   };
 
-  const nicknameIsValid = isTouched && isValid;
-
-  let message = '올바른 닉네임 형식에 대한 설명입니다.';
+  const isValid = isTouched && isNicknameValid;
 
   return (
-    <Wrapper>
+    <Wrapper id="startNickname">
       <TopBar2 pageTitle="" />
-      <div>
+      <TextContainer>
         <p>
           <span>바꾸바꾸</span>에서 사용할 <br /> 닉네임을 입력해주세요.
         </p>
-      </div>
-      <div>
-        <input type="text" onChange={changeInputHandler} />
-        <p>{message}</p>
-      </div>
-      <FormSubmitBtn btnType="disabled" />
+      </TextContainer>
+      <InputContainer disabled={isValid ? false : true}>
+        <input type="text" onChange={onChangeInput} onBlur={onChangeInput} />
+        <p>{nicknameMessage}</p>
+      </InputContainer>
+      <BtnContainer>
+        <FormSubmitBtn
+          disabled={isValid ? false : true}
+          onClick={clickHandler}
+        />
+      </BtnContainer>
     </Wrapper>
   );
 }
