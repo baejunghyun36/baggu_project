@@ -14,7 +14,7 @@ function BottomBar() {
     setLiked(!liked);
   };
 
-  // 온보딩 페이지에서 상단바 숨기기
+  // 온보딩 페이지에서 하단바 숨기기
   const location = useLocation().pathname;
   if (location.startsWith('/start')) {
     return null;

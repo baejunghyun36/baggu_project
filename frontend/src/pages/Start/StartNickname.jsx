@@ -42,7 +42,7 @@ const InputContainer = styled.div`
 `;
 
 const BtnContainer = styled.div`
-  ${tw`flex pt-2 pb-2 px-4 fixed bottom-0 w-full`}
+  ${tw`flex pt-2 pb-2 px-4 fixed bottom-0 w-full h-[98px]`}
 `;
 
 function StartNickname() {
@@ -73,10 +73,10 @@ function StartNickname() {
       setNicknameMessage('');
       setIsNicknameValid(true);
     }
-  });
+  }, []);
 
   const navigate = useNavigate();
-  const clickHandler = () => {
+  const submitHandler = () => {
     // {nickname : nickname}으로 중앙저장소에 저장
     if (isValid) {
       console.log({ nickname: nickname });
@@ -101,7 +101,7 @@ function StartNickname() {
       <BtnContainer>
         <FormSubmitBtn
           disabled={isValid ? false : true}
-          onClick={clickHandler}
+          onClick={submitHandler}
         />
       </BtnContainer>
     </Wrapper>

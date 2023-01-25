@@ -14,10 +14,10 @@ const Btn = styled.div`
   }
 `;
 
-function FormSubmitBtn({ disabled, onClick }) {
+function FormSubmitBtn({ disabled, onClick, title }) {
   return (
     <Btn disabled={disabled} onClick={onClick}>
-      <span>입력완료</span>
+      <span>{title ? title : '다음'}</span>
     </Btn>
   );
 }
