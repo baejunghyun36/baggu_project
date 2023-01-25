@@ -1,14 +1,11 @@
 package com.project.baggu.domain;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,12 +14,9 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
-
 @DynamicInsert
 @Entity
 @Table(name = "user")
@@ -95,7 +89,7 @@ public class User extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
-  private List<ReviewUser> reviewUsers = new ArrayList<>();
+  private List<ReviewText> reviewUsers = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
@@ -106,7 +100,7 @@ public class User extends BaseTimeEntity {
   private List<Heart> hearts = new ArrayList<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "requestUserIdx")
+  @OneToMany(mappedBy = "requestUser")
   private List<TradeRequest> tradeRequests = new ArrayList<>();
 
   @JsonIgnore

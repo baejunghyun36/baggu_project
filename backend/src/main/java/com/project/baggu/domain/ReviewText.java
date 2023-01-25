@@ -12,25 +12,27 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
-@Table(name = "review_user")
+@Table(name = "review_text")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ReviewUser extends BaseTimeEntity {
+public class ReviewText extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "review_user_idx")
-  private Long reviewUserIdx;
+  @Column(name = "review_text_idx")
+  private Long reviewTextIdx;
 
   @Column(name = "comment")
   private String comment;
 
   @Column(name = "is_valid")
   private boolean isValid = true;
+
+  @Column(name = "receive_user_idx")
+  private Long receiveUserIdx;
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user_idx")
@@ -47,7 +49,6 @@ public class ReviewUser extends BaseTimeEntity {
 
   public void setItem(Item item) {
     this.item = item;
-    user.getReviewUsers().add(this);
+    item.setReviewText(this);
   }
-
 }
