@@ -23,7 +23,7 @@ function TopBar2({ pageTitle }) {
       <img src={arrow_back} alt="button to go back" onClick={handleGoBack} />
       <h3>{pageTitle}</h3>
 
-      <img src={check} alt="button to confirm" className="opacity-0" />
+      <img src={check} alt="button to confirm" className="opacity-1" />
     </div>
   );
 }

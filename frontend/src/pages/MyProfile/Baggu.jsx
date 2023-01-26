@@ -2,6 +2,7 @@ import React from 'react';
 import FeedList from 'components/common/FeedList';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import TopBar2 from 'components/common/TopBar2';
 
 function Baggu() {
   const [feeds, setFeeds] = useState([]);
@@ -23,7 +24,7 @@ function Baggu() {
   }, []);
   return (
     <div>
-      <h3>바꾸내역</h3>
+      <TopBar2 pageTitle="바꾸내역" />
       <FeedList feeds={feeds} />
     </div>
   );
