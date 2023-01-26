@@ -500,6 +500,9 @@ video {
 .hidden {
   display: none;
 }
+.h-full {
+  height: 100%;
+}
 .h-\[680px\] {
   height: 680px;
 }
@@ -508,9 +511,6 @@ video {
 }
 .h-screen {
   height: 100vh;
-}
-.h-full {
-  height: 100%;
 }
 .h-\[98px\] {
   height: 98px;
@@ -539,9 +539,6 @@ video {
 }
 .h-\[12px\] {
   height: 12px;
-}
-.w-6 {
-  width: 48px;
 }
 .w-full {
   width: 100%;

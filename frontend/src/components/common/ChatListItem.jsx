@@ -22,7 +22,7 @@ function ChatListItem({
 }) {
   return (
     <Container>
-      <Avatar img={null} />
+      {/* <Avatar img={userProfile} /> */}
       <div>
         <p>{nickname}</p>
         <p>{recentMessage}</p>
