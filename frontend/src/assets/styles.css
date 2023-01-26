@@ -500,12 +500,6 @@ video {
 .hidden {
   display: none;
 }
-.h-6 {
-  height: 48px;
-}
-.h-full {
-  height: 100%;
-}
 .h-\[680px\] {
   height: 680px;
 }
@@ -515,6 +509,9 @@ video {
 .h-screen {
   height: 100vh;
 }
+.h-full {
+  height: 100%;
+}
 .h-\[98px\] {
   height: 98px;
 }
@@ -523,6 +520,9 @@ video {
 }
 .h-\[90\%\] {
   height: 90%;
+}
+.h-6 {
+  height: 48px;
 }
 .h-fit {
   height: -moz-fit-content;
@@ -558,6 +558,9 @@ video {
 }
 .w-\[80\%\] {
   width: 80%;
+}
+.w-6 {
+  width: 48px;
 }
 .w-\[40px\] {
   width: 40px;
@@ -595,11 +598,11 @@ video {
 .overflow-scroll {
   overflow: scroll;
 }
-.rounded-full {
-  border-radius: 9999px;
-}
 .rounded {
   border-radius: 0.25rem;
+}
+.rounded-full {
+  border-radius: 9999px;
 }
 .rounded-lg {
   border-radius: 0.5rem;
