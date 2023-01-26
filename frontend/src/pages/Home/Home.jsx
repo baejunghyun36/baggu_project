@@ -1,6 +1,7 @@
 import React from 'react';
 import ProductList from 'components/common/ProductList';
 import FeedList from 'components/common/FeedList';
+import TabBar from 'components/common/TabBar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 // components
@@ -8,12 +9,10 @@ import axios from 'axios';
 
 function Home() {
   const [movies, setMovies] = useState([]);
-  const [page, setPage] = useState(false);
-  const onClickItemPage = () => {
-    setPage(false);
-  };
-  const onClickBagguPage = () => {
-    setPage(true);
+  const [page, setPage] = useState(0);
+  const tabNames = ['최근물건', '최근바꾸'];
+  const getIndex = data => {
+    setPage(data);
   };
   async function getMovies() {
     try {
@@ -33,12 +32,11 @@ function Home() {
   }, []);
   return (
     <div>
-      <span onClick={onClickItemPage}>최근물품</span>
-      <span onClick={onClickBagguPage}>최근바꾸</span>
-      <div className={`${page ? 'hidden' : ''}`}>
+      <TabBar tabNames={tabNames} getIndex={getIndex} />
+      <div className={`${page === 0 ? '' : 'hidden'}`}>
         <ProductList movies={movies} />
       </div>
-      <div className={`${page ? '' : 'hidden'}`}>
+      <div className={`${page === 1 ? '' : 'hidden'}`}>
         <FeedList feeds={movies} />
       </div>
     </div>

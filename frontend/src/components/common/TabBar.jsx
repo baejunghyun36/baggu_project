@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import TabBarItem from './TabBarItem';
 
-function TabBar({ tabNames }) {
+function TabBar({ tabNames, getIndex }) {
   const [index, setIndex] = useState(0);
 
   //   const onClickHandler = id => {
@@ -11,6 +11,7 @@ function TabBar({ tabNames }) {
   //   };
   const changeTabHandler = id => {
     setIndex(id);
+    getIndex(id);
   };
 
   return (
