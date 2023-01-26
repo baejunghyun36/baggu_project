@@ -20,35 +20,46 @@ import Baggu from 'pages/MyProfile/Baggu';
 import Myreview from 'pages/MyProfile/Myreview';
 import Favorite from 'pages/MyProfile/Favorite';
 import ProfileTown from 'pages/MyProfile/ProfileTown';
+import Chat from 'pages/Chat/Chat';
+
+// react-query
+import { QueryClient, QueryClientProvider } from 'react-query';
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <BrowserRouter className="App">
-      <TopBar1 />
-      <Routes>
-        <Route path="/start" element={<Start />}>
-          <Route path="" element={<StartLogin />} />
-          <Route path="nickname" element={<StartNickname />} />
-          <Route path="town" element={<StartTown />} />
-          <Route path="category" element={<StartCategory />} />
-          <Route path="ready" element={<StartReady />} />
-          <Route path="introduce" element={<StartIntroduce />} />
-        </Route>
-        <Route path="/" element={<Home />} />
-        <Route path="/example" element={<Example />} />
-        <Route path="/item/:id" element={<Item />} />
-        <Route path="/item/create" element={<ItemCreate />} />
-        <Route path="/mybaggu" element={<MyBaggu />} />
-        <Route path="/myprofile" element={<MyProfile />} />
-        <Route path="/myprofile/edit" element={<MyProfileEdit />} />
-        <Route path="/myprofile/:id/baggu" element={<Baggu />} />
-        <Route path="/myprofile/:id/myreview" element={<Myreview />} />
-        <Route path="/myprofile/:id/favorite" element={<Favorite />} />
-        <Route path="/myprofile/:id/town" element={<ProfileTown />} />
-      </Routes>
-      <BottomBar />
-      <BottomNav />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter className="App">
+        <TopBar1 />
+        <Routes>
+          <Route path="/start" element={<Start />}>
+            <Route path="" element={<StartLogin />} />
+            <Route path="nickname" element={<StartNickname />} />
+            <Route path="town" element={<StartTown />} />
+            <Route path="category" element={<StartCategory />} />
+            <Route path="ready" element={<StartReady />} />
+            <Route path="introduce" element={<StartIntroduce />} />
+          </Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/example" element={<Example />} />
+          <Route path="/item/:id" element={<Item />} />
+          <Route path="/item/create" element={<ItemCreate />} />
+          <Route path="/mybaggu" element={<MyBaggu />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/myprofile" element={<MyProfile />} />
+          <Route path="/myprofile/edit" element={<MyProfileEdit />} />
+          <Route path="/myprofile/:id/baggu" element={<Baggu />} />
+          <Route path="/myprofile/:id/myreview" element={<Myreview />} />
+          <Route path="/myprofile/:id/favorite" element={<Favorite />} />
+          <Route path="/myprofile/:id/town" element={<ProfileTown />} />
+        </Routes>
+        <BottomBar />
+        <BottomNav />
+      </BrowserRouter>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+    </QueryClientProvider>
   );
 }
 
