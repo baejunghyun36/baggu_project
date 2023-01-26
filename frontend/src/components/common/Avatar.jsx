@@ -14,7 +14,7 @@ const Container = styled.div`
 `;
 
 function Avatar({ img }) {
-  const avatar = img ? img : default_avatar;
+  const avatar = default_avatar;
   return <Container>{/* <img src={default_avatar} /> */}</Container>;
 }
 
