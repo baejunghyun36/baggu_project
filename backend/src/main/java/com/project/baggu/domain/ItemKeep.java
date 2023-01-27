@@ -24,6 +24,9 @@ public class ItemKeep extends BaseTimeEntity{
   @Column(name = "item_keep_idx")
   private Long itemKeepIdx;
 
+  @Column(name = "is_valid")
+  private boolean isValid = true;
+
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user_idx")
   private User user;
