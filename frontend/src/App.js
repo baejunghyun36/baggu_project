@@ -27,8 +27,18 @@ import UserDetail from 'pages/User/UserDetail';
 import { QueryClient, QueryClientProvider } from 'react-query';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+// styled component
+import tw, { styled, css } from 'twin.macro';
+import ChatDetail from 'pages/Chat/ChatDetail';
+
 const queryClient = new QueryClient();
 
+const Wrapper = styled.div`
+  ${tw`w-full`}
+  ${css`
+    height: calc(100% - 60px - 98px);
+  `}
+`;
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -49,6 +59,7 @@ function App() {
           <Route path="/item/create" element={<ItemCreate />} />
           <Route path="/mybaggu" element={<MyBaggu />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/chat/:id" element={<ChatDetail />} />
           <Route path="/myprofile" element={<MyProfile />} />
           <Route path="/myprofile/edit" element={<MyProfileEdit />} />
           <Route path="/myprofile/:id/baggu" element={<Baggu />} />

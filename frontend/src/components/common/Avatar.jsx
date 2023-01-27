@@ -13,9 +13,12 @@ const Container = styled.div`
   }
 `;
 
-function Avatar({ img }) {
-  const avatar = default_avatar;
-  return <Container>{/* <img src={default_avatar} /> */}</Container>;
+function Avatar({ imgURL }) {
+  return (
+    <Container>
+      <img src={imgURL} alt="user profile image" />
+    </Container>
+  );
 }
 
 export default Avatar;

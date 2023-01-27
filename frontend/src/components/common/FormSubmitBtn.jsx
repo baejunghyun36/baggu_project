@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import tw from 'twin.macro';
+// import styled from 'styled-components';
+import tw, { styled } from 'twin.macro';
 
 const Btn = styled.div`
   ${tw`w-full rounded-full flex justify-center items-center h-6`}
