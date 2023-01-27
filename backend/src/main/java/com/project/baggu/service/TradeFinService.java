@@ -86,23 +86,4 @@ public class TradeFinService {
     reviewTextRepository.save(reviewText);
   }
 
-  public ReviewDto reviewInfo(Long userIdx) {
-    ReviewDto reviewDto = new ReviewDto();
-    List<ReviewTag> reviewTagList = reviewTagRepository.findReviewTag(userIdx);
-    for(ReviewTag rt : reviewTagList){
-      reviewDto.getReviewTag().put(rt.getType().ordinal(), reviewDto.getReviewTag().getOrDefault(rt.getType().ordinal(), 0) + 1);
-    }
-    List<String> commentList = reviewTextRepository.findReviewReceiveTextList(userIdx);
-    for(String c : commentList){
-      reviewDto.getReceiveReviewText().add(c);
-    }
-    List<ReviewText> reviewRequestTextList = reviewTextRepository.findReviewRequestTextList(userIdx);
-    for(ReviewText rt : reviewRequestTextList){
-      ReviewTextDto reviewTextDto = new ReviewTextDto();
-      reviewTextDto.setReceiveItemIdx(rt.getItem().getItemIdx());
-      reviewTextDto.setReviewText(rt.getComment());
-      reviewDto.getRequestReviewText().add(reviewTextDto);
-    }
-    return reviewDto;
-  }
 }

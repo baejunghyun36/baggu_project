@@ -28,11 +28,11 @@ public class TradeRequestService {
   private final UserRepository userRepository;
 
   @Transactional
-  public void tradeDelete(TradeDeleteDto tradeDeleteDto) {
+  public void tradeDelete(Long tradeRequestIdx, TradeDeleteDto tradeDeleteDto) {
 
-    Long tradeRequestIdx = tradeRequestRepository.findIdxByUserIdx(tradeDeleteDto.getRequestUserIdx(), tradeDeleteDto.getItemIdx());
-    tradeDetailRepository.deleteTradeRequest(tradeRequestIdx);
-    tradeRequestRepository.deleteTradeRequest(tradeRequestIdx);
+    TradeRequest tradeRequest = tradeRequestRepository.findById(tradeRequestIdx).get();
+    tradeDetailRepository.deleteTradeRequest(tradeRequest.getTradeRequestIdx());
+    tradeRequestRepository.deleteTradeRequest(tradeRequest.getTradeRequestIdx());
   }
 
   public List<ItemListDto> requestItemList(Long userIdx) {
@@ -51,28 +51,7 @@ public class TradeRequestService {
     return userItemDtoList;
   }
 
-  @Transactional
-  public void tradeRequest(TradeRequestDto tradeRequestDto) {
 
-    TradeRequest tradeRequest = new TradeRequest();
-    tradeRequest.setRequestUser(userRepository.findById(tradeRequestDto.getRequestUserIdx()).get());
-    tradeRequest.setReceiveItemIdx(itemRepository.findById(tradeRequestDto.getReceiveItemIdx()).get());
-    tradeRequest.setComment(tradeRequestDto.getComment());
-    tradeRequestRepository.save(tradeRequest);
-    for(Long itemIdx : tradeRequestDto.getRequestItemIdxList()){
-      TradeDetail tradeDetail = new TradeDetail();
-      tradeDetail.setRequestItemIdx(itemIdx);
-      tradeDetail.setTradeRequest(tradeRequest);
-      tradeDetailRepository.save(tradeDetail);
-    }
-  }
 
-  @Transactional
-  public void tradeRequestSelect(Long tradeDetailIdx) {
 
-    tradeDetailRepository.updateTypeOne(tradeDetailIdx);
-    Long tradeRequestIdx = tradeDetailRepository.findById(tradeDetailIdx).get().getTradeRequest().getTradeRequestIdx();
-    log.info("{}", tradeRequestIdx);
-    tradeRequestRepository.updateTypeOne(tradeRequestIdx);
-  }
 }
