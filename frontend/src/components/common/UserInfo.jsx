@@ -6,16 +6,26 @@ import check from 'assets/icons/check.svg';
 // ex) 유저pk를 불러와서 이용자와 열람하려는 사용자의 정보가 같을경우 내 프로필 페이지로, 아니라면 유저상세정보 페이지로
 function UserInfo({ user }) {
   const location = useLocation().pathname;
+  // const navigate = useNavigate();
+  // const MoveToUserDetail = () => {
+  //   if (location !== 'myprofile') {
+
+  //   }
+  // }
   return (
     <div className="flex justify-between items-center p-2 h-[60px] w-full ">
-      <img
-        src="assets/images/kakao_sync_login/avatar_1x.png"
-        alt="User_profileimage"
-      />
-      <div>
-        <h4>{user}</h4>
-        <h4>한줄소개</h4>
-      </div>
+      <Link to={`${location !== '/myprofile' ? '/user/:id' : ''}`}>
+        <div className="flex justify-between items-center p-2 h-[60px] w-full ">
+          <img
+            src="assets/images/kakao_sync_login/avatar_1x.png"
+            alt="User_profileimage"
+          />
+          <div>
+            <h4>{user}</h4>
+            <h4>한줄소개</h4>
+          </div>
+        </div>
+      </Link>
       <Link
         to="/myprofile/edit"
         className={`${location === '/myprofile' ? '' : 'hidden'}`}

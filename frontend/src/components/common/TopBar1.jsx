@@ -17,8 +17,14 @@ function TopBar1() {
   if (location.startsWith('/start') || location.startsWith('/chat')) {
     return null;
   }
+  if (location.startsWith('/user')) {
+    return null;
+  }
   return (
-    <Container>
+    <div
+      id="top-bar-1"
+      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px]"
+    >
       <div>
         {/* 동네설정 url은 임시 */}
         <Link to="/town" className="flex items-center">
