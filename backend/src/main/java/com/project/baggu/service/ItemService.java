@@ -9,6 +9,7 @@ import com.project.baggu.domain.enumType.TradeState;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;
+import com.project.baggu.dto.TradeRequestDto;
 import com.project.baggu.dto.UpdatedItemDto;
 import com.project.baggu.dto.UserDto;
 import com.project.baggu.dto.UserItemDto;
@@ -145,18 +146,20 @@ public class ItemService {
     }
     return list;
   }
-  public List<ItemListDto> userKeepItemList(Long userIdx) {
 
-    List<Item> list = itemRepository.userKeepItemList(userIdx);
-    ItemListDto itemListDto = new ItemListDto();
-    List<ItemListDto> itemListDtos = new ArrayList<>();
-    for (Item i : list) {
-      itemListDto.setTitle(i.getTitle());
-      itemListDto.setDong(i.getDong());
-      itemListDto.setState(i.getState());
-      itemListDto.setCreatedAt(i.getCreatedAt());
-      itemListDtos.add(itemListDto);
+  @Transactional
+  public void tradeRequest(Long itemIdx, TradeRequestDto tradeRequestDto) {
+
+    TradeRequest tradeRequest = new TradeRequest();
+    tradeRequest.setRequestUser(userRepository.findById(tradeRequestDto.getRequestUserIdx()).get());
+    tradeRequest.setReceiveItemIdx(itemRepository.findById(itemIdx).get());
+    tradeRequest.setComment(tradeRequestDto.getComment());
+    tradeRequestRepository.save(tradeRequest);
+    for(Long i : tradeRequestDto.getRequestItemIdxList()){
+      TradeDetail tradeDetail = new TradeDetail();
+      tradeDetail.setRequestItemIdx(i);
+      tradeDetail.setTradeRequest(tradeRequest);
+      tradeDetailRepository.save(tradeDetail);
     }
-    return itemListDtos;
   }
 }

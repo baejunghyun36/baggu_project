@@ -1,12 +1,17 @@
 package com.project.baggu.controller;
 
+import com.project.baggu.dto.ItemListDto;
 import com.project.baggu.dto.LocationInfoDto;
 import com.project.baggu.dto.NotifyDto;
+import com.project.baggu.dto.ReviewDto;
 import com.project.baggu.dto.UserDetailDto;
+import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserProfileDto;
 import com.project.baggu.dto.UserSignUpDto;
 import com.project.baggu.dto.UserUpdateProfileDto;
 import com.project.baggu.service.ItemService;
+import com.project.baggu.service.TradeFinService;
+import com.project.baggu.service.TradeRequestService;
 import com.project.baggu.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +32,8 @@ public class UserController {
 
   private final UserService userService;
   private final ItemService itemService;
+  private final TradeRequestService tradeRequestService;
+  private final TradeFinService tradeFinService;
 
   //유저가 받은 최근 알림 리스트를 받는다.
   @GetMapping("/notify/{userIdx}")
@@ -36,10 +43,10 @@ public class UserController {
   }
 
   //유저의 현재 위치를 기준으로 유저의 동네를 저장한다.
-  @PutMapping("/changeLocation")
-  public void userChangeLocation(@RequestBody LocationInfoDto locationInfoDto){
+  @PutMapping("/{userIdx}/location")
+  public void userChangeLocation(@PathVariable("userIdx") Long userIdx, @RequestBody LocationInfoDto locationInfoDto){
 
-    userService.userChangeLocation(locationInfoDto);
+    userService.userChangeLocation(userIdx, locationInfoDto);
   }
 
   /*
@@ -47,39 +54,47 @@ public class UserController {
   - 유저의 관심 카테고리를 저장한다. (1순위)
   - 유저의 현재 위치를 기준으로 유저의 동네를 저장한다.
   */
-  @PostMapping("/signUp")
+  @PostMapping
   public void userSignUp(@RequestBody UserSignUpDto userSignUpDto){
 
     userService.userSignUp(userSignUpDto);
   }
 
-  //사용자가 가입된 유저인지 아닌지에 대한 정보를 받는다.
-  @GetMapping("/login")
-  public boolean loginUserTrueOrFalse(){
-
-    String email = "bae1004kin@naver.com";
-    return userService.findUserByEmail(email);
-  }
-
-  //유저의 동네에 최근 등록된 물품 리스트를 받는다.
   //유저의 정보를 받는다.
   @GetMapping("/{userIdx}")
-  public UserProfileDto itemListOrderByNeighbor(@PathVariable("userIdx") Long userIdx){
+  public UserProfileDto userProfile(@PathVariable("userIdx") Long userIdx){
 
     return userService.userProfile(userIdx);
   }
 
   //해당 유저에 대한 프로필 정보와 등록한 아이템 리스트를 받는다.
-  @GetMapping("/detail/{userIdx}")
+  @GetMapping("/{userIdx}/item")
   public UserDetailDto userDetail(@PathVariable("userIdx") Long userIdx){
 
     return userService.userDetail(userIdx);
   }
 
-  // 사용자 프로필 수정
-  @PutMapping("/{userIdx}")
+  // 유저의 프로필 정보를 수정한다.
+  @PutMapping("/{userIdx}/detail")
   public void userUpdateProfile(@PathVariable("userIdx") Long userIdx, @RequestBody UserUpdateProfileDto userUpdateProfileDto){
 
     userService.userUpdateProfile(userIdx, userUpdateProfileDto);
   }
+
+
+  //해당 유저가 받은 태그 유저 후기, 받은 텍스트 후기, 보낸 텍스트 후기 리스트를 받는다.
+  @GetMapping("/{userIdx}/review")
+  public ReviewDto reviewInfo(@PathVariable("userIdx") Long userIdx){
+
+    return userService.reviewInfo(userIdx);
+  }
+
+  //유저의 관심목록을 받는다.
+  @GetMapping("/{userIdx}/keep")
+  public List<ItemListDto> userKeepItemList(@PathVariable("userIdx") Long userIdx){
+
+    return userService.userKeepItemList(userIdx);
+  }
+
+
 }

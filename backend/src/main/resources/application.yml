@@ -6,7 +6,7 @@ spring:
 #      create-drop : 매번 테이블 생성 후 작업 종류 직전 생성 테이블 삭제
 #      validate : 테이블에 대한 유효성 검사
 #      create로 바꾸지 마라 진짜.
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
 #        show_sql: true
@@ -23,7 +23,6 @@ spring:
   output:
     ansi:
       enabled: always
-
 #log설정
 logging:
   level:

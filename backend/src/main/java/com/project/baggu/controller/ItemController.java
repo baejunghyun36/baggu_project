@@ -3,11 +3,13 @@ package com.project.baggu.controller;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;
+import com.project.baggu.dto.TradeRequestDto;
 import com.project.baggu.dto.UpdateItemDto;
 import com.project.baggu.dto.UpdatedItemDto;
 import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
 import com.project.baggu.service.ItemService;
+import com.project.baggu.service.TradeRequestService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,36 +30,40 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemController {
 
   private final ItemService itemService;
+  private final TradeRequestService tradeRequestService;
 
-  //유저의 관심목록을 받는다.
-  @GetMapping("/keep/{userIdx}")
-  public List<ItemListDto> userKeepItemList(@PathVariable("userIdx") Long userIdx){
 
-    return itemService.userKeepItemList(userIdx);
+
+//  유저가 입력한 검색어를 기반으로 아이템 리스트를 받는다. pathvariable로 하면 한글 안넘어와
+  @GetMapping(params = {"keyword"})
+  public List<ItemListDto> itemListByItemName(@RequestParam(name = "keyword") String keyword){
+
+    return itemService.itemListByItemName(keyword);
   }
 
-  //유저가 입력한 검색어를 기반으로 아이템 리스트를 받는다. pathvariable로 하면 한글 안넘어와
-  @GetMapping
-  public List<ItemListDto> itemListByItemName(@RequestParam String itemName){
+  //유저가 등록한 아이템 리스트를 받는다.
+  @GetMapping(params = {"userIdx"})
+  public List<UserItemDto> userItemList (@RequestParam(name = "userIdx") Long userIdx){
 
-    return itemService.itemListByItemName(itemName);
+    return itemService.userItemList(userIdx);
   }
 
-  //아이템의 상세 정보(아이템 정보, 신청자 정보)를 받는다. 진행 중..
+
+  //아이템의 상세 정보(아이템 정보, 신청자 정보)를 받는다.
   @GetMapping("/{itemIdx}")
   public ItemDetailDto itemDetail (@PathVariable("itemIdx") Long itemIdx){
 
     return  itemService.itemDetail(itemIdx);
   }
 
-  //새로운 게시글을 작성한다.
-  @PostMapping("/regist")
+  //새로운 아이템을 작성한다.
+  @PostMapping
   public void registItem(@RequestBody UserRegistItemDto u){
 
     itemService.registItem(u);
   }
 
-  //게시글을 수정한다.
+  //게시글 정보를 갱신한다.
   @PutMapping("/{itemIdx}")
   public UpdateItemDto updateItem(@PathVariable("itemIdx") Long itemIdx, @RequestBody UpdatedItemDto item){
 
@@ -73,16 +79,16 @@ public class ItemController {
   }
 
   //유저의 동네에 최근 등록된 물품 리스트를 받는다.
-  @GetMapping("/list/{dong}")
-  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(@PathVariable("dong") String dong){
+  @GetMapping
+  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(@RequestParam(name = "dong") String dong){
 
     return itemService.itemListOrderByNeighbor(dong);
   }
 
-  //유저가 등록한 아이템 리스트를 받는다.
-  @GetMapping("/userItem/{userIdx}")
-  public List<UserItemDto> userItemList (@PathVariable("userIdx") Long userIdx){
+  //유저가 신청메세지와 함께 바꾸신청을 보낸다.
+  @PostMapping("/{itemIdx}")
+  public void tradeRequest(@PathVariable("itemIdx") Long itemIdx, @RequestBody TradeRequestDto tradeRequestDto){
 
-    return itemService.userItemList(userIdx);
+    itemService.tradeRequest(itemIdx, tradeRequestDto);
   }
 }
