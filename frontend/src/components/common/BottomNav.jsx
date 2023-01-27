@@ -15,7 +15,11 @@ import myProfile_active from '../../assets/icons/nav_myprofile_active.svg';
 function BottomNav() {
   // 온보딩 페이지에서 하단바 숨기기
   const location = useLocation().pathname;
-  if (location.startsWith('/start') || location.startsWith('/item')) {
+  if (
+    location.startsWith('/start') ||
+    location.startsWith('/item') ||
+    location.startsWith('/chat/')
+  ) {
     return null;
   }
 

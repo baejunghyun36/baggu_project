@@ -16,7 +16,7 @@ function BottomBar() {
 
   // 온보딩 페이지에서 하단바 숨기기
   const location = useLocation().pathname;
-  if (location.startsWith('/start')) {
+  if (location.startsWith('/start') || location.startsWith('/chat')) {
     return null;
   }
 

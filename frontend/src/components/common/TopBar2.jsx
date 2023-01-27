@@ -1,11 +1,21 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import tw, { styled, css } from 'twin.macro';
 
 // icon
 import arrow_back from '../../assets/icons/arrow_back.svg';
 import check from '../../assets/icons/check.svg';
 
-function TopBar2({ pageTitle }) {
+const Container = styled.div`
+  ${tw`flex justify-between items-center p-2 border-b border-grey1 h-[60px] w-full`}
+  & {
+    img:last-child {
+      ${props => (props.isCheck ? '' : tw`opacity-0`)}
+    }
+  }
+`;
+
+function TopBar2({ title, isCheck }) {
   const navigate = useNavigate();
   const handleGoBack = () => {
     navigate(-1);
@@ -15,16 +25,24 @@ function TopBar2({ pageTitle }) {
   if (location.startsWith('/start/ready')) {
     return null;
   }
+  const clickHandler = props => {
+    if (props.isCheck) {
+      console.log('clicked');
+    }
+  };
   return (
-    <div
-      id="top-bar-2"
-      className="flex justify-between items-center p-2 border-b border-grey1 h-[60px] w-full"
-    >
+    <Container id="top-bar-2">
       <img src={arrow_back} alt="button to go back" onClick={handleGoBack} />
-      <h3>{pageTitle}</h3>
+      <h3 className="text-h3">{title}</h3>
 
-      <img src={check} alt="button to confirm" className="opacity-1" />
-    </div>
+      <img
+        disabled={!isCheck}
+        src={check}
+        alt="button to confirm"
+        className="opacity-1"
+        onClick={clickHandler}
+      />
+    </Container>
   );
 }
 
