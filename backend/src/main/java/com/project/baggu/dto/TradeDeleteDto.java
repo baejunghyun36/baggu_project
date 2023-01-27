@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 public class TradeDeleteDto {
 
   private Long itemIdx;
-  private Long requestUserIdx;
+
 }

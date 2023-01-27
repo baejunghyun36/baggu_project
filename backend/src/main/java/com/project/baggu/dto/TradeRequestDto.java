@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TradeRequestDto{
 
-  private Long receiveItemIdx;
+
   private List<Long> requestItemIdxList = new ArrayList<>();
   private Long requestUserIdx;
   private String comment;
