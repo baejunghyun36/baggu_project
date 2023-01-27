@@ -14,10 +14,13 @@ function TopBar1() {
   if (location.startsWith('/start')) {
     return null;
   }
+  if (location.startsWith('/user')) {
+    return null;
+  }
   return (
     <div
       id="top-bar-1"
-      className="flex justify-between p-2 border-b border-grey1 h-[60px]"
+      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px]"
     >
       <div>
         {/* 동네설정 url은 임시 */}
