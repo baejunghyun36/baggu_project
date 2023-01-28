@@ -144,6 +144,7 @@ public class ItemService {
       userDto.setComment(tr.getComment());
       for (TradeDetail td : tradeDetailList) {
         userDto.getRequestItemIdxList().add(td.getRequestItemIdx());
+        userDto.getTradeDetailIdxList().add(td.getTradeDetailIdx());
       }
       idd.getRequestUserList().add(userDto);
     }
