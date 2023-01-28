@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateItemDto {
 
+  private int category;
   private String title;
   private String content;
 

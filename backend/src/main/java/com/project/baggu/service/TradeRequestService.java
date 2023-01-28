@@ -28,24 +28,26 @@ public class TradeRequestService {
   private final UserRepository userRepository;
 
   @Transactional
-  public void tradeDelete(Long tradeRequestIdx, TradeDeleteDto tradeDeleteDto) {
+  public void tradeDelete(Long tradeRequestIdx) {
 
-    TradeRequest tradeRequest = tradeRequestRepository.findById(tradeRequestIdx).get();
-    tradeDetailRepository.deleteTradeRequest(tradeRequest.getTradeRequestIdx());
-    tradeRequestRepository.deleteTradeRequest(tradeRequest.getTradeRequestIdx());
+    tradeDetailRepository.deleteTradeDetail(tradeRequestIdx);
+    tradeRequestRepository.deleteTradeRequest(tradeRequestIdx);
   }
 
   public List<ItemListDto> requestItemList(Long userIdx) {
 
-
-    List<Item> items = tradeRequestRepository.findItemByUserIdx(userIdx);
+    List <TradeRequest> list = tradeRequestRepository.findItemByUserIdx(userIdx);
     List<ItemListDto> userItemDtoList = new ArrayList<>();
-    for(Item i : items){
+
+    for(TradeRequest t : list){
       ItemListDto userItemDto = new ItemListDto();
+      Item i = t.getReceiveItemIdx();
       userItemDto.setTitle(i.getTitle());
       userItemDto.setDong(i.getDong());
       userItemDto.setCreatedAt(i.getCreatedAt());
       userItemDto.setState(i.getState());
+      userItemDto.setValid(i.isValid());
+      userItemDto.setTradeRequestIdx(t.getTradeRequestIdx());
       userItemDtoList.add(userItemDto);
     }
     return userItemDtoList;

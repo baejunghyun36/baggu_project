@@ -5,6 +5,7 @@ import com.project.baggu.service.TradeDetailService;
 import com.project.baggu.service.TradeRequestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,4 +25,11 @@ public class TradeDetailController {
 
     tradeDetailService.tradeRequestSelect(tradeDetailIdx);
   }
+
+  @DeleteMapping("/{tradeDetailIdx}")
+  public void tradeDetailDelete(@PathVariable("tradeDetailIdx") Long tradeDetailIdx){
+
+    tradeDetailService.tradeDetailDelete(tradeDetailIdx);
+  }
+
 }

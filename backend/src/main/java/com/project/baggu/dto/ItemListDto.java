@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ItemListDto {
 
+  private Long tradeRequestIdx;
   private String title;
   private String dong;
   private LocalDateTime createdAt;
   private int state;
+  private boolean isValid;
 }
