@@ -1,5 +1,6 @@
 package com.project.baggu.dto;
 
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,5 +13,5 @@ public class UserDto {
   private Long userIdx;
   private String nickname;
   private String comment;
-  private Long requestItemIdx;
+  private ArrayList<Long> requestItemIdxList = new ArrayList<>();
 }

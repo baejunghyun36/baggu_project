@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ItemOrderByNeighborDto {
 
+  private Long itemIdx;
   private String title;
   private LocalDateTime createdAt;
   private int state;

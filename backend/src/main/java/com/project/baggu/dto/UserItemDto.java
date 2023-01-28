@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserItemDto {
 
+  private Long itemIdx;
   private String title;
   private String dong;
   private LocalDateTime createdAt;

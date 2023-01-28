@@ -1,6 +1,7 @@
 package com.project.baggu.service;
 
 import com.project.baggu.domain.Item;
+import com.project.baggu.domain.ItemKeep;
 import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.TradeDetail;
 import com.project.baggu.domain.TradeRequest;
@@ -10,10 +11,12 @@ import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;
 import com.project.baggu.dto.TradeRequestDto;
+import com.project.baggu.dto.UpdateItemDto;
 import com.project.baggu.dto.UpdatedItemDto;
 import com.project.baggu.dto.UserDto;
 import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
+import com.project.baggu.repository.ItemKeepRepository;
 import com.project.baggu.repository.ItemRepository;
 import com.project.baggu.repository.ReviewTextRepository;
 import com.project.baggu.repository.TradeDetailRepository;
@@ -41,6 +44,7 @@ public class ItemService {
   private final TradeRequestRepository tradeRequestRepository;
   private final TradeDetailRepository tradeDetailRepository;
   private final TradeFinRepository tradeFinRepository;
+  private final ItemKeepRepository itemKeepRepository;
 
   public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(String dong) {
 
@@ -48,6 +52,7 @@ public class ItemService {
     List<ItemOrderByNeighborDto> ItemDtoList = new ArrayList<>();
     for(Item i : itemList){
       ItemOrderByNeighborDto itemDto = new ItemOrderByNeighborDto();
+      itemDto.setItemIdx(i.getItemIdx());
       itemDto.setTitle(i.getTitle());
       itemDto.setCreatedAt(i.getCreatedAt());
       itemDto.setState(i.getState());
@@ -62,12 +67,13 @@ public class ItemService {
     List<UserItemDto> userItemDtoList = new ArrayList<>();
     for(Item i : itemList){
       UserItemDto itemDto = new UserItemDto();
+      itemDto.setItemIdx(i.getItemIdx());
       itemDto.setTitle(i.getTitle());
       itemDto.setDong(i.getDong());
       itemDto.setCreatedAt(i.getCreatedAt());
       itemDto.setTradeState(i.getState());
       if(i.getState() == TradeState.TYPE2.ordinal()){
-        Optional<ReviewText> check = reviewTextRepository.findByTradeItemIdx(i.getItemIdx());
+        Optional<ReviewText> check = reviewTextRepository.findByTradeItemIdx(i.getTradeItemIdx());
         if(check.isEmpty()) itemDto.setReviewState(true);
       }
       userItemDtoList.add(itemDto);
@@ -75,16 +81,29 @@ public class ItemService {
     return userItemDtoList;
   }
 
+  @Transactional
   public void deleteItem(Long itemIdx) {
 
     itemRepository.deleteItem(itemIdx);
+    itemKeepRepository.deleteItem(itemIdx);
+    List<TradeRequest> list = tradeRequestRepository.findAllReceiveItem(itemIdx);
+    for (TradeRequest tr : list) {
+      tradeDetailRepository.deleteTradeDetail(tr.getTradeRequestIdx());
+      tradeRequestRepository.deleteTradeRequest(tr.getTradeRequestIdx());
+    }
   }
 
-  public void updateItem(Long itemIdx, UpdatedItemDto item) {
+  @Transactional
+  public UpdateItemDto updateItem(Long itemIdx, UpdatedItemDto item) {
 
-    itemRepository.updateItem(itemIdx, item.getTitle(), item.getCategory(), item.getContent());
+    Item i = itemRepository.findById(itemIdx).get();
+    i.setTitle(item.getTitle());
+    i.setCategory(item.getCategory());
+    i.setContent(item.getContent());
+    return new UpdateItemDto(i.getCategory().ordinal(), i.getTitle(), i.getContent());
   }
 
+  @Transactional
   public void registItem(UserRegistItemDto u) {
 
     User user = userRepository.findById(u.getUserIdx()).get();
@@ -119,15 +138,14 @@ public class ItemService {
     for(TradeRequest tr : trList){
 
       List<TradeDetail> tradeDetailList = tradeDetailRepository.findByTradeRequestIdx(tr.getTradeRequestIdx());
-
+      UserDto userDto = new UserDto();
+      userDto.setUserIdx(tr.getRequestUser().getUserIdx());
+      userDto.setNickname(tr.getRequestUser().getNickname());
+      userDto.setComment(tr.getComment());
       for (TradeDetail td : tradeDetailList) {
-        UserDto userDto = new UserDto();
-        userDto.setUserIdx(tr.getRequestUser().getUserIdx());
-        userDto.setNickname(tr.getRequestUser().getNickname());
-        userDto.setComment(tr.getComment());
-        userDto.setRequestItemIdx(td.getRequestItemIdx());
-        idd.getRequestUserList().add(userDto);
+        userDto.getRequestItemIdxList().add(td.getRequestItemIdx());
       }
+      idd.getRequestUserList().add(userDto);
     }
     return idd;
   }
@@ -161,5 +179,9 @@ public class ItemService {
       tradeDetail.setTradeRequest(tradeRequest);
       tradeDetailRepository.save(tradeDetail);
     }
+    User user = userRepository.findById(tradeRequestDto.getRequestUserIdx()).get();
+    Item item = itemRepository.findById(itemIdx).get();
+    user.setTradeCount(user.getTradeCount()+1);
+    item.setUserRequestCount(item.getUserRequestCount()+1);
   }
 }

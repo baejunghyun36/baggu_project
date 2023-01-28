@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 public interface TradeDetailRepository extends JpaRepository<TradeDetail, Long> {
   @Modifying
   @Query("update TradeDetail t set t.isValid = false where t.tradeRequest.tradeRequestIdx = :tradeRequestIdx")
-  void deleteTradeRequest(@Param("tradeRequestIdx") Long tradeRequestIdx);
+  void deleteTradeDetail(@Param("tradeRequestIdx") Long tradeRequestIdx);
 
   @Modifying
   @Query("update TradeDetail t set t.tradeState = 1 where t.tradeDetailIdx = :tradeDetailIdx")
@@ -17,5 +17,6 @@ public interface TradeDetailRepository extends JpaRepository<TradeDetail, Long> 
 
   @Query("select t from TradeDetail t where t.tradeRequest.tradeRequestIdx = :tradeRequestIdx")
   List<TradeDetail> findByTradeRequestIdx(@Param("tradeRequestIdx") Long tradeRequestIdx);
+
 
 }

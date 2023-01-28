@@ -34,21 +34,6 @@ public class ItemController {
 
 
 
-//  유저가 입력한 검색어를 기반으로 아이템 리스트를 받는다. pathvariable로 하면 한글 안넘어와
-  @GetMapping(params = {"keyword"})
-  public List<ItemListDto> itemListByItemName(@RequestParam(name = "keyword") String keyword){
-
-    return itemService.itemListByItemName(keyword);
-  }
-
-  //유저가 등록한 아이템 리스트를 받는다.
-  @GetMapping(params = {"userIdx"})
-  public List<UserItemDto> userItemList (@RequestParam(name = "userIdx") Long userIdx){
-
-    return itemService.userItemList(userIdx);
-  }
-
-
   //아이템의 상세 정보(아이템 정보, 신청자 정보)를 받는다.
   @GetMapping("/{itemIdx}")
   public ItemDetailDto itemDetail (@PathVariable("itemIdx") Long itemIdx){
@@ -67,8 +52,7 @@ public class ItemController {
   @PutMapping("/{itemIdx}")
   public UpdateItemDto updateItem(@PathVariable("itemIdx") Long itemIdx, @RequestBody UpdatedItemDto item){
 
-    itemService.updateItem(itemIdx, item);
-    return new UpdateItemDto(item.getTitle(), item.getContent());
+    return itemService.updateItem(itemIdx, item);
   }
 
   //게시글을 삭제한다.
@@ -78,12 +62,7 @@ public class ItemController {
     itemService.deleteItem(itemIdx);
   }
 
-  //유저의 동네에 최근 등록된 물품 리스트를 받는다.
-  @GetMapping
-  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(@RequestParam(name = "dong") String dong){
 
-    return itemService.itemListOrderByNeighbor(dong);
-  }
 
   //유저가 신청메세지와 함께 바꾸신청을 보낸다.
   @PostMapping("/{itemIdx}")
@@ -91,4 +70,35 @@ public class ItemController {
 
     itemService.tradeRequest(itemIdx, tradeRequestDto);
   }
+
+
+
+
+  //유저의 동네에 최근 등록된 물품 리스트를 받는다.
+  @GetMapping(params = {"dong"})
+  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(@RequestParam(name = "dong") String dong){
+
+    return itemService.itemListOrderByNeighbor(dong);
+  }
+
+
+  //유저가 등록한 아이템 리스트를 받는다.
+  @GetMapping(params = {"userIdx"})
+  public List<UserItemDto> userItemList (@RequestParam(name = "userIdx") Long userIdx){
+
+    return itemService.userItemList(userIdx);
+  }
+
+//  유저가 입력한 검색어를 기반으로 아이템 리스트를 받는다. pathvariable로 하면 한글 안넘어와
+  @GetMapping(params = {"keyword"})
+  public List<ItemListDto> itemListByItemName(@RequestParam(name = "keyword") String keyword){
+
+    return itemService.itemListByItemName(keyword);
+  }
+
+
+
+
+
+
 }
