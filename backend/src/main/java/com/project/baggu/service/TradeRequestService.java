@@ -50,6 +50,8 @@ public class TradeRequestService {
       userItemDto.setTradeRequestIdx(t.getTradeRequestIdx());
       userItemDtoList.add(userItemDto);
     }
+
+
     return userItemDtoList;
   }
 

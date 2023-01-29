@@ -4,16 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.*;
+
+import com.project.baggu.domain.enumType.Role;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "user")
 @NoArgsConstructor
 @Getter @Setter
+@AllArgsConstructor @Builder
 public class User extends BaseTimeEntity {
 
   @Id
@@ -32,9 +27,11 @@ public class User extends BaseTimeEntity {
   @Column(name = "email")
   private String email;
 
+  //삭제 필요?
   @Column(name = "name")
   private String name;
 
+  //삭제 필요
   @Column(name = "phone")
   private String phone;
 
@@ -74,6 +71,13 @@ public class User extends BaseTimeEntity {
 
   @Column(name = "lng")
   private String lng;
+
+  @Column(name = "role")
+  @Enumerated(EnumType.ORDINAL)
+  private Role role;
+
+  @Column(name = "kakaoId")
+  private String kakaoId;
 
   @JsonIgnore
   @OneToMany(mappedBy = "user" )

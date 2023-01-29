@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewTextDto {
+public class UserUpdateLocationDto {
 
-  private Long targetItemIdx;
-  private Long writeUserIdx;
-  private String reviewText;
-
+  private String si;
+  private String gu;
+  private String dong;
+  private String lat;
+  private String lng;
 }

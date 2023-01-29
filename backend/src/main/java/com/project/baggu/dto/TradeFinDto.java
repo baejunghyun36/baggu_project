@@ -14,4 +14,5 @@ public class TradeFinDto {
   private Long receiveItemIdx;
   private int heartCount;
   private LocalDateTime createdAt;
+  private boolean isUserHeart;
 }

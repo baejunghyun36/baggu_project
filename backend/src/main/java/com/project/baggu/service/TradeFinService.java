@@ -1,21 +1,18 @@
 package com.project.baggu.service;
 
-import com.project.baggu.domain.Item;
-import com.project.baggu.domain.ReviewTag;
-import com.project.baggu.domain.ReviewText;
-import com.project.baggu.domain.TradeFin;
-import com.project.baggu.domain.User;
+import com.project.baggu.config.BaseException;
+import com.project.baggu.config.BaseResponseStatus;
+import com.project.baggu.domain.*;
 import com.project.baggu.dto.ReviewDto;
 import com.project.baggu.dto.ReviewTagDto;
 import com.project.baggu.dto.ReviewTextDto;
 import com.project.baggu.dto.TradeFinDto;
-import com.project.baggu.repository.ItemRepository;
-import com.project.baggu.repository.ReviewTagRepository;
-import com.project.baggu.repository.ReviewTextRepository;
-import com.project.baggu.repository.TradeFinRepository;
-import com.project.baggu.repository.UserRepository;
+import com.project.baggu.repository.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -31,6 +28,10 @@ public class TradeFinService {
   private final ReviewTagRepository reviewTagRepository;
   private final ItemRepository itemRepository;
   private final ReviewTextRepository reviewTextRepository;
+  private final TradeRequestRepository tradeRequestRepository;
+  private final TradeDetailRepository tradeDetailRepository;
+  private final HeartRepository heartRepository;
+
 
   public List<TradeFinDto> tradeFinList() {
 
@@ -46,6 +47,7 @@ public class TradeFinService {
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
       tradeFinDtos.add(tradeFinDto);
     }
+
     return tradeFinDtos;
   }
 
@@ -68,22 +70,103 @@ public class TradeFinService {
 
   public void reviewTag(ReviewTagDto reviewTagDto) {
 
-    ReviewTag reviewTag = new ReviewTag();
-    reviewTag.setType(reviewTagDto.getReviewTagType());
-    reviewTag.setUser(userRepository.findById(reviewTagDto.getUserIdx()).get());
-    reviewTagRepository.save(reviewTag);
+    User user = userRepository.findById(reviewTagDto.getUserIdx()).get();
+
+    reviewTagDto.getReviewTagTypes().stream().forEach((reviewTagType) ->
+      reviewTagRepository.save(ReviewTag.builder().user(user).type(reviewTagType).build()));
   }
 
-  public void reviewText(ReviewTextDto reviewTextDto) {
+  public void reviewText(ReviewTextDto reviewTextDto) throws BaseException {
 
-    ReviewText reviewText = new ReviewText();
-    User requestUser = userRepository.findById(reviewTextDto.getRequestUserIdx()).get();
-    Item receiveitem = itemRepository.findById(reviewTextDto.getReceiveItemIdx()).get();
-    reviewText.setUser(requestUser);
-    reviewText.setItem(receiveitem);
-    reviewText.setComment(reviewTextDto.getReviewText());
-    reviewText.setReceiveUserIdx(receiveitem.getUser().getUserIdx());
-    reviewTextRepository.save(reviewText);
+    User writeUser = userRepository.findById(reviewTextDto.getWriteUserIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.REQUEST_ERROR));
+    Item targetItem = itemRepository.findById(reviewTextDto.getTargetItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.REQUEST_ERROR));
+
+    reviewTextRepository.save(
+            ReviewText.builder()
+                    .user(writeUser)
+                    .item(targetItem)
+                    .comment(reviewTextDto.getReviewText())
+                    .receiveUserIdx(targetItem.getUser().getUserIdx())
+                    .build()
+    );
+
+    createTradeFin(writeUser, targetItem);
   }
+
+  public void createTradeFin(User writeUser, Item targetItem) throws BaseException {
+
+    //이미 상대방이 먼저 후기를 등록해서 trade fin 된 상태인지 확인
+    if(tradeFinRepository.findTradeFinByItemIdx(targetItem.getItemIdx())>0) return;
+
+    //해당 후기를 작성하려는 writer가 requestUser인지 receiveUser인지 확인한다.
+    //trade request에 item(신청받는 아이템)이 targetItem이고 user(신청자)가 writer고, state가 1인 레코드가 존재한다면
+    //writer가 requestUser
+    Optional<TradeRequest> opt = tradeRequestRepository.findIdxByUserIdxAndItemIdx(writeUser.getUserIdx(), targetItem.getItemIdx());
+
+    User requestUser;
+    User receiveUser;
+    Item requestItem;
+    Item receiveItem;
+    TradeFin tradeFin;
+
+    if(opt.isPresent() && opt.get().getTradeRequestState()==1){
+      TradeRequest tradeRequest = opt.get();
+
+      requestUser = tradeRequest.getRequestUser();
+      receiveItem = tradeRequest.getReceiveItemIdx();
+      receiveUser = receiveItem.getUser();
+
+      TradeDetail tradeDetail = tradeDetailRepository.findFinItemByTradeRequestIdx(tradeRequest.getTradeRequestIdx()).orElseThrow();
+
+      tradeFin = TradeFin.builder()
+              .receiveItemIdx(receiveItem.getItemIdx())
+              .receiveNickname(receiveUser.getNickname())
+              .receiveUserIdx(receiveUser.getUserIdx())
+              .requestItemIdx(tradeDetail.getRequestItemIdx())
+              .requestNickname(requestUser.getNickname())
+              .requestUserIdx(requestUser.getUserIdx())
+              .build();
+
+    } else{
+      receiveUser = writeUser;
+      requestItem = targetItem;
+
+      TradeDetail tradeDetail = tradeDetailRepository.findFinItemByRequestItemIdx(requestItem.getItemIdx()).orElseThrow();
+      TradeRequest tradeRequest = tradeDetail.getTradeRequest();
+
+      requestUser = tradeRequest.getRequestUser();
+      receiveItem = tradeRequest.getReceiveItemIdx();
+
+      tradeFin = TradeFin.builder()
+              .receiveItemIdx(receiveItem.getItemIdx())
+              .receiveNickname(receiveUser.getNickname())
+              .receiveUserIdx(receiveUser.getUserIdx())
+              .requestItemIdx(requestItem.getItemIdx())
+              .requestNickname(requestUser.getNickname())
+              .requestUserIdx(requestUser.getUserIdx())
+              .build();
+    }
+
+    tradeFinRepository.save(tradeFin);
+
+  }
+
+  public void likeTradeFin(Long tradeFinIdx, Long userIdx){
+    heartRepository.save(Heart.builder()
+            .tradeFin(tradeFinRepository.findById(tradeFinIdx).orElseThrow())
+            .user(userRepository.findById(userIdx).orElseThrow())
+            .build());
+
+    tradeFinRepository.likeTradeFin(tradeFinIdx);
+  }
+
+  public void dislikeTradeFin(Long tradeFinIdx, Long userIdx){
+    heartRepository.delete(Heart.builder()
+            .tradeFin(tradeFinRepository.findById(tradeFinIdx).orElseThrow())
+            .user(userRepository.findById(userIdx).orElseThrow())
+            .build());
+    tradeFinRepository.dislikeTradeFin(tradeFinIdx);
+  }
+
 
 }

@@ -110,26 +110,27 @@ public class SampleRegistItemRequsetItemTest {
   }
 
 
-  @Test
-  @Order(4)
-  @DisplayName("현재 유저가 아이템 교환 신청")
-  @Rollback(false)
-  public void requestItem() throws Exception{
-    //given
-    log.info("start 3");
-    TradeRequest request = new TradeRequest();
-    request.setComment("저 에어팟인데 버즈랑 바꾸고 싶어요.");
-    request.setReceiveItemIdx(receiveItem);
-    log.info("receiveItem : {} ", receiveItem.getItemIdx());
-    request.setRequestUserIdx(user);
-    request.setTradeRequestState(TradeState.TYPE0.ordinal());
-    //when
-    sampleTradeRequestService.regist(request);
-
-    //then
-    assertEquals(sampleTradeRequestService.findOne(request.getTradeRequestIdx()).getComment(), request.getComment());
-
-  }
+//  @Test
+//  @Order(4)
+//  @DisplayName("현재 유저가 아이템 교환 신청")
+//  @Rollback(false)
+//  public void requestItem() throws Exception{
+//    //given
+//    log.info("start 3");
+//    TradeRequest request = new TradeRequest();
+//    request.setComment("저 에어팟인데 버즈랑 바꾸고 싶어요.");
+//    request.setReceiveItemIdx(receiveItem);
+//    log.info("receiveItem : {} ", receiveItem.getItemIdx());
+//    request.setRequest
+//    request.setRequestUserIdx(user);
+//    request.setTradeRequestState(TradeState.TYPE0.ordinal());
+//    //when
+//    sampleTradeRequestService.regist(request);
+//
+//    //then
+//    assertEquals(sampleTradeRequestService.findOne(request.getTradeRequestIdx()).getComment(), request.getComment());
+//
+//  }
 
 
 

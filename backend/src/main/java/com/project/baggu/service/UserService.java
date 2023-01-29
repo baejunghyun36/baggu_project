@@ -1,20 +1,14 @@
 package com.project.baggu.service;
 
+import com.project.baggu.config.BaseException;
+import com.project.baggu.config.BaseResponseStatus;
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.Notify;
 import com.project.baggu.domain.ReviewTag;
 import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.User;
-import com.project.baggu.dto.ItemListDto;
-import com.project.baggu.dto.LocationInfoDto;
-import com.project.baggu.dto.NotifyDto;
-import com.project.baggu.dto.ReviewDto;
-import com.project.baggu.dto.ReviewTextDto;
-import com.project.baggu.dto.UserDetailDto;
-import com.project.baggu.dto.UserProfileDto;
-import com.project.baggu.dto.UserSignUpDto;
-import com.project.baggu.dto.UserUpdateProfileDto;
+import com.project.baggu.dto.*;
 import com.project.baggu.repository.CategoryRepository;
 import com.project.baggu.repository.ItemRepository;
 import com.project.baggu.repository.NotifyRepository;
@@ -43,18 +37,52 @@ public class UserService {
   private final ReviewTextRepository reviewTextRepository;
   private final ReviewTagRepository reviewTagRepository;
 
-  public UserProfileDto userProfile(Long userIdx) {
+  @Transactional
+  public UserProfileDto userSignUp(UserSignUpDto userSignUpDto) throws BaseException {
 
-    User user = userRepository.findById(userIdx).get();
-    UserProfileDto userProfileDto = new UserProfileDto();
-    userProfileDto.setDong(user.getDong());
-    userProfileDto.setInfo(user.getInfo());
-    userProfileDto.setNickname(user.getNickname());
+    User user = userRepository.findUserByKakaoId(userSignUpDto.getKakaoId()).orElseThrow(()-> new BaseException(BaseResponseStatus.REQUEST_ERROR));
 
-    return userProfileDto;
+    user.setEmail(userSignUpDto.getEmail());
+    user.setNickname(userSignUpDto.getNickname());
+    user.setCategories(new ArrayList<>());
+    user.setSi(userSignUpDto.getSi());
+    user.setGu(userSignUpDto.getGu());
+    user.setDong(userSignUpDto.getDong());
+    user.setLng(userSignUpDto.getLng());
+    user.setLat(userSignUpDto.getLat());
+    user.setRole(userSignUpDto.getRole());
+
+    userRepository.save(user);
+
+    for(int i=0; i<userSignUpDto.getCategory().size(); i++){
+      Category category = new Category();
+      category.setUser(user);
+      category.setType(userSignUpDto.getCategory().get(i));
+      categoryRepository.save(category);
+    }
+
+    return UserProfileDto.builder()
+            .userIdx(user.getUserIdx())
+            .nickname(user.getNickname())
+            .info(user.getInfo())
+            .dong(user.getDong())
+            .role(user.getRole()).build();
   }
-  public void userUpdateProfile(Long userIdx, UserUpdateProfileDto userUpdateProfileDto) {
 
+
+
+  public UserProfileDto userProfile(Long userIdx) throws BaseException {
+
+    User user = userRepository.findById(userIdx).orElseThrow(()-> new BaseException(BaseResponseStatus.REQUEST_ERROR));
+
+    return UserProfileDto.builder()
+            .userIdx(user.getUserIdx())
+            .nickname(user.getNickname())
+            .info(user.getInfo())
+            .dong(user.getDong())
+            .role(user.getRole()).build();
+  }
+  public void userUpdateProfile(Long userIdx, UserUpdateProfileDto userUpdateProfileDto) throws Exception{
     userRepository.userUpdateProfile(userIdx,userUpdateProfileDto.getNickname(), userUpdateProfileDto.getInfo());
   }
   public User findUser(Long userIdx) {
@@ -68,32 +96,18 @@ public class UserService {
     else return false;
 
   }
-  @Transactional
-  public void userSignUp(UserSignUpDto userSignUpDto) {
 
-    User user = new User();
-    user.setEmail(userSignUpDto.getEmail());
-    user.setNickname(userSignUpDto.getNickname());
-    user.setSi(userSignUpDto.getSi());
-    user.setGu(userSignUpDto.getGu());
-    user.setDong(userSignUpDto.getDong());
-    user.setLng(userSignUpDto.getLng());
-    user.setLat(userSignUpDto.getLat());
-    userRepository.save(user);
-
-    for(int i=0; i<userSignUpDto.getCategory().size(); i++){
-      Category category = new Category();
-      category.setUser(user);
-      category.setType(userSignUpDto.getCategory().get(i));
-      categoryRepository.save(category);
-    }
-  }
   @Transactional
-  public void userChangeLocation(Long userIdx, LocationInfoDto locationInfoDto) {
+  public void userUpdateLocation(Long userIdx, UserUpdateLocationDto userUpdateLocationDto) {
 
     User user = userRepository.findById(userIdx).get();
-    user.setLat(locationInfoDto.getLat());
-    user.setLng(locationInfoDto.getLng());
+
+    user.setSi(userUpdateLocationDto.getSi());
+    user.setGu(userUpdateLocationDto.getGu());
+    user.setDong(userUpdateLocationDto.getDong());
+    user.setLat(userUpdateLocationDto.getLat());
+    user.setLng(userUpdateLocationDto.getLng());
+
     userRepository.save(user);
   }
 
@@ -113,22 +127,26 @@ public class UserService {
     return notifyDtoList;
   }
 
-  public UserDetailDto userDetail(Long userIdx) {
+  public UserDetailDto userDetail(Long userIdx) throws BaseException {
 
-    User user = userRepository.findById(userIdx).get();
+    User user = userRepository.findById(userIdx).orElseThrow(()-> new BaseException(BaseResponseStatus.REQUEST_ERROR));
     UserDetailDto userDetailDto = new UserDetailDto();
     userDetailDto.setInfo(user.getInfo());
     userDetailDto.setNickname(user.getNickname());
     List<Item> items = itemRepository.userItemList(userIdx);
 
     for(Item item : items){
-      ItemListDto userItemDto = new ItemListDto();
-      userItemDto.setTitle(item.getTitle());
-      userItemDto.setDong(item.getDong());
-      userItemDto.setCreatedAt(item.getCreatedAt());
-      userItemDto.setState(item.getState());
-      userDetailDto.getItemList().add(userItemDto);
+      userDetailDto.getItemList().add(
+              ItemListDto.builder()
+                      .title(item.getTitle())
+                      .dong(item.getDong())
+                      .createdAt(item.getCreatedAt())
+                      .state(item.getState())
+                      .isValid(item.isValid())
+                      .build()
+      );
     }
+
     return userDetailDto;
   }
 
@@ -176,7 +194,7 @@ public class UserService {
     List<ReviewText> reviewRequestTextList = reviewTextRepository.findReviewRequestTextList(userIdx);
     for(ReviewText rt : reviewRequestTextList){
       ReviewTextDto reviewTextDto = new ReviewTextDto();
-      reviewTextDto.setReceiveItemIdx(rt.getItem().getItemIdx());
+      reviewTextDto.setTargetItemIdx(rt.getItem().getItemIdx());
       reviewTextDto.setReviewText(rt.getComment());
       reviewDto.getRequestReviewText().add(reviewTextDto);
     }
@@ -196,5 +214,15 @@ public class UserService {
       itemListDtos.add(itemListDto);
     }
     return itemListDtos;
+  }
+
+
+  //내부 로직 수행에서 필요 -> auth
+  public void save(User user){
+    userRepository.save(user);
+  }
+
+  public Optional<User> findUserByKakaoId(String kakaoId){
+    return userRepository.findUserByKakaoId(kakaoId);
   }
 }
