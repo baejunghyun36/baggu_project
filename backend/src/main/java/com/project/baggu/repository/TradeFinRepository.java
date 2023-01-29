@@ -19,7 +19,7 @@ public interface TradeFinRepository extends JpaRepository<TradeFin, Long> {
   @Query("select t from TradeFin t order by t.createdAt desc")
   List<TradeFin> recentTradeFinList(@Param("userIdx") Long userIdx);
 
-//  @Query("select distinct t, count(h) as heartCount from TradeFin t join fetch Heart h group by h.tradeFin order by t.createdAt desc")
+////  @Query("select distinct t, count(h) as heartCount from TradeFin t join fetch Heart h group by h.tradeFin order by t.createdAt desc")
 //  List<TradeFin> getRecentTradeFin(@Param("userIdx") Long userIdx)
 
   @Query("update TradeFin t set t.heartCount=t.heartCount+1 where t.tradeFinIdx = :tradeFinIdx")

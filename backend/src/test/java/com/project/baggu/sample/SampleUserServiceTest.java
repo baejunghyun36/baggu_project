@@ -52,38 +52,38 @@ class SampleUserServiceTest {
     log.info("============afterEach===========");
   }
 
-//  @Test
-//  @DisplayName("userSignUp: 사용자 가입")
-//  @Rollback(false)
-//  public void saveUser() throws Exception {
-//
-//    //전제조건 -> 사용자의 구체적 회원 가입 로직 전 카카오 로그인 단계에서 해당 유저의 이메일, 카카오 아이디, 롤을 저장한 레코드가 우선 생성된다.
-//    //테스트용 db를 따로 운영하고 있지 않으므로...
-//    User registered = User.builder().email("temp123@naver.com").kakaoId("1234567").role(Role.TYPE4).build();
-//    userService.save(registered);
-//
-//    //given
-//    UserSignUpDto userSignUpDto = UserSignUpDto.builder()
-//            .email("temp123@naver.com")
-//            .nickname("바꾸바꾸")
-//            .category(new ArrayList<>(Arrays.asList((new CategoryType[] {TYPE0,TYPE1}))))
-//            .si("서울시")
-//            .gu("서대문구")
-//            .dong("홍은동")
-//            .lng("37.5666")
-//            .lat("126.9784")
-//            .kakaoId(registered.getKakaoId())
-//            .role(Role.TYPE3).build();
-//
-//    //when
-//    userService.userSignUp(userSignUpDto);
-//
-//    //then
-//    assertEquals(userService.findUserByKakaoId(registered.getKakaoId())
-//              .orElseThrow(()->new Exception())
-//              .getNickname(),
-//            userSignUpDto.getNickname());
-//  }
+  @Test
+  @DisplayName("userSignUp: 사용자 가입")
+  @Rollback(false)
+  public void saveUser() throws Exception {
+
+    //testUser 생성
+    User testUser = userService.findUserByKakaoId("test1234").orElseGet(User::new);
+    testUser.setKakaoId("test1234");
+    testUser.setEmail("beforeSignup@test.com");
+
+    //given
+    UserSignUpDto userSignUpDto = UserSignUpDto.builder()
+            .email("afterSignup@test.com")
+            .nickname("바꾸테스트")
+            .category(new ArrayList<>(Arrays.asList((new CategoryType[] {TYPE0,TYPE1}))))
+            .si("서울시")
+            .gu("서대문구")
+            .dong("홍은동")
+            .lng("37.5666")
+            .lat("126.9784")
+            .kakaoId(testUser.getKakaoId())
+            .role(Role.TYPE3).build();
+
+    //when
+    userService.userSignUp(userSignUpDto);
+
+    //then
+    assertEquals(userService.findUserByKakaoId(testUser.getKakaoId())
+              .orElseThrow(()->new Exception())
+            .getEmail(),
+            userSignUpDto.getEmail());
+  }
 
   @Test
   public void NullPointException() {
