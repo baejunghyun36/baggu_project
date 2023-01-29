@@ -1,12 +1,21 @@
 package com.project.baggu.sample;
 
 import static com.project.baggu.domain.enumType.CategoryType.TYPE0;
+import static com.project.baggu.domain.enumType.CategoryType.TYPE1;
 import static org.junit.jupiter.api.Assertions.*;
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.User;
+import com.project.baggu.domain.enumType.CategoryType;
+import com.project.baggu.domain.enumType.Role;
+import com.project.baggu.dto.UserSignUpDto;
 import com.project.baggu.sample.user.SampleUserService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import com.project.baggu.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +27,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 @Transactional
 @SpringBootTest
 @Slf4j
@@ -25,6 +38,9 @@ class SampleUserServiceTest {
 
   @Autowired
   SampleUserService sampleUserService;
+
+  @Autowired
+  UserService userService;
 
   @BeforeEach
   public void beforeEach() {
@@ -37,20 +53,36 @@ class SampleUserServiceTest {
   }
 
   @Test
-  @DisplayName("사용자 가입")
+  @DisplayName("userSignUp: 사용자 가입")
   @Rollback(false)
   public void saveUser() throws Exception {
 
+    //testUser 생성
+    User testUser = userService.findUserByKakaoId("test1234").orElseGet(User::new);
+    testUser.setKakaoId("test1234");
+    testUser.setEmail("beforeSignup@test.com");
+
     //given
-    User user = new User();
-    user.setName("최교수");
+    UserSignUpDto userSignUpDto = UserSignUpDto.builder()
+            .email("afterSignup@test.com")
+            .nickname("바꾸테스트")
+            .category(new ArrayList<>(Arrays.asList((new CategoryType[] {TYPE0,TYPE1}))))
+            .si("서울시")
+            .gu("서대문구")
+            .dong("홍은동")
+            .lng("37.5666")
+            .lat("126.9784")
+            .kakaoId(testUser.getKakaoId())
+            .role(Role.TYPE3).build();
 
     //when
-    sampleUserService.save(user);
+    userService.userSignUp(userSignUpDto);
 
     //then
-    assertEquals(sampleUserService.find(user.getUserIdx()).getName(), user.getName());
-
+    assertEquals(userService.findUserByKakaoId(testUser.getKakaoId())
+              .orElseThrow(()->new Exception())
+            .getEmail(),
+            userSignUpDto.getEmail());
   }
 
   @Test

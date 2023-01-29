@@ -10,15 +10,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 @Entity
 @Table(name = "trade_fin")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TradeFin extends BaseTimeEntity {
 
   @Id
@@ -27,7 +28,7 @@ public class TradeFin extends BaseTimeEntity {
   private Long tradeFinIdx;
 
   @Column(name = "heart_count")
-  private int heartCount;
+  private int heartCount = 0;
 
   @Column(name = "receive_item_idx")
   private Long receiveItemIdx;

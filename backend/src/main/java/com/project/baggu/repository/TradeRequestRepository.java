@@ -3,6 +3,8 @@ package com.project.baggu.repository;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.TradeRequest;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +16,7 @@ public interface TradeRequestRepository extends JpaRepository<TradeRequest, Long
 
 
   @Query("select t.tradeRequestIdx from TradeRequest t where t.requestUser.userIdx = :requestUserIdx and t.receiveItemIdx.itemIdx = :itemIdx")
-  Long findIdxByUserIdx(@Param("requestUserIdx") Long requestUserIdx, @Param("itemIdx") Long itemIdx);
+  Optional<TradeRequest> findIdxByUserIdxAndItemIdx(@Param("requestUserIdx") Long requestUserIdx, @Param("itemIdx") Long itemIdx);
 
   @Modifying
   @Query("update TradeRequest t set t.isValid = false where t.tradeRequestIdx = :tradeRequestIdx")
