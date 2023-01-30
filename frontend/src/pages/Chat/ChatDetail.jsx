@@ -2,9 +2,10 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import tw, { styled, css } from 'twin.macro';
 
-// icon
+// icon, image
 import icon_exchange from 'assets/icons/exchange.svg';
 import icon_send from 'assets/icons/send.svg';
+import img_avatar from 'assets/images/avatar_1x.png';
 
 // components
 import TopBar2 from 'components/common/TopBar2';
@@ -58,6 +59,43 @@ const MessageForm = styled.form`
 `;
 
 const TextInput = tw.input`w-[320px] h-[44px] p-1 rounded`;
+
+const MessageSection = styled.section`
+  ${tw`flex p-2 w-full gap-1`}
+`;
+
+const Avatar = styled.div`
+  ${props => (props.type === 'send' ? tw`hidden` : '')}
+  ${tw`bg-primary rounded-full w-6 min-w-[48px] h-6 bg-cover bg-center`}
+  ${props => css`
+    background-image: url(${props.img});
+  `}
+`;
+
+const MessageColumn = styled.div`
+  ${tw`flex flex-col gap-1`}
+  ${css`
+    width: calc(100vw - 48px - 8px);
+  `}
+  span {
+    ${tw`text-tiny text-grey3`}
+  }
+  & {
+    div {
+      ${props => (props.type === 'send' ? tw`flex-row-reverse` : '')}
+      ${tw`flex items-end gap-1`}
+    }
+  }
+`;
+
+const MessageStyles = {
+  receive: tw`bg-grey1`,
+  send: tw`bg-primary`,
+};
+const Bubble = styled.p`
+  ${tw`px-2 py-1 text-main text-black rounded-[20px] w-fit max-w-[80%]`}
+  ${props => MessageStyles[props.type]}
+`;
 
 // Chat Detail component
 function ChatDetail() {
@@ -125,7 +163,38 @@ function ChatDetail() {
           )}
         </Button>
       </Summary>
-      <ChatContent></ChatContent>
+      <ChatContent>
+        {/* CSS용 임시 */}
+        <MessageSection type="send">
+          <Avatar img={img_avatar} type="send"></Avatar>
+          <MessageColumn type="send">
+            <div>
+              <Bubble type="send">안녕하세요.</Bubble>
+              <span>12:40 PM</span>
+            </div>
+            <div>
+              <Bubble type="send">물물교환 하실래요?</Bubble>
+              <span>12:40 PM</span>
+            </div>
+          </MessageColumn>
+        </MessageSection>
+        <MessageSection type="receive">
+          <Avatar img={img_avatar} type="receive"></Avatar>
+          <MessageColumn type="receive">
+            <div>
+              <Bubble type="receive">안녕하세요.</Bubble>
+              <span>12:40 PM</span>
+            </div>
+            <div>
+              <Bubble type="receive">
+                물물교환 하실래요? 물물교환 하실래요? 물물교환 하실래요?
+                물물교환 하실래요? 물물교환 하실래요? 물물교환 하실래요?
+              </Bubble>
+              <span>12:40 PM</span>
+            </div>
+          </MessageColumn>
+        </MessageSection>
+      </ChatContent>
       <MessageForm action="">
         <TextInput type="text" value={message} />
         <img src={icon_send} onClick={sendMessageHandler} />
