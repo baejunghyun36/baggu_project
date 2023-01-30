@@ -1,5 +1,6 @@
 package com.project.baggu.service;
 
+import com.project.baggu.domain.enumType.Role;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.domain.Category;
@@ -49,7 +50,7 @@ public class UserService {
     user.setDong(userSignUpDto.getDong());
     user.setLng(userSignUpDto.getLng());
     user.setLat(userSignUpDto.getLat());
-    user.setRole(userSignUpDto.getRole());
+    user.setRole(Role.afterSignUp(user.getRole()));
 
     userRepository.save(user);
 

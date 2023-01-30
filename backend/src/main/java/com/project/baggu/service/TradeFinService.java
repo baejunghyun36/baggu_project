@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -33,6 +34,7 @@ public class TradeFinService {
 
 
   public List<TradeFinDto> tradeFinList() {
+    User user = userRepository.findById(4L).orElseThrow();
 
     List<TradeFin> tradeFinList = tradeFinRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
@@ -44,6 +46,13 @@ public class TradeFinService {
       tradeFinDto.setRequestItemIdx(tf.getRequestItemIdx());
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
+
+      user.getHearts().forEach((heart)->{
+        if(heart.getTradeFin().getTradeFinIdx()==tf.getTradeFinIdx()){
+          tradeFinDto.setUserHeart(true);
+        }
+      });
+
       tradeFinDtos.add(tradeFinDto);
     }
 
@@ -51,6 +60,8 @@ public class TradeFinService {
   }
 
   public List<TradeFinDto> userTradeFinList(Long userIdx) {
+
+    User user = userRepository.findById(1L).orElseThrow();
 
     List<TradeFin> tradeFinList = tradeFinRepository.userTradeFinList(userIdx);
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
@@ -62,6 +73,13 @@ public class TradeFinService {
       tradeFinDto.setRequestItemIdx(tf.getRequestItemIdx());
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
+
+      user.getHearts().forEach((heart)->{
+        if(heart.getTradeFin().getTradeFinIdx()==tf.getTradeFinIdx()){
+          tradeFinDto.setUserHeart(true);
+        }
+      });
+
       tradeFinDtos.add(tradeFinDto);
     }
     return tradeFinDtos;
@@ -75,10 +93,15 @@ public class TradeFinService {
       reviewTagRepository.save(ReviewTag.builder().user(user).type(reviewTagType).build()));
   }
 
+  @Transactional
   public void reviewText(ReviewTextDto reviewTextDto) throws BaseException {
 
     User writeUser = userRepository.findById(reviewTextDto.getWriteUserIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.REQUEST_ERROR));
     Item targetItem = itemRepository.findById(reviewTextDto.getTargetItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.REQUEST_ERROR));
+
+    if(reviewTextRepository.findByUserIdxAndTradeItemIdx(writeUser.getUserIdx(), targetItem.getItemIdx()).isPresent()){
+      return;
+    }
 
     reviewTextRepository.save(
             ReviewText.builder()
@@ -100,7 +123,7 @@ public class TradeFinService {
     //해당 후기를 작성하려는 writer가 requestUser인지 receiveUser인지 확인한다.
     //trade request에 item(신청받는 아이템)이 targetItem이고 user(신청자)가 writer고, state가 1인 레코드가 존재한다면
     //writer가 requestUser
-    Optional<TradeRequest> opt = tradeRequestRepository.findIdxByUserIdxAndItemIdx(writeUser.getUserIdx(), targetItem.getItemIdx());
+    Optional<TradeRequest> opt = tradeRequestRepository.findByUserIdxAndItemIdx(writeUser.getUserIdx(), targetItem.getItemIdx());
 
     User requestUser;
     User receiveUser;
@@ -150,21 +173,25 @@ public class TradeFinService {
 
   }
 
+  @Transactional
   public void likeTradeFin(Long tradeFinIdx, Long userIdx){
+    TradeFin tf = tradeFinRepository.findById(tradeFinIdx).orElseThrow();
+
     heartRepository.save(Heart.builder()
             .tradeFin(tradeFinRepository.findById(tradeFinIdx).orElseThrow())
             .user(userRepository.findById(userIdx).orElseThrow())
             .build());
 
-    tradeFinRepository.likeTradeFin(tradeFinIdx);
+    tf.setHeartCount(tf.getHeartCount()+1);
   }
 
+  @Transactional
   public void dislikeTradeFin(Long tradeFinIdx, Long userIdx){
-    heartRepository.delete(Heart.builder()
-            .tradeFin(tradeFinRepository.findById(tradeFinIdx).orElseThrow())
-            .user(userRepository.findById(userIdx).orElseThrow())
-            .build());
-    tradeFinRepository.dislikeTradeFin(tradeFinIdx);
+    TradeFin tf = tradeFinRepository.findById(tradeFinIdx).orElseThrow();
+
+    heartRepository.dislike(tradeFinIdx, userIdx);
+
+    tf.setHeartCount(tf.getHeartCount()-1);
   }
 
 

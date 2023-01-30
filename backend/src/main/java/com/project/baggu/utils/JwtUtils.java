@@ -1,6 +1,7 @@
 package com.project.baggu.utils;
 
 import com.project.baggu.domain.TokenInfo;
+import com.project.baggu.domain.enumType.Role;
 import io.jsonwebtoken.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
@@ -16,6 +17,9 @@ public class JwtUtils {
 
     //refresh 토큰 하루
     private static final long REFRESH_PERIOD = 1000L * 60L * 60L * 24L;
+
+    //개발용 access 토큰 30일
+    private static final long DEV_ACCESS_PERIOD = 1000L * 60L * 60L * 24L * 30L;
 
     //userIdx와 role로 토큰 발급
     public static TokenInfo allocateToken(Long userIdx, String role) {
@@ -58,6 +62,23 @@ public class JwtUtils {
 
     public static String resolveAccessToken(HttpServletRequest req) {
         return req.getHeader("access-token");
+    }
+
+    public static String allocateDevToken(Long userIdx) {
+
+        JwtBuilder jwtBuilder = Jwts.builder()
+            .setHeaderParam("alg", "HS256")
+            .setHeaderParam("typ", "JWT");
+
+        jwtBuilder.claim("userIdx",userIdx);
+        jwtBuilder.claim("role", Role.TYPE5);
+
+        Date now = new Date();
+
+        return jwtBuilder.setIssuedAt(now)
+                .setExpiration(new Date(now.getTime()+DEV_ACCESS_PERIOD))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
     }
 
 

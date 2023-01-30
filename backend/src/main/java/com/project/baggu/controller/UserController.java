@@ -1,14 +1,20 @@
 package com.project.baggu.controller;
 
+import com.project.baggu.domain.TokenInfo;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.*;
 import com.project.baggu.service.ItemService;
 import com.project.baggu.service.TradeFinService;
 import com.project.baggu.service.TradeRequestService;
 import com.project.baggu.service.UserService;
+import com.project.baggu.utils.CookieUtils;
+import com.project.baggu.utils.JwtTokenProvider;
+import com.project.baggu.utils.JwtUtils;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +35,8 @@ public class UserController {
   private final ItemService itemService;
   private final TradeRequestService tradeRequestService;
   private final TradeFinService tradeFinService;
+  private final JwtTokenProvider tokenProvider;
+  private static final int REFRESH_PERIOD = 60 * 60 * 24;
 
   //[POST] /baggu/user
   //  - 화면에 입력된 사용자의 닉네임을 저장한다.
@@ -41,17 +49,14 @@ public class UserController {
     try{
       userProfileDto = userService.userSignUp(userSignUpDto);
 
-      //토큰 발급 로직
-      //TokenInfo tokenInfo = JwtUtils.allocateToken(authLoginUserDto.getUserIdx, authLoginUserDto.getRole);
-      //response.addHeader("access-token",tokenInfo.getAccessToken());
-      //CookieUtils.addCookie(response,refresh토큰);
+      TokenInfo tokenInfo = JwtUtils.allocateToken(userProfileDto.getUserIdx(), userProfileDto.getRole().toString());
+      response.addHeader("access-token", tokenInfo.getAccessToken());
+      CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(), REFRESH_PERIOD);
 
     } catch (BaseException e){
-//      //catch logic
+       response.setStatus(500);
     }
-
     return userProfileDto;
-
   }
 
   //[GET] /baggu/user/{userIdx}
@@ -69,7 +74,22 @@ public class UserController {
     return userProfileDto;
   }
 
-
+  // [PUT] /baggu/user/{userIdx}/location
+  // 유저의 현재 위치를 기준으로 유저의 동네를 저장한다.
+  @PutMapping("/{userIdx}/location")
+  public BaseIsSuccessDto userUpdateLocation(@PathVariable("userIdx") Long userIdx, @RequestBody UserUpdateLocationDto userUpdateLocationDto){
+    try{
+      Long authUserIdx = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+      if(authUserIdx!=userIdx){
+        throw new BaseException(BaseResponseStatus.UNVALID_USER);
+      }
+      userService.userUpdateLocation(authUserIdx, userUpdateLocationDto);
+      return new BaseIsSuccessDto(true);
+    } catch (Exception e){
+      //catch
+      return new BaseIsSuccessDto(false);
+    }
+  }
 
 
 
@@ -116,17 +136,7 @@ public class UserController {
   }
 
 
-  // [PUT] /baggu/user/{userIdx}/location
-  // 유저의 프로필 정보를 수정한다.
-  @PutMapping("/{userIdx}/location")
-  public BaseIsSuccessDto userUpdateLocation(@PathVariable("userIdx") Long userIdx, @RequestBody UserUpdateLocationDto userUpdateLocationDto){
-    try{
-      userService.userUpdateLocation(userIdx, userUpdateLocationDto);
-      return new BaseIsSuccessDto(true);
-    } catch (Exception e){
-      return new BaseIsSuccessDto(false);
-    }
-  }
+
 
 
   //[GET] /baggu/user/{userIdx}/review

@@ -60,7 +60,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     AuthLoginDto authLoginDto = AuthLoginDto.builder()
         .isSigned(true)
-        .user(UserProfileDto.builder().userIdx(oAuth2KakaoUser.getUserIdx()).role(oAuth2KakaoUser.getRole()).build())
+        .user(UserProfileDto.builder().userIdx(oAuth2KakaoUser.getUserIdx()).role(oAuth2KakaoUser.getRole()).nickname(oAuth2KakaoUser.getNickname()).build())
         .build();
 
     //json 변환 후 response에 저장

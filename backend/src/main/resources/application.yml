@@ -15,7 +15,7 @@ spring:
 
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/baggu?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mariadb://localhost:3306/baggu?serverTimezone=UTC&characterEncoding=utf8mb4&useSSL=false&useUnicode=true
     username: root
     password: A708
 

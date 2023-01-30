@@ -7,6 +7,7 @@ import com.project.baggu.dto.TradeFinDto;
 import com.project.baggu.service.TradeFinService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,11 +43,12 @@ public class TradeFinController {
   //[POST] /baggu/tradeFin/{tradeFinIdx}/like
   //사용자가 특정 바꾸 내역에 대해 좋아요를 표시한다.
   @PostMapping("/{tradeFinIdx}/like")
-  public BaseIsSuccessDto likeTradeFin(@PathVariable("tradeFinIdx") Long tradeFinIdx){
+  public BaseIsSuccessDto likeTradeFin(@PathVariable("tradeFinIdx") Long tradeFinIdx, HttpServletRequest request){
     try{
-      //jwt에서 추출 로직 필요
-      Long userIdx = 1L;
-      tradeFinService.likeTradeFin(tradeFinIdx, userIdx);
+      Long authUserIdx = Long.parseLong(
+          SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+
+      tradeFinService.likeTradeFin(tradeFinIdx, authUserIdx);
       return new BaseIsSuccessDto(true);
     } catch (Exception e){
       return new BaseIsSuccessDto(false);
@@ -60,9 +62,10 @@ public class TradeFinController {
   @DeleteMapping("/{tradeFinIdx}/like")
   public BaseIsSuccessDto dislikeTradeFin(@PathVariable("tradeFinIdx") Long tradeFinIdx) {
     try {
-      //jwt에서 추출 로직 필요
-      Long userIdx = 1L;
-      tradeFinService.dislikeTradeFin(tradeFinIdx, userIdx);
+      Long authUserIdx = Long.parseLong(
+          SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+
+      tradeFinService.dislikeTradeFin(tradeFinIdx, authUserIdx);
       return new BaseIsSuccessDto(true);
     } catch (Exception e) {
       return new BaseIsSuccessDto(false);
@@ -71,8 +74,8 @@ public class TradeFinController {
 
 
   //유저의 최근 거래(바꾸) 리스트를 받는다.
-  @GetMapping(params = {"userIdx"})
-  public List<TradeFinDto> userTradeFinList(@RequestParam(name = "userIdx") Long userIdx){
+  @GetMapping("/{userIdx}")
+  public List<TradeFinDto> userTradeFinList(@PathVariable(name = "userIdx") Long userIdx){
 
     return tradeFinService.userTradeFinList(userIdx);
   }

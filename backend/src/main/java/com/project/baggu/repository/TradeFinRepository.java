@@ -1,5 +1,6 @@
 package com.project.baggu.repository;
 
+import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.TradeFin;
 import java.util.List;
 import java.util.Optional;
@@ -27,5 +28,6 @@ public interface TradeFinRepository extends JpaRepository<TradeFin, Long> {
 
   @Query("update TradeFin t set t.heartCount=t.heartCount-1 where t.tradeFinIdx = :tradeFinIdx")
   void dislikeTradeFin(@Param("tradeFinIdx") Long tradeFinIdx);
+
 
 }

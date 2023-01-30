@@ -21,7 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 
 @RequiredArgsConstructor
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //uri 설정
     //"/auth/callback/**"은 카카오 로그인 리다이렉션 url로 사용하기 위해 임시 지정
     http.authorizeRequests()
-            .antMatchers("/", "/auth/callback/**", "/auth/token" ).permitAll()
+            .antMatchers("/", "/auth/callback/**", "/auth/token", "/baggu/user","/auth/token/dev" ).permitAll()
             .anyRequest().authenticated();
 
     //oauth2 설정

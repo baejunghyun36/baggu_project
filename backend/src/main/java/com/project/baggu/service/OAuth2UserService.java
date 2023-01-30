@@ -47,6 +47,7 @@ public class OAuth2UserService implements
 
     // db에 존재하는 유저일 경우
     kakaoUser.setUserIdx(registeredUser.getUserIdx());
+    kakaoUser.setNickname(registeredUser.getNickname());
     kakaoUser.setRole(registeredUser.getRole());
     kakaoUser.setEmail(registeredUser.getEmail());
 

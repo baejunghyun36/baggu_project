@@ -17,4 +17,9 @@ public interface ReviewTextRepository extends JpaRepository<ReviewText, Long> {
 
   @Query("select rt from ReviewText rt where rt.item.itemIdx = :itemIdx")
   Optional<ReviewText> findByTradeItemIdx(@Param("itemIdx") Long itemIdx);
+
+  @Query("select rt from ReviewText rt where rt.item.itemIdx = :itemIdx and rt.user.userIdx= :userIdx")
+  Optional<ReviewText> findByUserIdxAndTradeItemIdx(@Param("userIdx") Long userIdx,
+      @Param("itemIdx") Long itemIdx);
+
 }

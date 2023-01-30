@@ -19,4 +19,12 @@ public enum Role {
         this.key = key;
         this.description = description;
     }
+
+    public static Role afterSignUp(Role role){
+        if(role.key.equals("ROLE_TEMP_USER")){
+            return TYPE2;
+        } else{
+            return TYPE1;
+        }
+    }
 }
