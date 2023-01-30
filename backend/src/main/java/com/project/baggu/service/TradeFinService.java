@@ -33,8 +33,8 @@ public class TradeFinService {
   private final HeartRepository heartRepository;
 
 
-  public List<TradeFinDto> tradeFinList() {
-    User user = userRepository.findById(4L).orElseThrow();
+  public List<TradeFinDto> tradeFinList(Long userIdx) {
+    User user = userRepository.findById(userIdx).orElseThrow();
 
     List<TradeFin> tradeFinList = tradeFinRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
@@ -59,9 +59,9 @@ public class TradeFinService {
     return tradeFinDtos;
   }
 
-  public List<TradeFinDto> userTradeFinList(Long userIdx) {
+  public List<TradeFinDto> userTradeFinList(Long userIdx, Long authUserIdx) {
 
-    User user = userRepository.findById(1L).orElseThrow();
+    User user = userRepository.findById(authUserIdx).orElseThrow();
 
     List<TradeFin> tradeFinList = tradeFinRepository.userTradeFinList(userIdx);
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
@@ -170,12 +170,16 @@ public class TradeFinService {
     }
 
     tradeFinRepository.save(tradeFin);
-
   }
 
   @Transactional
-  public void likeTradeFin(Long tradeFinIdx, Long userIdx){
+  public void likeTradeFin(Long tradeFinIdx, Long userIdx) throws BaseException {
     TradeFin tf = tradeFinRepository.findById(tradeFinIdx).orElseThrow();
+
+    //이미 좋아요를 했는데 한번 더 요청할경우
+    if(heartRepository.findByTradeFinIdxAndUserIdx(tradeFinIdx, userIdx)>0) {
+      throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+    }
 
     heartRepository.save(Heart.builder()
             .tradeFin(tradeFinRepository.findById(tradeFinIdx).orElseThrow())
@@ -186,10 +190,14 @@ public class TradeFinService {
   }
 
   @Transactional
-  public void dislikeTradeFin(Long tradeFinIdx, Long userIdx){
+  public void dislikeTradeFin(Long tradeFinIdx, Long userIdx) throws BaseException {
     TradeFin tf = tradeFinRepository.findById(tradeFinIdx).orElseThrow();
 
-    heartRepository.dislike(tradeFinIdx, userIdx);
+    if(heartRepository.findByTradeFinIdxAndUserIdx(tradeFinIdx, userIdx)==0) {
+      throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+    }
+
+    heartRepository.deleteHeart(tradeFinIdx, userIdx);
 
     tf.setHeartCount(tf.getHeartCount()-1);
   }

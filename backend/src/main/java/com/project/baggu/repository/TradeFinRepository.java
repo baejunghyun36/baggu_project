@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 public interface TradeFinRepository extends JpaRepository<TradeFin, Long> {
 
-  @Query("select t from TradeFin t where t.receiveUserIdx= :userIdx or t.requestItemIdx= :userIdx order by t.createdAt desc")
+  @Query("select t from TradeFin t where t.receiveUserIdx= :userIdx or t.requestUserIdx= :userIdx order by t.createdAt desc")
   List<TradeFin> userTradeFinList(@Param("userIdx") Long userIdx);
 
   @Query("select count(t) from TradeFin t where t.receiveItemIdx = :receiveItemIdx or t.requestItemIdx = :receiveItemIdx")

@@ -193,10 +193,13 @@ public class UserService {
     }
     List<ReviewText> reviewRequestTextList = reviewTextRepository.findReviewRequestTextList(userIdx);
     for(ReviewText rt : reviewRequestTextList){
-      ReviewTextDto reviewTextDto = new ReviewTextDto();
-      reviewTextDto.setTargetItemIdx(rt.getItem().getItemIdx());
-      reviewTextDto.setReviewText(rt.getComment());
-      reviewDto.getRequestReviewText().add(reviewTextDto);
+      reviewDto.getRequestReviewText().add(
+              ReviewTextDto.builder()
+                      .targetItemIdx(rt.getItem().getItemIdx())
+                      .reviewText(rt.getComment())
+                      .writeUserIdx(rt.getUser().getUserIdx())
+                      .build()
+      );
     }
     return reviewDto;
   }
