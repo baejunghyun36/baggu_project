@@ -1,7 +1,7 @@
 package com.project.baggu.service;
 
-import com.project.baggu.config.BaseException;
-import com.project.baggu.config.BaseResponseStatus;
+import com.project.baggu.exception.BaseException;
+import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.Notify;
@@ -21,7 +21,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service

@@ -1,6 +1,5 @@
 package com.project.baggu.controller;
 
-import com.project.baggu.config.BaseException;
 import com.project.baggu.dto.BaseIsSuccessDto;
 import com.project.baggu.dto.ReviewTagDto;
 import com.project.baggu.dto.ReviewTextDto;

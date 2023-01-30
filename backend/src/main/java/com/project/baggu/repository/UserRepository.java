@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-
   @Modifying
   @Query("update User u set u.nickname = :nickname, u.info = :info where u.userIdx = :userIdx")
   void userUpdateProfile(

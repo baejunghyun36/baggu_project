@@ -39,6 +39,21 @@ dependencies {
 	//https://catsbi.oopy.io/b1e24e80-1a0b-47c2-bf7b-2cd9ade76703
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
 
+
+	//jwt
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.2'
+
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	//oauth
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	//json
+	implementation group: 'org.json', name: 'json', version: '20210307'
+
 }
 
 tasks.named('test') {

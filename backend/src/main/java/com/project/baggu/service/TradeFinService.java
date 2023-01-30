@@ -1,9 +1,8 @@
 package com.project.baggu.service;
 
-import com.project.baggu.config.BaseException;
-import com.project.baggu.config.BaseResponseStatus;
+import com.project.baggu.exception.BaseException;
+import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.domain.*;
-import com.project.baggu.dto.ReviewDto;
 import com.project.baggu.dto.ReviewTagDto;
 import com.project.baggu.dto.ReviewTextDto;
 import com.project.baggu.dto.TradeFinDto;

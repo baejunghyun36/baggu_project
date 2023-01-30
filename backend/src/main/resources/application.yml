@@ -23,6 +23,24 @@ spring:
   output:
     ansi:
       enabled: always
+  jwt:
+    SECRET_KEY: jwt-temp-secret-key
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            authorization-grant-type: authorization_code
+            client-id: dcea227af64fcf0366810e14b850e4d6
+            redirect-uri: http://localhost:8080/auth/callback/kakao
+            client-authentication-method: POST
+            client-name: kakao
+        provider:
+          kakao:
+            authorization_uri: https://kauth.kakao.com/oauth/authorize
+            token_uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user_name_attribute: id
 #log설정
 logging:
   level:
