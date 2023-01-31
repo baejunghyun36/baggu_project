@@ -27,13 +27,16 @@ public class User extends BaseTimeEntity {
   @Column(name = "email")
   private String email;
 
-  //삭제 필요?
   @Column(name = "name")
   private String name;
 
   //삭제 필요
   @Column(name = "phone")
   private String phone;
+
+  //추가
+  @Column(name="profile_img")
+  private String profileImg;
 
   @Column(name = "nickname")
   private String nickname;

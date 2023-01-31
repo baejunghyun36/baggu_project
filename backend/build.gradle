@@ -54,6 +54,8 @@ dependencies {
 	//json
 	implementation group: 'org.json', name: 'json', version: '20210307'
 
+	//aws
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.0.1.RELEASE'
 }
 
 tasks.named('test') {

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JwtTokenService {
 
-
   public String renewAccessToken(String refreshToken) throws BaseException {
 
     //refreshToken에서 userIdx, role 뽑아내기

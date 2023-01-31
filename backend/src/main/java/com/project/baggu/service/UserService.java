@@ -83,6 +83,9 @@ public class UserService {
             .role(user.getRole()).build();
   }
   public void userUpdateProfile(Long userIdx, UserUpdateProfileDto userUpdateProfileDto) throws Exception{
+    //일단 이미지 업로드
+
+
     userRepository.userUpdateProfile(userIdx,userUpdateProfileDto.getNickname(), userUpdateProfileDto.getInfo());
   }
   public User findUser(Long userIdx) {

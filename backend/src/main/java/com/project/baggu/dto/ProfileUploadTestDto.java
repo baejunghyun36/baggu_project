@@ -1,19 +1,20 @@
 package com.project.baggu.dto;
 
-import java.util.ArrayList;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDetailDto {
-
-  private MultipartFile profileImg;
-  private String nickname;
+@Builder
+public class ProfileUploadTestDto {
+  private MultipartFile file;
+  private String name;
   private String info;
-  private ArrayList<ItemListDto> itemList = new ArrayList<>();
 
 }
