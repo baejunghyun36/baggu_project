@@ -40,7 +40,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     //jwt 토큰 생성 후 refresh token 저장
     TokenInfo tokenInfo = JwtUtils.allocateToken(kakaoUser.getUserIdx(), kakaoUser.getRole().getKey());
-//    jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
+    jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
 
     //token 설정
     response.setHeader("access-token",tokenInfo.getAccessToken());

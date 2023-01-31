@@ -1,7 +1,7 @@
 package com.project.baggu.service;
 
 import com.project.baggu.exception.BaseException;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.Notify;

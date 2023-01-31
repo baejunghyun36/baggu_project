@@ -2,6 +2,8 @@ package com.project.baggu.sample;
 
 import static org.junit.jupiter.api.Assertions.*;
 import com.project.baggu.domain.Item;
+import com.project.baggu.domain.TradeFin;
+import com.project.baggu.repository.TradeFinRepository;
 import com.project.baggu.sample.item.SampleItemRepository;
 import com.project.baggu.sample.item.SampleItemService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,8 @@ class SampleItemServiceTest {
 
   @Autowired
   SampleItemRepository sampleItemRepository;
-
+  @Autowired
+  TradeFinRepository tradeFinRepository;
   @Autowired
   SampleItemService sampleItemService;
 
@@ -34,6 +37,7 @@ class SampleItemServiceTest {
   public void afterEach(){
     log.info("============afterEach===========");
   }
+
 
 
   @Test

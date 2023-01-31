@@ -13,9 +13,12 @@ public class JwtUtils {
 
     //access 토큰 15분
     private static final long ACCESS_PERIOD = 1000L * 60L * 15L;
-
+    public static long getAccessPeriod(){
+        return ACCESS_PERIOD;
+    }
     //refresh 토큰 하루
     private static final long REFRESH_PERIOD = 1000L * 60L * 60L * 24L;
+//    private static final long REFRESH_PERIOD = 10L;
 
     //userIdx와 role로 토큰 발급
     public static TokenInfo allocateToken(Long userIdx, String role) {

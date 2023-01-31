@@ -1,7 +1,9 @@
 package com.project.baggu.service;
 
+import static com.project.baggu.config.RedisConfig.RedisCacheKey.TRADE_FIN_LIST;
+
 import com.project.baggu.exception.BaseException;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.domain.*;
 import com.project.baggu.dto.ReviewTagDto;
 import com.project.baggu.dto.ReviewTextDto;
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +34,11 @@ public class TradeFinService {
   private final TradeDetailRepository tradeDetailRepository;
   private final HeartRepository heartRepository;
 
-
+  @Cacheable(value = "trade", cacheManager = "redisCacheManager")
   public List<TradeFinDto> tradeFinList() {
 
-    List<TradeFin> tradeFinList = tradeFinRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+//    List<TradeFin> tradeFinList = tradeFinRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    List<TradeFin> tradeFinList = tradeFinRepository.findAll();
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
     for(TradeFin tf : tradeFinList){
       TradeFinDto tradeFinDto = new TradeFinDto();
