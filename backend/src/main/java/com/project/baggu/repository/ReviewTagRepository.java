@@ -9,5 +9,5 @@ import org.springframework.data.repository.query.Param;
 public interface ReviewTagRepository extends JpaRepository<ReviewTag, Long>{
 
   @Query("select rt from ReviewTag rt where rt.user.userIdx = :userIdx")
-  List<ReviewTag> findReviewTag(@Param("userIdx") Long userIdx);
+  List<ReviewTag> findReviewTagByUserIdx(@Param("userIdx") Long userIdx);
 }

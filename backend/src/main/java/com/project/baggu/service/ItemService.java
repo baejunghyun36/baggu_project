@@ -1,6 +1,7 @@
 package com.project.baggu.service;
 
 import com.project.baggu.domain.Item;
+import com.project.baggu.domain.ItemImage;
 import com.project.baggu.domain.ItemKeep;
 import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.TradeDetail;
@@ -16,6 +17,7 @@ import com.project.baggu.dto.UpdatedItemDto;
 import com.project.baggu.dto.UserDto;
 import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
+import com.project.baggu.repository.ItemImageRepository;
 import com.project.baggu.repository.ItemKeepRepository;
 import com.project.baggu.repository.ItemRepository;
 import com.project.baggu.repository.ReviewTextRepository;
@@ -46,6 +48,12 @@ public class ItemService {
   private final TradeFinRepository tradeFinRepository;
   private final ItemKeepRepository itemKeepRepository;
 
+  private final S3UploadService s3UploadService;
+
+  private final ItemImageRepository itemImageRepository;
+
+  private final String IMAGE_DIR_ITEM = "item";
+
   public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(String dong) {
 
     List <Item> itemList = itemRepository.itemListOrderByNeighbor(dong);
@@ -63,7 +71,7 @@ public class ItemService {
 
   public List<UserItemDto> userItemList(Long userIdx) {
 
-    List <Item> itemList = itemRepository.userItemList(userIdx);
+    List <Item> itemList = itemRepository.getUserItemList(userIdx);
     List<UserItemDto> userItemDtoList = new ArrayList<>();
     for(Item i : itemList){
       UserItemDto itemDto = new UserItemDto();
@@ -104,9 +112,11 @@ public class ItemService {
   }
 
   @Transactional
-  public void registItem(UserRegistItemDto u) {
+  public void registItem(UserRegistItemDto u) throws Exception {
 
     User user = userRepository.findById(u.getUserIdx()).get();
+
+    //아이템 생성
     Item item = new Item();
     item.setSi(user.getSi());
     item.setGu(user.getGu());
@@ -116,6 +126,24 @@ public class ItemService {
     item.setCategory(u.getCategory());
     item.setUser(user);
     itemRepository.save(item);
+//
+//    //이미지 존재시 이미지 저장 -> 순서대로
+//    if(u.getItemImages().size()>0){
+//      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImages(), IMAGE_DIR_ITEM);
+//
+//      for(int i=0; i<uploadUrls.size(); i++){
+//        ItemImage itemImage = ItemImage.builder()
+//            .imgOrder(i)
+//            .itemImageIdx(item.getItemIdx())
+//            .itemImg(uploadUrls.get(i))
+//            .build();
+//
+//        itemImageRepository.save(itemImage);
+//        item.getItemImages().add(itemImage);
+//      }
+//    }
+//
+//    itemRepository.save(item);
   }
 
   public ItemDetailDto itemDetail(Long itemIdx) {

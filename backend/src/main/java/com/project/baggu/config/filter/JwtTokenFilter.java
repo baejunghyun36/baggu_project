@@ -1,7 +1,7 @@
 package com.project.baggu.config.filter;
 
 import com.project.baggu.utils.JwtTokenProvider;
-import com.project.baggu.utils.JwtUtils;
+import com.project.baggu.utils.JwtTokenUtils;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String jwt = JwtUtils.resolveAccessToken(request);
+        String jwt = JwtTokenUtils.resolveAccessToken(request);
 
         //jwt가 없다면 -> 다음 필터로
         if(!StringUtils.hasText(jwt)){
@@ -43,7 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         try{
             //유효할 경우
-            if(JwtUtils.isValidToken(jwt)){
+            if(JwtTokenUtils.isValidToken(jwt)){
                 Authentication authentication = jwtTokenProvider.getAuthentication(jwt); // 정상 토큰이면 SecurityContext 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else{ //만료된 경우

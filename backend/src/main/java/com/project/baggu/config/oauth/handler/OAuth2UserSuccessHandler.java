@@ -8,7 +8,7 @@ import com.project.baggu.dto.AuthLoginDto;
 import com.project.baggu.dto.UserProfileDto;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.utils.CookieUtils;
-import com.project.baggu.utils.JwtUtils;
+import com.project.baggu.utils.JwtTokenUtils;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,8 +39,8 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     OAuth2KakaoUser kakaoUser = OAuth2KakaoUser.mapToObj(((DefaultOAuth2User)authentication.getPrincipal()).getAttributes());
 
     //jwt 토큰 생성 후 refresh token 저장
-    TokenInfo tokenInfo = JwtUtils.allocateToken(kakaoUser.getUserIdx(), kakaoUser.getRole().getKey());
-//    jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
+    TokenInfo tokenInfo = JwtTokenUtils.allocateToken(kakaoUser.getUserIdx(), kakaoUser.getRole().getKey());
+    jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
 
     //token 설정
     response.setHeader("access-token",tokenInfo.getAccessToken());

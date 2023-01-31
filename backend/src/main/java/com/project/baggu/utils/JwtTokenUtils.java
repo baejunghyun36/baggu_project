@@ -6,11 +6,12 @@ import io.jsonwebtoken.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
-public class JwtUtils {
+public class JwtTokenUtils {
 
-    private static String SECRET_KEY = Base64.getEncoder().encodeToString("jwt-temp-secret-key".getBytes());
+    private static final String SECRET_KEY = Base64.getEncoder().encodeToString("jwt-temp-secret-key".getBytes());
+
 
     //access 토큰 15분
     private static final long ACCESS_PERIOD = 1000L * 60L * 15L;
@@ -82,4 +83,11 @@ public class JwtUtils {
     }
 
 
+    public static long getAccessPeriod(){
+        return ACCESS_PERIOD;
+    }
+
+    public static long getRefreshPeriod(){
+        return REFRESH_PERIOD;
+    }
 }

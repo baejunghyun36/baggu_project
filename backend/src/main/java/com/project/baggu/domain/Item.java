@@ -84,15 +84,25 @@ public class Item extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "item")
+  @Builder.Default
   private List<ItemKeep> itemKeeps = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "receiveItemIdx")
+  @Builder.Default
   private List<TradeRequest> tradeRequests = new ArrayList<>();
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user")
   private User user;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "item")
+  @Builder.Default
+  private List<ItemImage> itemImages = new ArrayList<>();
+
+  @Column(name = "first_image")
+  private String firstImage;
 
   public void setUser(User user) {
     this.user = user;

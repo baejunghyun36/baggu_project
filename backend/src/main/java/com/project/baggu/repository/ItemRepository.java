@@ -16,7 +16,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
   List<Item> itemListOrderByNeighbor(@Param(value = "dong") String dong);
 
   @Query(value = "select i from Item i where i.user.userIdx = :userIdx order by i.createdAt desc")
-  List<Item> userItemList(@Param(value = "userIdx") Long userIdx);
+  List<Item> getUserItemList(@Param(value = "userIdx") Long userIdx);
 
   @Modifying
   @Query("update Item i set i.isValid = false where i.itemIdx = :itemIdx")

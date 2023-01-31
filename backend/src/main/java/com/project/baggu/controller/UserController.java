@@ -3,16 +3,10 @@ package com.project.baggu.controller;
 import com.project.baggu.domain.TokenInfo;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.*;
-import com.project.baggu.service.ItemService;
-import com.project.baggu.service.S3ImageUploadService;
-import com.project.baggu.service.TradeFinService;
-import com.project.baggu.service.TradeRequestService;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.service.UserService;
-import com.project.baggu.utils.Constants;
 import com.project.baggu.utils.CookieUtils;
-import com.project.baggu.utils.JwtTokenProvider;
-import com.project.baggu.utils.JwtUtils;
-import java.io.IOException;
+import com.project.baggu.utils.JwtTokenUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +30,8 @@ public class UserController {
 
   private final UserService userService;
 
-  private final S3ImageUploadService s3ImageUploadService;
+  private final int REFRESH_PERIOD_INT = (int) JwtTokenUtils.getRefreshPeriod()/1000;
+
 
   //[POST] /baggu/user
   //  - 화면에 입력된 사용자의 닉네임을 저장한다.
@@ -46,36 +39,26 @@ public class UserController {
   //  - 유저의 현재 위치를 기준으로 유저의 동네를 저장한다.
   @PostMapping
   public UserProfileDto userSignUp(@RequestBody UserSignUpDto userSignUpDto,
-      HttpServletResponse response) {
-    UserProfileDto userProfileDto = new UserProfileDto();
+      HttpServletResponse response) throws Exception {
 
-    try {
-      userProfileDto = userService.userSignUp(userSignUpDto);
+    UserProfileDto userProfileDto = userService.userSignUp(userSignUpDto);
 
-      //토큰 발급
-      TokenInfo tokenInfo = JwtUtils.allocateToken(userProfileDto.getUserIdx(),
-          userProfileDto.getRole().toString());
-      response.addHeader("access-token", tokenInfo.getAccessToken());
-      CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
-          Constants.REFRESH_PERIOD_INT);
+    //토큰 발급
+    TokenInfo tokenInfo = JwtTokenUtils.allocateToken(userProfileDto.getUserIdx(),
+        userProfileDto.getRole().toString());
+    response.addHeader("access-token", tokenInfo.getAccessToken());
+    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
+        REFRESH_PERIOD_INT);
 
-    } catch (BaseException e) {
-      response.setStatus(500);
-    }
     return userProfileDto;
   }
 
   //[GET] /baggu/user/{userIdx}
   //로그인 시 사용자 정보 가져온다.
   @GetMapping("/{userIdx}")
-  public UserProfileDto userProfile(@PathVariable("userIdx") Long userIdx) {
-    UserProfileDto userProfileDto = new UserProfileDto();
+  public UserProfileDto getUserProfile(@PathVariable("userIdx") Long userIdx) throws Exception {
 
-    try {
-      userProfileDto = userService.userProfile(userIdx);
-    } catch (BaseException e) {
-      //catch logic
-    }
+    UserProfileDto userProfileDto = userService.getUserProfile(userIdx);
 
     return userProfileDto;
   }
@@ -83,62 +66,53 @@ public class UserController {
   // [PUT] /baggu/user/{userIdx}/location
   // 유저의 현재 위치를 기준으로 유저의 동네를 저장한다.
   @PutMapping("/{userIdx}/location")
-  public BaseIsSuccessDto userUpdateLocation(@PathVariable("userIdx") Long userIdx,
-      @RequestBody UserUpdateLocationDto userUpdateLocationDto) {
-    try {
-      Long authUserIdx = Long.parseLong(
-          SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-      if (authUserIdx != userIdx) {
-        throw new BaseException(BaseResponseStatus.UNVALID_USER);
-      }
-      userService.userUpdateLocation(authUserIdx, userUpdateLocationDto);
-      return new BaseIsSuccessDto(true);
-    } catch (Exception e) {
-      //catch
-      return new BaseIsSuccessDto(false);
+  public BaseIsSuccessDto updateUserLocation(@PathVariable("userIdx") Long userIdx,
+      @RequestBody UserUpdateLocationDto userUpdateLocationDto) throws Exception {
+
+    Long authUserIdx = Long.parseLong(
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+    if (authUserIdx != userIdx) {
+      throw new BaseException(BaseResponseStatus.UNVALID_USER);
     }
+
+    userService.updateUserLocation(userIdx, userUpdateLocationDto);
+    return new BaseIsSuccessDto(true);
   }
 
   //[GET] /baggu/user/{userIdx}/item
   //해당 유저에 대한 프로필 정보와 등록한 아이템 리스트를 받는다.
   @GetMapping("/{userIdx}/item")
-  public UserDetailDto userDetail(@PathVariable("userIdx") Long userIdx) {
-    UserDetailDto userDetailDto = new UserDetailDto();
-    try {
-      userDetailDto = userService.userDetail(userIdx);
-    } catch (BaseException e) {
-      //catch
-    }
+  public UserDetailDto getUserDetail(@PathVariable("userIdx") Long userIdx) {
+
+    UserDetailDto userDetailDto = userService.getUserDetail(userIdx);
 
     return userDetailDto;
-  }
-
-
-  // [PUT] /baggu/user/{userIdx}/detail
-  // 유저의 프로필 정보를 수정한다.
-  @PutMapping("/{userIdx}/detail")
-  public BaseIsSuccessDto userUpdateProfile(@PathVariable("userIdx") Long userIdx,
-      @RequestBody UserUpdateProfileDto userUpdateProfileDto) {
-    try {
-      Long authUserIdx = Long.parseLong(
-          SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-      if (authUserIdx != userIdx) {
-        throw new BaseException(BaseResponseStatus.UNVALID_USER);
-      }
-      userService.userUpdateProfile(userIdx, userUpdateProfileDto);
-      return new BaseIsSuccessDto(true);
-    } catch (Exception e) {
-      return new BaseIsSuccessDto(false);
-    }
   }
 
   //[GET] /baggu/user/{userIdx}/review
   //해당 유저가 받은 태그 유저 후기, 받은 텍스트 후기, 보낸 텍스트 후기 리스트를 받는다.
   @GetMapping("/{userIdx}/review")
-  public ReviewDto reviewInfo(@PathVariable("userIdx") Long userIdx) {
-
-    return userService.reviewInfo(userIdx);
+  public ReviewDto getUserReviewInfo(@PathVariable("userIdx") Long userIdx) {
+    return userService.getReviewInfo(userIdx);
   }
+
+  // [PUT] /baggu/user/{userIdx}/detail
+  // 유저의 프로필 정보를 수정한다.
+  @PutMapping("/{userIdx}/detail")
+  public BaseIsSuccessDto updateUserProfile(@PathVariable("userIdx") Long userIdx,
+      @ModelAttribute UserUpdateProfileDto userUpdateProfileDto) throws Exception {
+
+      Long authUserIdx = Long.parseLong(
+          SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+      if (authUserIdx != userIdx) {
+        throw new BaseException(BaseResponseStatus.UNVALID_USER);
+      }
+
+      userService.updateUserProfile(userIdx, userUpdateProfileDto);
+
+      return new BaseIsSuccessDto(true);
+  }
+
 
   //============================
   //이하 2순위 이하 API (미완성)

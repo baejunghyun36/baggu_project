@@ -2,16 +2,15 @@ package com.project.baggu.controller;
 
 import com.project.baggu.dto.AuthDevTokenDto;
 import com.project.baggu.dto.BaseMessageResponse;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.utils.CookieUtils;
-import com.project.baggu.utils.JwtUtils;
+import com.project.baggu.utils.JwtTokenUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +44,7 @@ public class AuthController {
 
   @PostMapping("/token/dev")
   public String tokenAllocateForDev(@RequestBody AuthDevTokenDto authDevTokenDto){
-      return JwtUtils.allocateDevToken(authDevTokenDto.getUserIdx());
+      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx());
   }
 
 //  @GetMapping("/baggu/auth/login")
