@@ -14,7 +14,11 @@ function TopBar1() {
 
   // 온보딩 페이지에서 상단바 숨기기
   const location = useLocation().pathname;
-  if (location.startsWith('/start') || location.startsWith('/chat')) {
+  if (
+    location.startsWith('/start') ||
+    location.startsWith('/chat') ||
+    location.startsWith('/review')
+  ) {
     return null;
   }
   if (location.startsWith('/user')) {

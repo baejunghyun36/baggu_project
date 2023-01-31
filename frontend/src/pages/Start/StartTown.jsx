@@ -148,12 +148,8 @@ function StartTown() {
           <span>{myTown ? myTown : '현재 위치로 설정하기'}</span>
         </Btn>
       </InputContainer>
-      <BtnContainer>
-        <FormSubmitBtn
-          disabled={myTown ? false : true}
-          onClick={submitHandler}
-        />
-      </BtnContainer>
+
+      <FormSubmitBtn disabled={myTown ? false : true} onClick={submitHandler} />
     </Wrapper>
   );
 }

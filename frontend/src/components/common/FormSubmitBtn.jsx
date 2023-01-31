@@ -14,11 +14,17 @@ const Btn = styled.div`
   }
 `;
 
+const BtnContainer = styled.div`
+  ${tw`flex pt-2 pb-2 px-4 fixed bottom-0 w-full h-[98px]`}
+`;
+
 function FormSubmitBtn({ disabled, onClick, title }) {
   return (
-    <Btn disabled={disabled} onClick={onClick}>
-      <span>{title ? title : '다음'}</span>
-    </Btn>
+    <BtnContainer>
+      <Btn disabled={disabled} onClick={onClick}>
+        <span>{title ? title : '다음'}</span>
+      </Btn>
+    </BtnContainer>
   );
 }
 
