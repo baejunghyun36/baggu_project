@@ -1,13 +1,30 @@
 package com.project.baggu.exception;
 
-import com.project.baggu.dto.BaseResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @AllArgsConstructor
-public class BaseException extends Exception {
+public class BaseException extends RuntimeException {
   private BaseResponseStatus status;
+  private String message;
+  public BaseException(BaseResponseStatus status){
+    this.status=status;
+    this.message=null;
+  }
+
+    @Override
+    public String getMessage(){
+      if(message==null){
+        System.out.println(status.getStatus());
+        return status.getMessage();
+      }else{
+        return String.format("%s. %s ", status.getMessage(),message);
+      }
+    }
+
+
+
+
 }
+

@@ -3,12 +3,14 @@ package com.project.baggu;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 // JPA Auditing 활성화(날짜)
 @EnableJpaAuditing
+@EnableCaching
 public class BagguApplication {
 
 	public static void main(String[] args) {

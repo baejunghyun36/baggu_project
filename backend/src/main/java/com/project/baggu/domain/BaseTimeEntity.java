@@ -1,6 +1,10 @@
 package com.project.baggu.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
@@ -19,6 +23,12 @@ public abstract class BaseTimeEntity {
   @CreatedDate
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "created_at")
+  @JsonDeserialize(
+      using = LocalDateTimeDeserializer.class
+  )
+  @JsonSerialize(
+      using = LocalDateTimeSerializer.class
+  )
   private LocalDateTime createdAt;
 
 

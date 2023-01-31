@@ -1,7 +1,7 @@
 package com.project.baggu.controller;
 
 import com.project.baggu.dto.BaseMessageResponse;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.utils.CookieUtils;
@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

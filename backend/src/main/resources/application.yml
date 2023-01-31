@@ -41,6 +41,10 @@ spring:
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
 #log설정
 logging:
   level:
