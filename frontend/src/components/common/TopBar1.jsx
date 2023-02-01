@@ -14,18 +14,14 @@ function TopBar1() {
 
   // 온보딩 페이지에서 상단바 숨기기
   const location = useLocation().pathname;
-  if (
-    location.startsWith('/start') ||
-    location.startsWith('/chat') ||
-    location.startsWith('/review')
-  ) {
+  if (location.startsWith('/start') || location.startsWith('/chat')) {
     return null;
   }
   if (location.startsWith('/user')) {
     return null;
   }
   return (
-    <Container
+    <div
       id="top-bar-1"
       className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px]"
     >

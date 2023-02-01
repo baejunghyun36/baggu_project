@@ -8,7 +8,7 @@ import com.project.baggu.dto.AuthLoginDto;
 import com.project.baggu.dto.UserProfileDto;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.utils.CookieUtils;
-import com.project.baggu.utils.JwtUtils;
+import com.project.baggu.utils.JwtTokenUtils;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     OAuth2KakaoUser kakaoUser = OAuth2KakaoUser.mapToObj(((DefaultOAuth2User)authentication.getPrincipal()).getAttributes());
 
     //jwt 토큰 생성 후 refresh token 저장
-    TokenInfo tokenInfo = JwtUtils.allocateToken(kakaoUser.getUserIdx(), kakaoUser.getRole().getKey());
+    TokenInfo tokenInfo = JwtTokenUtils.allocateToken(kakaoUser.getUserIdx(), kakaoUser.getRole().getKey());
     jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
 
     //token 설정
@@ -60,7 +60,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     AuthLoginDto authLoginDto = AuthLoginDto.builder()
         .isSigned(true)
-        .user(UserProfileDto.builder().userIdx(oAuth2KakaoUser.getUserIdx()).role(oAuth2KakaoUser.getRole()).build())
+        .user(UserProfileDto.builder().userIdx(oAuth2KakaoUser.getUserIdx()).role(oAuth2KakaoUser.getRole()).nickname(oAuth2KakaoUser.getNickname()).build())
         .build();
 
     //json 변환 후 response에 저장

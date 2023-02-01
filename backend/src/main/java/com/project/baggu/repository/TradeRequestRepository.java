@@ -37,4 +37,8 @@ public interface TradeRequestRepository extends JpaRepository<TradeRequest, Long
 
   @Query("select tr from TradeRequest tr where tr.receiveItemIdx.itemIdx = :itemIdx")
   List<TradeRequest> findAllReceiveItem(@Param("itemIdx") Long itemIdx);
+
+  @Query("select t from TradeRequest t where t.requestUser.userIdx = :requestUserIdx and t.receiveItemIdx.itemIdx = :itemIdx")
+  Optional<TradeRequest> findByUserIdxAndItemIdx(@Param("requestUserIdx") Long requestUserIdx, @Param("itemIdx") Long itemIdx);
+
 }

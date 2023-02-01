@@ -10,11 +10,16 @@ import org.springframework.data.repository.query.Param;
 public interface ReviewTextRepository extends JpaRepository<ReviewText, Long> {
 
   @Query("select rt.comment from ReviewText rt where rt.receiveUserIdx = :userIdx")
-  List<String> findReviewReceiveTextList(@Param("userIdx") Long userIdx);
+  List<String> findReviewReceiveTextListByUserIdx(@Param("userIdx") Long userIdx);
 
   @Query("select rt from ReviewText rt where rt.user.userIdx = :userIdx")
-  List<ReviewText> findReviewRequestTextList(@Param("userIdx") Long userIdx);
+  List<ReviewText> findReviewRequestTextListByUserIdx(@Param("userIdx") Long userIdx);
 
   @Query("select rt from ReviewText rt where rt.item.itemIdx = :itemIdx")
   Optional<ReviewText> findByTradeItemIdx(@Param("itemIdx") Long itemIdx);
+
+  @Query("select rt from ReviewText rt where rt.item.itemIdx = :itemIdx and rt.user.userIdx= :userIdx")
+  Optional<ReviewText> findByUserIdxAndTradeItemIdx(@Param("userIdx") Long userIdx,
+      @Param("itemIdx") Long itemIdx);
+
 }

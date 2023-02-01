@@ -22,7 +22,6 @@ import Favorite from 'pages/MyProfile/Favorite';
 import ProfileTown from 'pages/MyProfile/ProfileTown';
 import Chat from 'pages/Chat/Chat';
 import UserDetail from 'pages/User/UserDetail';
-import Review from 'pages/Review/Review';
 
 // react-query
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -54,7 +53,6 @@ function App() {
             <Route path="ready" element={<StartReady />} />
             <Route path="introduce" element={<StartIntroduce />} />
           </Route>
-          <Route path="/review" element={<Review />} />
           <Route path="/" element={<Home />} />
           <Route path="/example" element={<Example />} />
           <Route path="/item/:id" element={<Item />} />
@@ -70,6 +68,7 @@ function App() {
           <Route path="/myprofile/:id/town" element={<ProfileTown />} />
           <Route path="/user/:id" element={<UserDetail />} />
         </Routes>
+        <BottomBar />
         <BottomNav />
       </BrowserRouter>
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}

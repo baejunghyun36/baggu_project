@@ -1,24 +1,26 @@
 package com.project.baggu.utils;
 
 import com.project.baggu.domain.TokenInfo;
+import com.project.baggu.domain.enumType.Role;
 import io.jsonwebtoken.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
-public class JwtUtils {
+public class JwtTokenUtils {
 
-    private static String SECRET_KEY = Base64.getEncoder().encodeToString("jwt-temp-secret-key".getBytes());
+    private static final String SECRET_KEY = Base64.getEncoder().encodeToString("jwt-temp-secret-key".getBytes());
+
 
     //access 토큰 15분
     private static final long ACCESS_PERIOD = 1000L * 60L * 15L;
-    public static long getAccessPeriod(){
-        return ACCESS_PERIOD;
-    }
+
     //refresh 토큰 하루
     private static final long REFRESH_PERIOD = 1000L * 60L * 60L * 24L;
-//    private static final long REFRESH_PERIOD = 10L;
+
+    //개발용 access 토큰 30일
+    private static final long DEV_ACCESS_PERIOD = 1000L * 60L * 60L * 24L * 30L;
 
     //userIdx와 role로 토큰 발급
     public static TokenInfo allocateToken(Long userIdx, String role) {
@@ -63,5 +65,29 @@ public class JwtUtils {
         return req.getHeader("access-token");
     }
 
+    public static String allocateDevToken(Long userIdx) {
 
+        JwtBuilder jwtBuilder = Jwts.builder()
+            .setHeaderParam("alg", "HS256")
+            .setHeaderParam("typ", "JWT");
+
+        jwtBuilder.claim("userIdx",userIdx);
+        jwtBuilder.claim("role", Role.TYPE5);
+
+        Date now = new Date();
+
+        return jwtBuilder.setIssuedAt(now)
+                .setExpiration(new Date(now.getTime()+DEV_ACCESS_PERIOD))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
+
+    public static long getAccessPeriod(){
+        return ACCESS_PERIOD;
+    }
+
+    public static long getRefreshPeriod(){
+        return REFRESH_PERIOD;
+    }
 }

@@ -30,7 +30,9 @@ public class TradeDetailService {
     tradeDetail.setTradeState(1);
     tradeRequest.setTradeRequestState(1);
     item1.setState(1);
+    item1.setTradeItemIdx(item2.getItemIdx());
     item2.setState(1);
+    item2.setTradeItemIdx(item1.getItemIdx());
   }
 
   @Transactional

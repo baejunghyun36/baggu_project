@@ -19,9 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -31,6 +30,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Item extends BaseTimeEntity {
 
   @Id
@@ -83,15 +84,25 @@ public class Item extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "item")
+  @Builder.Default
   private List<ItemKeep> itemKeeps = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "receiveItemIdx")
+  @Builder.Default
   private List<TradeRequest> tradeRequests = new ArrayList<>();
 
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user")
   private User user;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "item")
+  @Builder.Default
+  private List<ItemImage> itemImages = new ArrayList<>();
+
+  @Column(name = "first_image")
+  private String firstImage;
 
   public void setUser(User user) {
     this.user = user;

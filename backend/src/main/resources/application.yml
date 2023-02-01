@@ -1,4 +1,11 @@
 spring:
+  profiles:
+    include: SECRET
+
+
+---
+#공통 변수
+spring:
   jpa:
     hibernate:
 #      create : 매번 테이블 새롭게 생성
@@ -12,19 +19,15 @@ spring:
 #        show_sql: true
         format_sql: true
 #      open-in-view: false
-
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/baggu?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mariadb://localhost:3306/baggu?serverTimezone=UTC&characterEncoding=utf84&useSSL=false&useUnicode=true
     username: root
     password: A708
-
 #console color change
   output:
     ansi:
       enabled: always
-  jwt:
-    SECRET_KEY: jwt-temp-secret-key
   security:
     oauth2:
       client:
@@ -50,4 +53,16 @@ logging:
   level:
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 
+cloud:
+  aws:
+    region:
+      static:
+        ap-northeast-2
+    stack:
+      auto:
+        false

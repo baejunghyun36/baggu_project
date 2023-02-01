@@ -1,11 +1,9 @@
 package com.project.baggu.domain;
 
 import static javax.persistence.FetchType.LAZY;
-import com.project.baggu.domain.enumType.CategoryType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,33 +17,27 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "category")
+@Table(name = "item_image")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category extends BaseTimeEntity {
+public class ItemImage  {
 
   @Id
-  @Column(name = "category_idx")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long categoryIdx;
+  @Column(name = "item_image_idx")
+  private Long itemImageIdx;
 
-  @Column(name = "type")
-  @Enumerated(EnumType.ORDINAL)
-  private CategoryType type;
+  @Column(name = "img_order")
+  private int imgOrder;
 
   @ManyToOne(fetch = LAZY)
-  @JoinColumn(name = "user_idx")
-  private User user;
+  @JoinColumn(name = "item_idx")
+  private Item item;
 
-  public User getUser() {
-    return user;
-  }
+  @Column(name="item_img")
+  private String itemImg;
 
-  public void setUser(User user) {
-    this.user = user;
-    user.getCategories().add(this);
-  }
 }

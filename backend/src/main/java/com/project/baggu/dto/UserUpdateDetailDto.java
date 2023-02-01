@@ -11,13 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDetailDto {
+public class UserUpdateDetailDto {
 
-  private String profileImg;
+  private MultipartFile profileImg;
   private String nickname;
   private String info;
-
-  @Builder.Default
   private ArrayList<ItemListDto> itemList = new ArrayList<>();
 
 }

@@ -43,6 +43,7 @@ public class TradeFin extends BaseTimeEntity {
   private String requestNickname;
 
   @Column(name = "is_valid")
+  @Builder.Default
   private boolean isValid = true;
 
   @Column(name = "request_userIdx")

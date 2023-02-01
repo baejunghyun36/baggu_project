@@ -8,13 +8,17 @@ import com.project.baggu.dto.UpdateItemDto;
 import com.project.baggu.dto.UpdatedItemDto;
 import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
+import com.project.baggu.exception.BaseException;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.service.ItemService;
 import com.project.baggu.service.TradeRequestService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,7 +47,13 @@ public class ItemController {
 
   //새로운 아이템을 작성한다.
   @PostMapping
-  public void registItem(@RequestBody UserRegistItemDto u){
+  public void registItem(@RequestBody UserRegistItemDto u) throws Exception {
+
+    Long authUserIdx = Long.parseLong(
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+    if (authUserIdx != u.getUserIdx()) {
+      throw new BaseException(BaseResponseStatus.UNVALID_USER);
+    }
 
     itemService.registItem(u);
   }

@@ -46,11 +46,13 @@ function StartReady() {
         </p>
       </TextContainer>
 
-      <FormSubmitBtn
-        //   disabled={clickedCount >= 2 ? false : true}
-        onClick={clickHandler}
-        title="바꾸바꾸 시작하기"
-      />
+      <BtnContainer>
+        <FormSubmitBtn
+          //   disabled={clickedCount >= 2 ? false : true}
+          onClick={clickHandler}
+          title="바꾸바꾸 시작하기"
+        />
+      </BtnContainer>
     </Wrapper>
   );
 }

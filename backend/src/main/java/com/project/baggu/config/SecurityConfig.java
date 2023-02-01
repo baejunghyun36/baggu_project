@@ -4,8 +4,6 @@ import com.project.baggu.config.filter.JwtTokenFilter;
 import com.project.baggu.config.oauth.handler.OAuth2UserFailureHandler;
 import com.project.baggu.config.oauth.handler.OAuth2UserSuccessHandler;
 import com.project.baggu.config.token.JwtTokenAuthenticationEntryPoint;
-import com.project.baggu.exception.BasicExceptionHandler;
-import com.project.baggu.exception.FilterExceptionHandler;
 import com.project.baggu.repository.OAuth2CookieAuthorizationRequestRepository;
 import com.project.baggu.service.OAuth2UserService;
 import com.project.baggu.utils.JwtTokenProvider;
@@ -23,7 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 
 @RequiredArgsConstructor
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
@@ -57,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //uri 설정
     //"/auth/callback/**"은 카카오 로그인 리다이렉션 url로 사용하기 위해 임시 지정
     http.authorizeRequests()
-            .antMatchers("/", "/auth/callback/**", "/auth/token","/**" ).permitAll()
+            .antMatchers("/", "/auth/callback/**", "/auth/token", "/baggu/user","/baggu/auth/token/dev" ).permitAll()
             .anyRequest().authenticated();
 
     //oauth2 설정
@@ -74,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.addFilterBefore(new JwtTokenFilter(new JwtTokenProvider()), OAuth2AuthorizationRequestRedirectFilter.class)
         .exceptionHandling()
         .authenticationEntryPoint(new JwtTokenAuthenticationEntryPoint());
-    http.addFilterBefore(new FilterExceptionHandler(), JwtTokenFilter.class);
+
 //    //logout 설정
 //    http.logout()
 //        .logoutUrl("/auth/logout")

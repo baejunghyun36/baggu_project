@@ -1,44 +1,33 @@
 package com.project.baggu.controller;
 
+import com.project.baggu.dto.AuthDevTokenDto;
 import com.project.baggu.dto.BaseMessageResponse;
 import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.utils.CookieUtils;
+import com.project.baggu.utils.JwtTokenUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/baggu/auth")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 public class AuthController {
 
   @Autowired
   private final JwtTokenService jwtTokenService;
-  @GetMapping("/")
-  public String index(HttpServletRequest request, HttpServletResponse response){
-    return "welcome";
-  }
 
-  @GetMapping("/auth/login")
-  public String login(HttpServletRequest request, HttpServletResponse response){
-    return "hi";
-  }
-
-  @GetMapping("/auth/fin")
-  public String afterAuthentication(HttpServletRequest request, HttpServletResponse response){
-    return "welcome userIdx " + SecurityContextHolder.getContext().getAuthentication().getPrincipal() + ", you are authorized";
-  }
-
-  @GetMapping("/auth/token")
+  @GetMapping("/token")
   public BaseMessageResponse tokenRefresh(HttpServletRequest request, HttpServletResponse response){
     try{
       String refreshToken = CookieUtils.getCookie(request,"refresh-token").getValue();
@@ -53,6 +42,11 @@ public class AuthController {
     return new BaseMessageResponse("ACCEPT");
   }
 
+  @PostMapping("/token/dev")
+  public String tokenAllocateForDev(@RequestBody AuthDevTokenDto authDevTokenDto){
+      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx());
+  }
+
 //  @GetMapping("/baggu/auth/login")
 //  public boolean loginUserTrueOrFalse(
 //      @RequestParam(name = "code") String code,
@@ -60,6 +54,5 @@ public class AuthController {
 //    String email = "bae1004kin@naver.com";
 //    return userService.findUserByEmail(email);
 //  }
-
 
 }

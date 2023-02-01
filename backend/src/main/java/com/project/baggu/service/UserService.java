@@ -1,12 +1,11 @@
 package com.project.baggu.service;
 
+import com.project.baggu.domain.enumType.Role;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.Notify;
-import com.project.baggu.domain.ReviewTag;
-import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.User;
 import com.project.baggu.dto.*;
 import com.project.baggu.repository.CategoryRepository;
@@ -35,11 +34,16 @@ public class UserService {
   private final NotifyRepository notifyRepository;
   private final ReviewTextRepository reviewTextRepository;
   private final ReviewTagRepository reviewTagRepository;
+  private final S3UploadService s3UploadService;
+  private final String IMAGE_DIR_ITEM = "item";
+
+  private final String IMAGE_DIR_USER = "user";
 
   @Transactional
   public UserProfileDto userSignUp(UserSignUpDto userSignUpDto) throws BaseException {
 
-    User user = userRepository.findUserByKakaoId(userSignUpDto.getKakaoId()).orElseThrow(()-> new BaseException(BaseResponseStatus.REQUEST_ERROR));
+    User user = userRepository.findUserByKakaoId(userSignUpDto.getKakaoId())
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.OAUTH_REQUIRE));
 
     user.setEmail(userSignUpDto.getEmail());
     user.setNickname(userSignUpDto.getNickname());
@@ -49,57 +53,44 @@ public class UserService {
     user.setDong(userSignUpDto.getDong());
     user.setLng(userSignUpDto.getLng());
     user.setLat(userSignUpDto.getLat());
-    user.setRole(userSignUpDto.getRole());
+    user.setRole(Role.afterSignUp(user.getRole()));
 
     userRepository.save(user);
 
-    for(int i=0; i<userSignUpDto.getCategory().size(); i++){
-      Category category = new Category();
-      category.setUser(user);
-      category.setType(userSignUpDto.getCategory().get(i));
-      categoryRepository.save(category);
-    }
+    userSignUpDto.getCategory()
+        .stream()
+        .forEach((c) -> categoryRepository.save(Category.builder().user(user).type(c).build()));
 
     return UserProfileDto.builder()
-            .userIdx(user.getUserIdx())
-            .nickname(user.getNickname())
-            .info(user.getInfo())
-            .dong(user.getDong())
-            .role(user.getRole()).build();
+        .userIdx(user.getUserIdx())
+        .nickname(user.getNickname())
+        .info(user.getInfo())
+        .dong(user.getDong())
+        .role(user.getRole()).build();
   }
 
+  public UserProfileDto getUserProfile(Long userIdx) throws BaseException {
 
+    User user = userRepository.findById(userIdx)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
-  public UserProfileDto userProfile(Long userIdx) throws BaseException {
+    UserProfileDto userProfileDto =  UserProfileDto.builder()
+        .userIdx(user.getUserIdx())
+        .nickname(user.getNickname())
+        .info(user.getInfo())
+        .dong(user.getDong())
+        .role(user.getRole())
+        .profileImg(user.getProfileImg())
+        .build();
 
-    User user = userRepository.findById(userIdx).orElseThrow(()-> new BaseException(BaseResponseStatus.REQUEST_ERROR));
-
-    return UserProfileDto.builder()
-            .userIdx(user.getUserIdx())
-            .nickname(user.getNickname())
-            .info(user.getInfo())
-            .dong(user.getDong())
-            .role(user.getRole()).build();
-  }
-  public void userUpdateProfile(Long userIdx, UserUpdateProfileDto userUpdateProfileDto) throws Exception{
-    userRepository.userUpdateProfile(userIdx,userUpdateProfileDto.getNickname(), userUpdateProfileDto.getInfo());
-  }
-  public User findUser(Long userIdx) {
-
-    return userRepository.findById(userIdx).get();
-  }
-  public boolean findUserByEmail(String email) {
-
-    Optional<User> user = userRepository.findUserByEmail(email);
-    if(user.isPresent())return true;
-    else return false;
-
+    return userProfileDto;
   }
 
   @Transactional
-  public void userUpdateLocation(Long userIdx, UserUpdateLocationDto userUpdateLocationDto) {
+  public void updateUserLocation(Long userIdx, UserUpdateLocationDto userUpdateLocationDto) {
 
-    User user = userRepository.findById(userIdx).get();
+    User user = userRepository.findById(userIdx)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
     user.setSi(userUpdateLocationDto.getSi());
     user.setGu(userUpdateLocationDto.getGu());
@@ -109,6 +100,109 @@ public class UserService {
 
     userRepository.save(user);
   }
+
+  public UserDetailDto getUserDetail(Long userIdx) throws BaseException {
+
+    User user = userRepository.findById(userIdx)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
+
+    UserDetailDto userDetailDto = UserDetailDto.builder()
+        .info(user.getInfo())
+        .nickname(user.getNickname())
+        .profileImg(user.getProfileImg())
+        .build();
+
+    itemRepository.getUserItemList(userIdx).stream().forEach(
+        (item) ->
+            userDetailDto.getItemList().add(
+                ItemListDto.builder()
+                    .title(item.getTitle())
+                    .dong(item.getDong())
+                    .createdAt(item.getCreatedAt())
+                    .state(item.getState())
+                    .isValid(item.isValid())
+                    .build()
+            )
+    );
+
+    return userDetailDto;
+  }
+
+  public ReviewDto getReviewInfo(Long userIdx) {
+
+    ReviewDto reviewDto = new ReviewDto();
+
+    //받은 태그 리뷰
+    reviewTagRepository.findReviewTagByUserIdx(userIdx).stream().forEach(
+        (rt)->
+            reviewDto.getReviewTag().put(rt.getType().ordinal(),
+                reviewDto.getReviewTag().getOrDefault(rt.getType().ordinal(), 0) + 1)
+    );
+
+    //보낸 텍스트 리뷰
+    reviewTextRepository.findReviewReceiveTextListByUserIdx(userIdx).stream().forEach(
+        (c) ->
+            reviewDto.getReceiveReviewText().add(c)
+    );
+
+    //받은 텍스트 리뷰(정보)
+    reviewTextRepository.findReviewRequestTextListByUserIdx(userIdx).stream().forEach(
+        (rt) ->
+            reviewDto.getRequestReviewText().add(
+                ReviewTextDto.builder()
+                    .targetItemIdx(rt.getItem().getItemIdx())
+                    .reviewText(rt.getComment())
+                    .writeUserIdx(rt.getUser().getUserIdx())
+                    .build()
+            )
+    );
+
+    return reviewDto;
+  }
+
+  @Transactional
+  public void updateUserProfile(Long userIdx, UserUpdateProfileDto userUpdateProfileDto)
+      throws Exception {
+
+    User user = userRepository.findById(userIdx).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
+
+    //만약 이미지가 존재하면, 이미지 업로드 처리
+    if(userUpdateProfileDto.getProfileImg()!=null){
+      String uploadUrl = s3UploadService.upload(userUpdateProfileDto.getProfileImg(), IMAGE_DIR_USER);
+      user.setProfileImg(uploadUrl);
+    }
+
+    //그 외 정보 처리
+    user.setInfo(userUpdateProfileDto.getInfo());
+    user.setNickname(userUpdateProfileDto.getNickname());
+
+    userRepository.save(user);
+  }
+
+
+  //============================
+  //이하 2순위 이하 API (미완성)
+  //============================
+
+
+  @Transactional
+
+  public User findUser(Long userIdx) {
+
+    return userRepository.findById(userIdx).get();
+  }
+
+  public boolean findUserByEmail(String email) {
+
+    Optional<User> user = userRepository.findUserByEmail(email);
+    if (user.isPresent()) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
 
   public List<NotifyDto> notifyList(Long userIdx) {
 
@@ -126,29 +220,6 @@ public class UserService {
     return notifyDtoList;
   }
 
-  public UserDetailDto userDetail(Long userIdx) throws BaseException {
-
-    User user = userRepository.findById(userIdx).orElseThrow(()-> new BaseException(BaseResponseStatus.REQUEST_ERROR));
-    UserDetailDto userDetailDto = new UserDetailDto();
-    userDetailDto.setInfo(user.getInfo());
-    userDetailDto.setNickname(user.getNickname());
-    List<Item> items = itemRepository.userItemList(userIdx);
-
-    for(Item item : items){
-      userDetailDto.getItemList().add(
-              ItemListDto.builder()
-                      .title(item.getTitle())
-                      .dong(item.getDong())
-                      .createdAt(item.getCreatedAt())
-                      .state(item.getState())
-                      .isValid(item.isValid())
-                      .build()
-      );
-    }
-
-    return userDetailDto;
-  }
-
 
 
   //tradeCount 0 으로 초기화
@@ -160,9 +231,9 @@ public class UserService {
 
 
   @Transactional
-  public void raceConditionTest(Long userIdx){
+  public void raceConditionTest(Long userIdx) {
     Optional<User> user = userRepository.findById(userIdx);
-    if(user.isPresent()){
+    if (user.isPresent()) {
       log.info("여기");
       User u = user.get();
       u.setTradeCount(u.getTradeCount() + 1);
@@ -170,7 +241,7 @@ public class UserService {
     }
   }
 
-  public int raceConditionTradeCountUser(Long userIdx){
+  public int raceConditionTradeCountUser(Long userIdx) {
     User user = userRepository.findById(userIdx).get();
     log.info("사용자 정보");
     log.info("{} {} {} {}", user.getUserIdx(), user.getInfo(), user.getName(),
@@ -179,26 +250,6 @@ public class UserService {
     return userRepository.findById(userIdx).get().getTradeCount();
   }
 
-  public ReviewDto reviewInfo(Long userIdx) {
-
-    ReviewDto reviewDto = new ReviewDto();
-    List<ReviewTag> reviewTagList = reviewTagRepository.findReviewTag(userIdx);
-    for(ReviewTag rt : reviewTagList){
-      reviewDto.getReviewTag().put(rt.getType().ordinal(), reviewDto.getReviewTag().getOrDefault(rt.getType().ordinal(), 0) + 1);
-    }
-    List<String> commentList = reviewTextRepository.findReviewReceiveTextList(userIdx);
-    for(String c : commentList){
-      reviewDto.getReceiveReviewText().add(c);
-    }
-    List<ReviewText> reviewRequestTextList = reviewTextRepository.findReviewRequestTextList(userIdx);
-    for(ReviewText rt : reviewRequestTextList){
-      ReviewTextDto reviewTextDto = new ReviewTextDto();
-      reviewTextDto.setTargetItemIdx(rt.getItem().getItemIdx());
-      reviewTextDto.setReviewText(rt.getComment());
-      reviewDto.getRequestReviewText().add(reviewTextDto);
-    }
-    return reviewDto;
-  }
 
   public List<ItemListDto> userKeepItemList(Long userIdx) {
 
@@ -217,11 +268,11 @@ public class UserService {
 
 
   //내부 로직 수행에서 필요 -> auth
-  public void save(User user){
+  public void save(User user) {
     userRepository.save(user);
   }
 
-  public Optional<User> findUserByKakaoId(String kakaoId){
+  public Optional<User> findUserByKakaoId(String kakaoId) {
     return userRepository.findUserByKakaoId(kakaoId);
   }
 }
