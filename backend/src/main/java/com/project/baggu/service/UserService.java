@@ -1,8 +1,8 @@
 package com.project.baggu.service;
 
 import com.project.baggu.domain.enumType.Role;
+import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
-import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.Notify;
@@ -35,7 +35,7 @@ public class UserService {
   private final ReviewTextRepository reviewTextRepository;
   private final ReviewTagRepository reviewTagRepository;
   private final S3UploadService s3UploadService;
-  private final String IMAGE_DIR_ITEM = "item";
+
 
   private final String IMAGE_DIR_USER = "user";
 
