@@ -22,7 +22,10 @@ import Favorite from 'pages/MyProfile/Favorite';
 import ProfileTown from 'pages/MyProfile/ProfileTown';
 import Chat from 'pages/Chat/Chat';
 import UserDetail from 'pages/User/UserDetail';
-import Review from 'pages/Review/Review';
+import ChatDetail from 'pages/Chat/ChatDetail';
+import UserReview from 'pages/Review/UserReview';
+import BagguReview from 'pages/Review/BagguReview';
+import KakaoLogin from 'pages/Start/KakaoLogin';
 
 // react-query
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -30,7 +33,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // styled component
 import tw, { styled, css } from 'twin.macro';
-import ChatDetail from 'pages/Chat/ChatDetail';
 
 const queryClient = new QueryClient();
 
@@ -42,7 +44,7 @@ const Wrapper = styled.div`
 `;
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient} contextSharing={true}>
       <BrowserRouter className="App">
         <TopBar1 />
         <Routes>
@@ -54,7 +56,9 @@ function App() {
             <Route path="ready" element={<StartReady />} />
             <Route path="introduce" element={<StartIntroduce />} />
           </Route>
-          <Route path="/review" element={<Review />} />
+          <Route path="/auth/callback/kakao" element={<KakaoLogin />} />
+          <Route path="/userReview" element={<UserReview />} />
+          <Route path="/bagguReview" element={<BagguReview />} />
           <Route path="/" element={<Home />} />
           <Route path="/example" element={<Example />} />
           <Route path="/item/:id" element={<Item />} />

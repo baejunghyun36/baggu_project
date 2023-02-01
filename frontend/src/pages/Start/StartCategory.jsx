@@ -4,10 +4,16 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// store
+import signUpstore from 'store/store';
+
+// API
+import { defaultInstance, authInstance } from 'api/axios';
+import requests from 'api/config';
+
 // components
 import TopBar2 from 'components/common/TopBar2';
 import FormSubmitBtn from 'components/common/FormSubmitBtn';
-// import axios from 'axios';
 
 // styled component
 const Wrapper = styled.div`
@@ -45,20 +51,20 @@ const CategoryBtn = styled.div`
 
 function StartCategory() {
   const [clickedCategories, setClickedCategories] = useState({
-    디지털기기: false,
-    생활가전: false,
-    '가구/인테리어': false,
-    '생활/주방': false,
-    여성의류: false,
-    여성잡화: false,
-    '남성패션/잡화': false,
-    '뷰티/미용': false,
-    '스포츠/레저': false,
-    '취미/게임/음반': false,
-    도서: false,
-    가공식품: false,
-    반려동물용품: false,
-    기타: false,
+    0: false,
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false,
+    8: false,
+    9: false,
+    10: false,
+    11: false,
+    12: false,
+    13: false,
   });
 
   // 카테고리 목록
@@ -79,24 +85,60 @@ function StartCategory() {
     '기타',
   ];
 
-  // 클릭된 카테고리 수
+  // store
+  const saveCategory = signUpstore(state => state.saveCategory);
+  const { email, nickname, category, si, gu, dong, lng, lat, kakaoId } =
+    signUpstore(state => state);
+
+  // 클릭된 카테고리 수,
   const clickedCount = Object.values(clickedCategories).filter(
     x => x === true
   ).length;
 
+  // signup API 요청 함수
+  const sign_up = async category_types => {
+    try {
+      const response = await defaultInstance.post(requests.SIGNUP, {
+        data: {
+          email: email,
+          nickname: nickname,
+          category: category_types,
+          si: si,
+          gu: gu,
+          dong: dong,
+          lng: lng,
+          lat: lat,
+          kakaoId: kakaoId,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
   const navigate = useNavigate();
   const submitHandler = () => {
     // {clickedCategories : clickedCategories}으로 중앙저장소에 저장
     // 카테고리 번호로 저장해야함
     if (clickedCount >= 2) {
-      console.log({
-        clickedCategories: Object.keys(clickedCategories).filter(
-          x => clickedCategories[x]
-        ),
-      });
-      navigate('/start/ready');
+      // store에 저장
+      const category_types = Object.keys(clickedCategories)
+        .map(Number)
+        .filter(x => clickedCategories[x])
+        .map(x => `TYPE${x}`);
+      console.log(nickname, si, gu, dong, lat, lng, category_types);
+      // API 요청
+      sign_up(category_types)
+        .then(res => {
+          navigate('/start/ready');
+        })
+        .catch(error => {
+          navigate('/start/ready');
+          console.log(error);
+        });
     }
   };
+
   return (
     <Wrapper>
       <TopBar2 pageTitle="" />
@@ -109,13 +151,11 @@ function StartCategory() {
       <ContentContainer>
         {categories.map((name, index) => (
           <CategoryBtn
-            isClicked={clickedCategories[name]}
+            isClicked={clickedCategories[index]}
             key={index}
             onClick={e => {
-              const name = e.currentTarget.querySelector('span').innerText;
               setClickedCategories(prev => {
-                const value = !clickedCategories[name];
-                return { ...prev, [name]: value };
+                return { ...prev, [index]: !prev[index] };
               });
             }}
           >
