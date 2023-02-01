@@ -1,6 +1,7 @@
 import axios from 'axios';
+import requests from './config';
 
-const BASE_URL = 'http://baggu.shop:3000';
+const BASE_URL = requests.base_url;
 
 // 인증이 필요없는 axios 인스턴스
 const axiosApi = (url, options) => {
