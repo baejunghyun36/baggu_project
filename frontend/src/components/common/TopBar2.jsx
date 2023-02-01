@@ -15,10 +15,12 @@ const Container = styled.div`
   }
 `;
 
-function TopBar2({ title, isCheck }) {
+// useCheckBtn (boolean) : 체크 버튼 사용 가능 여부
+// BackStep (integar) : 뒤로가기 스텝 수
+function TopBar2({ title, useCheckBtn, BackStep = 1 }) {
   const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate(-1);
+    navigate(-1 * BackStep);
   };
   // 회원가입 완료 후 숨기기
   const location = useLocation().pathname;
@@ -36,7 +38,7 @@ function TopBar2({ title, isCheck }) {
       <h3 className="text-h3">{title}</h3>
 
       <img
-        disabled={!isCheck}
+        disabled={!useCheckBtn}
         src={check}
         alt="button to confirm"
         className="opacity-1"

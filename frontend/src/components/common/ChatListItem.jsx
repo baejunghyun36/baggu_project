@@ -74,7 +74,7 @@ function ChatListItem({
         </Info>
         <Product img={itemImg}></Product>
       </Wrapper>
-      <SendReviewBtn>
+      <SendReviewBtn onClick={() => navigate('/review')}>
         <p>후기 보내기</p>
       </SendReviewBtn>
     </Container>

@@ -98,12 +98,11 @@ function StartNickname() {
         <input type="text" onChange={onChangeInput} onBlur={onChangeInput} />
         <p>{nicknameMessage}</p>
       </InputContainer>
-      <BtnContainer>
-        <FormSubmitBtn
-          disabled={isValid ? false : true}
-          onClick={submitHandler}
-        />
-      </BtnContainer>
+
+      <FormSubmitBtn
+        disabled={isValid ? false : true}
+        onClick={submitHandler}
+      />
     </Wrapper>
   );
 }

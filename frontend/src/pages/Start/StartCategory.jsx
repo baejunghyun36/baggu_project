@@ -123,13 +123,11 @@ function StartCategory() {
           </CategoryBtn>
         ))}
       </ContentContainer>
-      <BtnContainer>
-        <FormSubmitBtn
-          disabled={clickedCount >= 2 ? false : true}
-          onClick={submitHandler}
-          title="회원가입 완료하기"
-        />
-      </BtnContainer>
+      <FormSubmitBtn
+        disabled={clickedCount >= 2 ? false : true}
+        onClick={submitHandler}
+        title="회원가입 완료하기"
+      />
     </Wrapper>
   );
 }
