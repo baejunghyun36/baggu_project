@@ -5,7 +5,7 @@ const requests = {
   TEST_TOKEN: '/baggu/auth/token/dev',
 
   // 카카오로 시작하기 (GET)
-  KAKAO(code, state) {
+  CHECK_IS_SIGNED(code, state) {
     return `/auth/login?code=${code}&state=${state}`;
   },
 
