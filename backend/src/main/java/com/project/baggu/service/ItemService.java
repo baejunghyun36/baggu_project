@@ -64,12 +64,13 @@ public class ItemService {
       itemDto.setTitle(i.getTitle());
       itemDto.setCreatedAt(i.getCreatedAt());
       itemDto.setState(i.getState());
+      itemDto.setItemImgUrl(i.getFirstImg());
       ItemDtoList.add(itemDto);
     }
     return ItemDtoList;
   }
 
-  public List<UserItemDto> userItemList(Long userIdx) {
+  public List<UserItemDto> getUserItemList(Long userIdx) {
 
     List <Item> itemList = itemRepository.getUserItemList(userIdx);
     List<UserItemDto> userItemDtoList = new ArrayList<>();
@@ -80,6 +81,7 @@ public class ItemService {
       itemDto.setDong(i.getDong());
       itemDto.setCreatedAt(i.getCreatedAt());
       itemDto.setTradeState(i.getState());
+      itemDto.setItemImgUrl(i.getFirstImg());
       if(i.getState() == TradeState.TYPE2.ordinal()){
         Optional<ReviewText> check = reviewTextRepository.findByTradeItemIdx(i.getTradeItemIdx());
         if(check.isEmpty()) itemDto.setReviewState(true);
@@ -126,24 +128,27 @@ public class ItemService {
     item.setCategory(u.getCategory());
     item.setUser(user);
     itemRepository.save(item);
-//
-//    //이미지 존재시 이미지 저장 -> 순서대로
-//    if(u.getItemImages().size()>0){
-//      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImages(), IMAGE_DIR_ITEM);
-//
-//      for(int i=0; i<uploadUrls.size(); i++){
-//        ItemImage itemImage = ItemImage.builder()
-//            .imgOrder(i)
-//            .itemImageIdx(item.getItemIdx())
-//            .itemImg(uploadUrls.get(i))
-//            .build();
-//
-//        itemImageRepository.save(itemImage);
-//        item.getItemImages().add(itemImage);
-//      }
-//    }
-//
-//    itemRepository.save(item);
+
+    //이미지 존재시 이미지 저장 -> 순서대로
+    if(u.getItemImges().size()>0){
+      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImges(), IMAGE_DIR_ITEM);
+
+      for(int i=0; i<uploadUrls.size(); i++){
+        ItemImage itemImage = ItemImage.builder()
+            .imgOrder(i+1)
+            .itemImg(uploadUrls.get(i))
+            .build();
+
+        itemImage.setItem(item);
+
+        itemImageRepository.save(itemImage);
+      }
+
+      //첫번째 이미지는 대표이미지로 저장
+      item.setFirstImg(uploadUrls.get(u.getItemFirstImgIdx()));
+    }
+
+    itemRepository.save(item);
   }
 
   public ItemDetailDto itemDetail(Long itemIdx) {
@@ -153,6 +158,8 @@ public class ItemService {
     idd.setUserIdx(item.getUser().getUserIdx());
     idd.setNickname(item.getUser().getNickname());
     idd.setInfo(item.getUser().getInfo());
+    idd.setProfileImgUrl(item.getUser().getProfileImg());
+
     idd.setTitle(item.getTitle());
     idd.setCategory(item.getCategory().ordinal());
     idd.setDong(item.getDong());
@@ -160,6 +167,7 @@ public class ItemService {
     idd.setModifiedAt(item.getModifiedAt());
     idd.setContent(item.getContent());
     idd.setTradeState(item.getState());
+    idd.setItemImgUrl(item.getFirstImg());
 
     List<TradeRequest> trList = tradeRequestRepository.findByItemIdx(itemIdx);
 
@@ -170,6 +178,7 @@ public class ItemService {
       userDto.setUserIdx(tr.getRequestUser().getUserIdx());
       userDto.setNickname(tr.getRequestUser().getNickname());
       userDto.setComment(tr.getComment());
+      userDto.setProfileImgUrl(tr.getRequestUser().getProfileImg());
       for (TradeDetail td : tradeDetailList) {
         userDto.getRequestItemIdxList().add(td.getRequestItemIdx());
         userDto.getTradeDetailIdxList().add(td.getTradeDetailIdx());

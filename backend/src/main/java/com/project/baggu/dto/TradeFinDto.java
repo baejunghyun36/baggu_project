@@ -18,6 +18,8 @@ public class TradeFinDto {
   private String receiveNickname;
   private Long requestItemIdx;
   private Long receiveItemIdx;
+  private String requestItemImgUrl;
+  private String receiveItemImgUrl;
   private int heartCount;
   @JsonDeserialize(
       using = LocalDateTimeDeserializer.class

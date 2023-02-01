@@ -48,6 +48,7 @@ public class TradeRequestService {
       userItemDto.setState(i.getState());
       userItemDto.setValid(i.isValid());
       userItemDto.setTradeRequestIdx(t.getTradeRequestIdx());
+      userItemDto.setItemImgUrl(t.getReceiveItemIdx().getFirstImg());
       userItemDtoList.add(userItemDto);
     }
 

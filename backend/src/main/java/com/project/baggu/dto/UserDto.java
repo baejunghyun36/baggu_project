@@ -13,6 +13,7 @@ public class UserDto {
   private Long userIdx;
   private String nickname;
   private String comment;
+  private String profileImgUrl;
   private ArrayList<Long> requestItemIdxList = new ArrayList<>();
   private ArrayList<Long> tradeDetailIdxList = new ArrayList<>();
 }

@@ -16,6 +16,7 @@ public class UserDetailDto {
   private String profileImg;
   private String nickname;
   private String info;
+  private String profileImgUrl;
 
   @Builder.Default
   private ArrayList<ItemListDto> itemList = new ArrayList<>();
