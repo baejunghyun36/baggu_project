@@ -1,5 +1,6 @@
 package com.project.baggu.controller;
 
+import com.project.baggu.dto.BaseIsSuccessDto;
 import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
@@ -38,6 +39,8 @@ public class ItemController {
 
 
 
+
+  //GET baggu/item/{itemIdx}
   //아이템의 상세 정보(아이템 정보, 신청자 정보)를 받는다.
   @GetMapping("/{itemIdx}")
   public ItemDetailDto itemDetail (@PathVariable("itemIdx") Long itemIdx){
@@ -45,9 +48,10 @@ public class ItemController {
     return  itemService.itemDetail(itemIdx);
   }
 
+  //POST baggu/item
   //새로운 아이템을 작성한다.
   @PostMapping
-  public void registItem(@RequestBody UserRegistItemDto u) throws Exception {
+  public BaseIsSuccessDto registItem(@ModelAttribute UserRegistItemDto u) throws Exception {
 
     Long authUserIdx = Long.parseLong(
         SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
@@ -56,15 +60,22 @@ public class ItemController {
     }
 
     itemService.registItem(u);
+
+    return new BaseIsSuccessDto(true);
   }
 
+  //PUT /baggu/item/{itemIdx}
   //게시글 정보를 갱신한다.
   @PutMapping("/{itemIdx}")
   public UpdateItemDto updateItem(@PathVariable("itemIdx") Long itemIdx, @RequestBody UpdatedItemDto item){
 
+
+
+
     return itemService.updateItem(itemIdx, item);
   }
 
+  //DELETE /baggu/item/{itemIdx}
   //게시글을 삭제한다.
   @DeleteMapping("/{itemIdx}")
   public void deleteItem(@PathVariable("itemIdx") Long itemIdx){
@@ -73,7 +84,7 @@ public class ItemController {
   }
 
 
-
+  //POST baggu/item/{itemIdx}
   //유저가 신청메세지와 함께 바꾸신청을 보낸다.
   @PostMapping("/{itemIdx}")
   public void tradeRequest(@PathVariable("itemIdx") Long itemIdx, @RequestBody TradeRequestDto tradeRequestDto){
@@ -82,32 +93,41 @@ public class ItemController {
   }
 
 
-
-
+  //GET baggu/item?dong={dong}&userIdx={userIdx}&keyword={keyword}
   //유저의 동네에 최근 등록된 물품 리스트를 받는다.
-  @GetMapping(params = {"dong"})
-  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(@RequestParam(name = "dong") String dong){
-
-    return itemService.itemListOrderByNeighbor(dong);
-  }
-
-
   //유저가 등록한 아이템 리스트를 받는다.
-  @GetMapping(params = {"userIdx"})
-  public List<UserItemDto> userItemList (@RequestParam(name = "userIdx") Long userIdx){
+  //유저가 입력한 검색어를 기반으로 아이템 리스트를 받는다. pathvariable로 하면 한글 안넘어와
+  @GetMapping()
+  public List<?> getItemList(@RequestParam(name = "dong", required = false) String dong,
+      @RequestParam(name="userIdx", required=false) Long userIdx,
+      @RequestParam(name="keyword", required=false) String keyword){
 
-    return itemService.userItemList(userIdx);
+    if(dong!=null){
+      return itemService.itemListOrderByNeighbor(dong);
+    } else if(userIdx!=null){
+      return itemService.getUserItemList(userIdx);
+    } else if(keyword!=null){
+      return itemService.itemListByItemName(keyword);
+    } else{
+      throw new BaseException(BaseResponseStatus.UNVALID_PARAMETER);
+    }
   }
 
-//  유저가 입력한 검색어를 기반으로 아이템 리스트를 받는다. pathvariable로 하면 한글 안넘어와
-  @GetMapping(params = {"keyword"})
-  public List<ItemListDto> itemListByItemName(@RequestParam(name = "keyword") String keyword){
-
-    return itemService.itemListByItemName(keyword);
-  }
-
-
-
+//
+//  @GetMapping(params = {"userIdx"})
+//  public List<UserItemDto> userItemList (@RequestParam(name = "userIdx") Long userIdx){
+//
+//
+//  }
+//
+//  @GetMapping(params = {"keyword"})
+//  public List<ItemListDto> itemListByItemName(@RequestParam(name = "keyword") String keyword){
+//
+//
+//  }
+//
+//
+//
 
 
 

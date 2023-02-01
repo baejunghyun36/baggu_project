@@ -17,4 +17,5 @@ public class UserItemDto {
   private LocalDateTime createdAt;
   private int tradeState;
   private boolean reviewState;
+  private String itemImgUrl;
 }

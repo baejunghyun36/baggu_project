@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +36,6 @@ public class UserService {
   private final ReviewTextRepository reviewTextRepository;
   private final ReviewTagRepository reviewTagRepository;
   private final S3UploadService s3UploadService;
-
 
   private final String IMAGE_DIR_USER = "user";
 
@@ -80,7 +80,7 @@ public class UserService {
         .info(user.getInfo())
         .dong(user.getDong())
         .role(user.getRole())
-        .profileImg(user.getProfileImg())
+        .profileImgUrl(user.getProfileImg())
         .build();
 
     return userProfileDto;
@@ -121,6 +121,7 @@ public class UserService {
                     .createdAt(item.getCreatedAt())
                     .state(item.getState())
                     .isValid(item.isValid())
+                    .itemImgUrl(item.getFirstImg())
                     .build()
             )
     );
@@ -153,6 +154,7 @@ public class UserService {
                     .targetItemIdx(rt.getItem().getItemIdx())
                     .reviewText(rt.getComment())
                     .writeUserIdx(rt.getUser().getUserIdx())
+                    .profileImgUrl(rt.getUser().getProfileImg())
                     .build()
             )
     );
@@ -166,8 +168,8 @@ public class UserService {
 
     User user = userRepository.findById(userIdx).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
-    //만약 이미지가 존재하면, 이미지 업로드 처리
-    if(userUpdateProfileDto.getProfileImg()!=null){
+    //만약 이미지가 존재하고, 파일 형식이라면 이미지 업로드 처리
+    if(userUpdateProfileDto.getProfileImg()!=null && userUpdateProfileDto.getProfileImgs() instanceof MultipartFile){
       String uploadUrl = s3UploadService.upload(userUpdateProfileDto.getProfileImg(), IMAGE_DIR_USER);
       user.setProfileImg(uploadUrl);
     }

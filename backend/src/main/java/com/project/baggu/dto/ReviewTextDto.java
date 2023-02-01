@@ -14,5 +14,6 @@ public class ReviewTextDto {
   private Long targetItemIdx;
   private Long writeUserIdx;
   private String reviewText;
+  private String profileImgUrl;
 
 }

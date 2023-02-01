@@ -51,6 +51,11 @@ public class TradeFinService {
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
 
+      Item item1 = itemRepository.findById(tf.getReceiveItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
+      Item item2 = itemRepository.findById(tf.getRequestItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
+      tradeFinDto.setReceiveItemImgUrl(item1.getFirstImg());
+      tradeFinDto.setRequestItemImgUrl(item2.getFirstImg());
+
       user.getHearts().forEach((heart)->{
         if(heart.getTradeFin().getTradeFinIdx()==tf.getTradeFinIdx()){
           tradeFinDto.setUserHeart(true);
@@ -77,6 +82,11 @@ public class TradeFinService {
       tradeFinDto.setRequestItemIdx(tf.getRequestItemIdx());
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
+
+      Item item1 = itemRepository.findById(tf.getReceiveItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
+      Item item2 = itemRepository.findById(tf.getRequestItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
+      tradeFinDto.setReceiveItemImgUrl(item1.getFirstImg());
+      tradeFinDto.setRequestItemImgUrl(item2.getFirstImg());
 
       user.getHearts().forEach((heart)->{
         if(heart.getTradeFin().getTradeFinIdx()==tf.getTradeFinIdx()){
