@@ -1,5 +1,6 @@
 package com.project.baggu.controller;
 
+import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;
@@ -9,7 +10,6 @@ import com.project.baggu.dto.UpdatedItemDto;
 import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
 import com.project.baggu.exception.BaseException;
-import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.service.ItemService;
 import com.project.baggu.service.TradeRequestService;
 import java.util.List;

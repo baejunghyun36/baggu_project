@@ -1,6 +1,7 @@
 package com.project.baggu.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.baggu.dto.BaseResponseStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.Data;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtException;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 public class FilterExceptionHandler extends OncePerRequestFilter {
   @Override

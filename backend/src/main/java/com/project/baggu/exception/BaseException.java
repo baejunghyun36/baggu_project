@@ -1,5 +1,6 @@
 package com.project.baggu.exception;
 
+import com.project.baggu.dto.BaseResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

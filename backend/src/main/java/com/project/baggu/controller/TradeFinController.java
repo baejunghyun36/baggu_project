@@ -1,12 +1,11 @@
 package com.project.baggu.controller;
 
 import com.project.baggu.dto.*;
+import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
-import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.service.TradeFinService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,5 +1,7 @@
 package com.project.baggu.service;
 
+import static com.project.baggu.config.RedisConfig.RedisCacheKey.TRADE_FIN_LIST;
+
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.domain.*;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.Cacheable;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +36,8 @@ public class TradeFinService {
   private final HeartRepository heartRepository;
 
 
-  public List<TradeFinDto> tradeFinList(Long userIdx) {
+  @Cacheable(value = "trade", cacheManager = "redisCacheManager")
+  public List<TradeFinDto> getTradeFinList(Long userIdx) {
     User user = userRepository.findById(userIdx).orElseThrow();
 
     List<TradeFin> tradeFinList = tradeFinRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -59,7 +63,7 @@ public class TradeFinService {
     return tradeFinDtos;
   }
 
-  public List<TradeFinDto> userTradeFinList(Long userIdx, Long authUserIdx) {
+  public List<TradeFinDto> getTradeFinList(Long userIdx, Long authUserIdx) {
 
     User user = userRepository.findById(authUserIdx).orElseThrow();
 
@@ -85,7 +89,7 @@ public class TradeFinService {
     return tradeFinDtos;
   }
 
-  public void reviewTag(ReviewTagDto reviewTagDto) {
+  public void createTagReview(ReviewTagDto reviewTagDto) {
 
     User user = userRepository.findById(reviewTagDto.getUserIdx()).get();
 
@@ -94,7 +98,7 @@ public class TradeFinService {
   }
 
   @Transactional
-  public void reviewText(ReviewTextDto reviewTextDto) throws BaseException {
+  public void createTextReview(ReviewTextDto reviewTextDto) throws BaseException {
 
     User writeUser = userRepository.findById(reviewTextDto.getWriteUserIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.REQUEST_ERROR));
     Item targetItem = itemRepository.findById(reviewTextDto.getTargetItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.REQUEST_ERROR));
@@ -173,7 +177,7 @@ public class TradeFinService {
   }
 
   @Transactional
-  public void likeTradeFin(Long tradeFinIdx, Long userIdx) throws BaseException {
+  public void createHeart(Long tradeFinIdx, Long userIdx) throws BaseException {
     TradeFin tf = tradeFinRepository.findById(tradeFinIdx).orElseThrow();
 
     //이미 좋아요를 했는데 한번 더 요청할경우
@@ -190,7 +194,7 @@ public class TradeFinService {
   }
 
   @Transactional
-  public void dislikeTradeFin(Long tradeFinIdx, Long userIdx) throws BaseException {
+  public void deleteHeart(Long tradeFinIdx, Long userIdx) throws BaseException {
     TradeFin tf = tradeFinRepository.findById(tradeFinIdx).orElseThrow();
 
     if(heartRepository.findByTradeFinIdxAndUserIdx(tradeFinIdx, userIdx)==0) {
