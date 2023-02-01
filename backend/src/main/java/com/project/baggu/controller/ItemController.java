@@ -3,15 +3,15 @@ package com.project.baggu.controller;
 import com.project.baggu.dto.BaseIsSuccessDto;
 import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
-import com.project.baggu.dto.ItemOrderByNeighborDto;
-import com.project.baggu.dto.ItemListDto;
 import com.project.baggu.dto.TradeRequestDto;
 import com.project.baggu.dto.UpdateItemDto;
-import com.project.baggu.dto.UpdatedItemDto;
-import com.project.baggu.dto.UserItemDto;
+import com.project.baggu.dto.UpdateItemResponseDto;
+import com.project.baggu.dto.UploadImagesDto;
 import com.project.baggu.dto.UserRegistItemDto;
 import com.project.baggu.exception.BaseException;
+import com.project.baggu.repository.ItemRepository;
 import com.project.baggu.service.ItemService;
+import com.project.baggu.service.S3UploadService;
 import com.project.baggu.service.TradeRequestService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,9 +35,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ItemController {
 
+  private final ItemRepository itemRepository;
+
   private final ItemService itemService;
   private final TradeRequestService tradeRequestService;
-
+  private final S3UploadService s3UploadService;
+  private final String IMAGE_DIR_USER = "item";
 
 
 
@@ -67,12 +71,17 @@ public class ItemController {
   //PUT /baggu/item/{itemIdx}
   //게시글 정보를 갱신한다.
   @PutMapping("/{itemIdx}")
-  public UpdateItemDto updateItem(@PathVariable("itemIdx") Long itemIdx, @RequestBody UpdatedItemDto item){
+  public UpdateItemResponseDto updateItem(@PathVariable("itemIdx") Long itemIdx,
+      @RequestBody UpdateItemDto updateItemDto){
 
+    Long itemWriter = itemService.getUserIdxByItemIdx(itemIdx);
+    Long authUserIdx = Long.parseLong(
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+    if(itemWriter==null || itemWriter!=authUserIdx ){
+      throw new BaseException(BaseResponseStatus.UNVALID_USER);
+    }
 
-
-
-    return itemService.updateItem(itemIdx, item);
+    return itemService.updateItem(itemIdx, updateItemDto);
   }
 
   //DELETE /baggu/item/{itemIdx}
@@ -111,6 +120,13 @@ public class ItemController {
     } else{
       throw new BaseException(BaseResponseStatus.UNVALID_PARAMETER);
     }
+  }
+
+  @PostMapping("/images")
+  public UploadImagesDto uploadImages(@RequestParam("itemImges") List<MultipartFile> itemImages)
+      throws Exception {
+
+    return new UploadImagesDto(s3UploadService.upload(itemImages, IMAGE_DIR_USER));
   }
 
 //
