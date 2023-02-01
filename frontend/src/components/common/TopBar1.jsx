@@ -25,7 +25,7 @@ function TopBar1() {
     return null;
   }
   return (
-    <div
+    <Container
       id="top-bar-1"
       className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px]"
     >
