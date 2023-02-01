@@ -2,7 +2,7 @@ package com.project.baggu.controller;
 
 import com.project.baggu.dto.AuthDevTokenDto;
 import com.project.baggu.dto.BaseMessageResponse;
-import com.project.baggu.exception.BaseResponseStatus;
+import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.utils.CookieUtils;
