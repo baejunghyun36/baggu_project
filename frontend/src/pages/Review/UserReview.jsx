@@ -2,7 +2,7 @@ import FormSubmitBtn from 'components/common/FormSubmitBtn';
 import TopBar2 from 'components/common/TopBar2';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import tw, { styled, css } from 'twin.macro';
 
 // API
@@ -21,7 +21,6 @@ const Container = styled.div`
     }
   }
 `;
-const ReviewContent = styled.div``;
 
 const ReviewBtn = styled.div`
   ${tw`h-4 py-1 px-[12px] w-fit rounded-full flex justify-center items-center mb-1 text-main`}
@@ -67,7 +66,7 @@ function UserReview() {
   ];
 
   const you = '유저1';
-
+  const navigate = useNavigate();
   const submitHandler = () => {
     // 유저가 선택한 리뷰 태그 인덱스 필터링
     const clickedReviewsIndex = Object.keys(clickedReviews)
@@ -94,7 +93,15 @@ function UserReview() {
       }
     };
 
-    post_user_review(clickedReviewsIndex);
+    post_user_review(clickedReviewsIndex)
+      .then(() => {
+        navigate('/bagguReview');
+      })
+      .catch(error => {
+        console.log(error);
+        // 테스트용
+        navigate('/bagguReview');
+      });
   };
   return (
     <Wrapper>
