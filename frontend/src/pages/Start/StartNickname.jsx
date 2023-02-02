@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // store
-import signUpstore from 'store/store';
+import { signUpStore } from 'store/store';
 
 // components
 import TopBar2 from 'components/common/TopBar2';
