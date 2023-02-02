@@ -1,6 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useMutation } from 'react-query';
+import axios from 'axios';
 import TopBar2 from '../../components/common/TopBar2';
 import { defaultInstance, authInstance } from 'api/axios';
 import requests from 'api/config';
@@ -10,7 +12,7 @@ function ItemCreate() {
   const [itemTitleError, setItemTitleError] = useState('');
   const [itemContent, setItemcontent] = useState('');
   const [itemContentError, setItemContentError] = useState('');
-  const [itemImage, setItemImage] = useState([]);
+  const [itemImage, setItemImage] = useState('');
   const [itemImageError, setItemImageError] = useState('');
   const [itemCategories, setItemCategories] = useState('');
   const [itemCategoriesError, setItemCategoriesError] = useState('');
@@ -19,20 +21,19 @@ function ItemCreate() {
     const get_token = async () => {
       try {
         const { data } = await defaultInstance.post(requests.TEST_TOKEN, {
-          userIdx: 1,
+          data: { userIdx: 1 },
         });
         setToken(data);
+        console.log(token);
       } catch (error) {
         console.log(error);
       }
     };
     get_token();
   }, []);
-  // --------------------------------------------------------
   const handleItemImage = event => {
-    setItemImage(Array.from(event.target.files));
+    setItemImage(event.target.files);
   };
-
   const handleItemTitleChange = event => {
     setItemtitle(event.target.value);
   };
@@ -44,7 +45,9 @@ function ItemCreate() {
   };
   const handleSubmit = event => {
     event.preventDefault();
+
     let hasError = false;
+
     if (!itemTitle) {
       setItemTitleError('제목을 입력해주세요');
       hasError = true;
@@ -70,26 +73,20 @@ function ItemCreate() {
       setItemCategoriesError('');
     }
     if (!hasError) {
-      const data = new FormData();
-      data.append('userIdx', '1');
-      data.append('title', itemTitle);
-      data.append('content', itemContent);
-      data.append('category', 'TYPE0');
-      itemImage.forEach((image, index) => {
-        data.append('itemImgs', image);
-      });
-      for (let key of data.keys()) {
-        console.log(key);
-      }
-      for (let value of data.values()) {
-        console.log(value);
-      }
       const post_item_create = async () => {
         try {
-          const response = await authInstance.post(requests.POST_ITEM, data, {
+          console.log(token);
+          const response = await authInstance.post(requests.POST_ITEM, {
+            data: {
+              userIdx: 1,
+              category: 'TYPE0',
+              title: itemTitle,
+              content: itemContent,
+              itemImges: itemImage, //file 배열,
+              itemFirstImgIdx: 0, //file 배열에서 대표 이미지의 인덱스
+            },
             headers: {
-              Authorization: token,
-              'Content-Type': 'multipart/form-data',
+              'access-token': token,
             },
           });
 
@@ -105,7 +102,7 @@ function ItemCreate() {
     <div>
       <TopBar2 pageTitle="게시글 작성" />
       <form onSubmit={handleSubmit}>
-        <input type="file" multiple accept="img/*" onChange={handleItemImage} />
+        <input type="file" accept="img/*" onChange={handleItemImage} />
         {itemImageError && <div style={{ color: 'red' }}>{itemImageError}</div>}
         <input
           type="text"

@@ -62,7 +62,7 @@ public class JwtTokenUtils {
     }
 
     public static String resolveAccessToken(HttpServletRequest req) {
-        return req.getHeader("Authorization");
+        return req.getHeader("access-token");
     }
 
     public static String allocateDevToken(Long userIdx) {

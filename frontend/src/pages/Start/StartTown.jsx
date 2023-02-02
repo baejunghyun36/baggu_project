@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // store
-import { signUpStore } from 'store/store';
+import signUpstore from 'store/store';
 
 // components
 import TopBar2 from 'components/common/TopBar2';
@@ -70,7 +70,7 @@ function StartTown() {
   });
 
   // store
-  const { saveTown } = signUpstore(state => state);
+  const saveTown = signUpstore(state => state.saveTown);
 
   const navigate = useNavigate();
 
