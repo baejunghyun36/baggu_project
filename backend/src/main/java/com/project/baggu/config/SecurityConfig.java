@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
@@ -36,6 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
   private OAuth2UserSuccessHandler oAuth2UserSuccessHandler;
+
+  @Autowired
+  private CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
   //정적 리소스에 대한 허용
   @Override
@@ -56,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //uri 설정
     //"/auth/callback/**"은 카카오 로그인 리다이렉션 url로 사용하기 위해 임시 지정
     http.authorizeRequests()
-            .antMatchers("/", "/baggu/auth/callback/**", "/baggu/auth/token", "/baggu/user","/baggu/auth/token/dev" ).permitAll()
+            .antMatchers("/", "/baggu/auth/callback/**", "/baggu/auth/token", "/baggu/user","/baggu/auth/token/dev", "/baggu/auth/token/dev/**" ).permitAll()
             .anyRequest().authenticated();
 
     //oauth2 설정
@@ -78,7 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.logout()
         .logoutUrl("/baggu/auth/logout")
         .deleteCookies("refresh-token")
-        .logoutSuccessHandler(new CustomLogoutSuccessHandler());
+        .logoutSuccessHandler(customLogoutSuccessHandler);
 //        .addLogoutHandler(new LogoutProcessHandler());
   }
 

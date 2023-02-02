@@ -4,6 +4,7 @@ import com.project.baggu.domain.TokenInfo;
 import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.*;
+import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.service.UserService;
 import com.project.baggu.utils.CookieUtils;
 import com.project.baggu.utils.JwtTokenUtils;
@@ -29,8 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
 
   private final UserService userService;
-
-  private final int REFRESH_PERIOD_INT = (int) JwtTokenUtils.getRefreshPeriod()/1000;
+  private final JwtTokenService jwtTokenService;
 
 
   //[POST] /baggu/user
@@ -46,9 +46,10 @@ public class UserController {
     //토큰 발급
     TokenInfo tokenInfo = JwtTokenUtils.allocateToken(userProfileDto.getUserIdx(),
         userProfileDto.getRole().toString());
+    jwtTokenService.saveRefreshToken(userProfileDto.getUserIdx(), tokenInfo.getRefreshToken());
     response.addHeader("access-token", tokenInfo.getAccessToken());
     CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
-        REFRESH_PERIOD_INT);
+        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
 
     return userProfileDto;
   }
