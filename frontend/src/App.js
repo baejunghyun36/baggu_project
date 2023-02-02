@@ -27,6 +27,9 @@ import UserReview from 'pages/Review/UserReview';
 import BagguReview from 'pages/Review/BagguReview';
 import KakaoLogin from 'pages/Start/KakaoLogin';
 
+// Store
+import { signUpStore, userStore } from 'store/store';
+
 // react-query
 import { QueryClient, QueryClientProvider } from 'react-query';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -43,6 +46,8 @@ const Wrapper = styled.div`
   `}
 `;
 function App() {
+  const { isLoggedIn, token, kakaoId, userIdx, dong } = userStore();
+  console.log(isLoggedIn, token, kakaoId, userIdx, dong);
   return (
     <QueryClientProvider client={queryClient} contextSharing={true}>
       <BrowserRouter className="App">

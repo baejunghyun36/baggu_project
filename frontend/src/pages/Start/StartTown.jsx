@@ -70,7 +70,7 @@ function StartTown() {
   });
 
   // store
-  const { saveTown } = signUpstore(state => state);
+  const { saveTown } = signUpStore(state => state);
 
   const navigate = useNavigate();
 

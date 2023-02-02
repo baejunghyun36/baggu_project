@@ -40,22 +40,30 @@ function KakaoLogin() {
     // 3. 가입된 사용자인지 확인
     check_is_signed(AUTHORIZE_CODE)
       .then(response => {
+        console.log('data', response.data);
+        console.log('headers', response.headers);
+        console.log('token', response.headers['authorization']);
+        console.log('userIdx', response.data.user.userIdx);
+        console.log('kakaoId', response.data.kakaoId);
+
         // access-token, isLoggedIn localStorage에 저장
         const access_token = response.headers['authorization'];
-        localStorage.setItem('token', access_token);
         localStorage.setItem('isLoggedIn', true);
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('kakaoId', response.data.kakaoId);
+        localStorage.setItem('userIdx', response.data.user.userIdx);
 
         // kakaoId 저장
-        saveToken(access_token);
-        saveKakaoId(response.kakaoId);
-        saveUserIdx(response.data.user.userIdx);
-        console.log('userIdx', response.data.user.userIdx);
+        // saveToken(access_token);
+        // saveKakaoId(response.kakaoId);
+        // saveUserIdx(response.data.user.userIdx);
 
         // 리다이렉트
         if (response.data.signed) {
           // 가입된 사용자
           // token, kakaoId, userIdx, dong 모두 저장
-          saveDong(response.data.user.dong);
+          localStorage.setItem('dong', response.data.user.dong);
+          // saveDong(response.data.user.dong);
           navigate('/');
         } else {
           // 가입되지 않은 사용자

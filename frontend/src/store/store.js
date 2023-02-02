@@ -6,8 +6,9 @@ export const userStore = create(
   devtools(set => ({
     isLoggedIn: localStorage.getItem('isLoggedIn') || false,
     token: localStorage.getItem('token') || '',
-    userIdx: '',
-    dong: '',
+    kakaoId: localStorage.getItem('kakaoId') || '',
+    userIdx: localStorage.getItem('userIdx') || '',
+    dong: localStorage.getItem('dong') || '',
     saveToken: token => set({ token: token }),
     saveUserIdx: userIdx => set({ userIdx: userIdx }),
     saveDong: dong => set({ dong: dong }),
