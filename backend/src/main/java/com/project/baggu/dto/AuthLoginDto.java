@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class AuthLoginDto {
   private boolean isSigned;
+  private String kakaoId;
   private UserProfileDto user;
 
 }

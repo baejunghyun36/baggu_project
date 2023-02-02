@@ -1,6 +1,7 @@
 package com.project.baggu.config;
 
 import com.project.baggu.config.filter.JwtTokenFilter;
+import com.project.baggu.config.oauth.handler.CustomLogoutSuccessHandler;
 import com.project.baggu.config.oauth.handler.OAuth2UserFailureHandler;
 import com.project.baggu.config.oauth.handler.OAuth2UserSuccessHandler;
 import com.project.baggu.config.token.JwtTokenAuthenticationEntryPoint;
@@ -73,13 +74,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .exceptionHandling()
         .authenticationEntryPoint(new JwtTokenAuthenticationEntryPoint());
 
-//    //logout 설정
-//    http.logout()
-//        .logoutUrl("/auth/logout")
-//        .logoutSuccessUrl("/")
-//        .deleteCookies("refresh_token")
-//        .logoutSuccessHandler(new CustomLogoutSuccessHandler());
-////        .addLogoutHandler(new LogoutProcessHandler());
+    //logout 설정
+    http.logout()
+        .logoutUrl("/baggu/auth/logout")
+        .deleteCookies("refresh-token")
+        .logoutSuccessHandler(new CustomLogoutSuccessHandler());
+//        .addLogoutHandler(new LogoutProcessHandler());
   }
 
   @Bean

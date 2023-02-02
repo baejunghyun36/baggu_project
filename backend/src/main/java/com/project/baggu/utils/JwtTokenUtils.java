@@ -82,7 +82,6 @@ public class JwtTokenUtils {
                 .compact();
     }
 
-
     public static long getAccessPeriod(){
         return ACCESS_PERIOD;
     }

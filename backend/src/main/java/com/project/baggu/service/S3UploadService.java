@@ -46,6 +46,9 @@ public class S3UploadService {
 
   private AmazonS3 amazonS3Client;
 
+  private final String CLOUD_FRONT_DOMAIN = "https://d21fcuishx9n20.cloudfront.net/";
+  private final String S3_DOMAIN = "https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/";
+
   @PostConstruct
   private void init(){
     this.localDir = System.getProperty("user.dir") + staticDir;
@@ -84,7 +87,7 @@ public class S3UploadService {
     try{
       //S3로 파일 업로드
       String fileName = dirName + "/" + uploadFile.getName();
-      String uploadUrl = putS3(uploadFile, bucket, fileName);
+      String uploadUrl = CLOUD_FRONT_DOMAIN + putS3(uploadFile, bucket, fileName).replace(S3_DOMAIN,"");
 
       //로컬 파일 삭제
       removeLocalFile(uploadFile);

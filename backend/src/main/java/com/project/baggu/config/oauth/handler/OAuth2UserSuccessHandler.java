@@ -43,7 +43,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
 
     //token 설정
-    response.setHeader("access-token",tokenInfo.getAccessToken());
+    response.setHeader("Authorization",tokenInfo.getAccessToken());
     CookieUtils.addCookie(response,"refresh-token",tokenInfo.getRefreshToken(), REFRESH_PERIOD);
 
     //임시 코드
@@ -60,6 +60,7 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     AuthLoginDto authLoginDto = AuthLoginDto.builder()
         .isSigned(true)
+        .kakaoId(oAuth2KakaoUser.getKakaoId())
         .user(UserProfileDto.builder().userIdx(oAuth2KakaoUser.getUserIdx()).role(oAuth2KakaoUser.getRole()).nickname(oAuth2KakaoUser.getNickname()).build())
         .build();
 
