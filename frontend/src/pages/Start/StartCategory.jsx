@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // store
-import signUpstore from 'store/store';
+import { signUpStore } from 'store/store';
 
 // API
 import { defaultInstance, authInstance } from 'api/axios';
@@ -86,9 +86,18 @@ function StartCategory() {
   ];
 
   // store
-  const saveCategory = signUpstore(state => state.saveCategory);
-  const { email, nickname, category, si, gu, dong, lng, lat, kakaoId } =
-    signUpstore(state => state);
+  const {
+    email,
+    nickname,
+    category,
+    si,
+    gu,
+    dong,
+    lng,
+    lat,
+    kakaoId,
+    saveCategory,
+  } = signUpstore(state => state);
 
   // 클릭된 카테고리 수,
   const clickedCount = Object.values(clickedCategories).filter(
@@ -100,7 +109,6 @@ function StartCategory() {
     try {
       const response = await defaultInstance.post(requests.SIGNUP, {
         data: {
-          email: email,
           nickname: nickname,
           category: category_types,
           si: si,
@@ -108,7 +116,7 @@ function StartCategory() {
           dong: dong,
           lng: lng,
           lat: lat,
-          kakaoId: kakaoId,
+          kakaoId: '12',
         },
       });
       return response.data;
@@ -130,6 +138,7 @@ function StartCategory() {
       // API 요청
       sign_up(category_types)
         .then(res => {
+          console.log('sign up success', res);
           navigate('/start/ready');
         })
         .catch(error => {

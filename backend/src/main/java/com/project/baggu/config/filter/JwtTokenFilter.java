@@ -22,7 +22,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final String excludeUrl = "/auth/login/kakao";
+    private final String excludeUrl = "/baggu/auth/login/kakao";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
