@@ -56,7 +56,7 @@ function App() {
             <Route path="ready" element={<StartReady />} />
             <Route path="introduce" element={<StartIntroduce />} />
           </Route>
-          <Route path="/auth/callback/kakao" element={<KakaoLogin />} />
+          <Route path="/kakaoLogin" element={<KakaoLogin />} />
           <Route path="/userReview" element={<UserReview />} />
           <Route path="/bagguReview" element={<BagguReview />} />
           <Route path="/" element={<Home />} />
