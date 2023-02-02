@@ -4,7 +4,8 @@ import { devtools } from 'zustand/middleware';
 // 유저 정보 전역 상태
 export const userStore = create(
   devtools(set => ({
-    token: '',
+    isLoggedIn: localStorage.getItem('isLoggedIn') || false,
+    token: localStorage.getItem('token') || '',
     userIdx: '',
     dong: '',
     saveToken: token => set({ token: token }),
