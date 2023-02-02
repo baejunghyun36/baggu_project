@@ -1,8 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { useMutation } from 'react-query';
 import axios from 'axios';
 import TopBar2 from '../../components/common/TopBar2';
+import { defaultInstance, authInstance } from 'api/axios';
+import requests from 'api/config';
+
 function ItemCreate() {
   const [itemTitle, setItemtitle] = useState('');
   const [itemTitleError, setItemTitleError] = useState('');
@@ -12,7 +16,21 @@ function ItemCreate() {
   const [itemImageError, setItemImageError] = useState('');
   const [itemCategories, setItemCategories] = useState('');
   const [itemCategoriesError, setItemCategoriesError] = useState('');
-  // const []
+  const [token, setToken] = useState(null);
+  useEffect(() => {
+    const get_token = async () => {
+      try {
+        const { data } = await defaultInstance.post(requests.TEST_TOKEN, {
+          data: { userIdx: 1 },
+        });
+        setToken(data);
+        console.log(token);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    get_token();
+  }, []);
   const handleItemImage = event => {
     setItemImage(event.target.files);
   };
@@ -55,33 +73,34 @@ function ItemCreate() {
       setItemCategoriesError('');
     }
     if (!hasError) {
-      // Submit the form data to the server or perform other actions
+      const post_item_create = async () => {
+        try {
+          console.log(token);
+          const response = await authInstance.post(requests.POST_ITEM, {
+            data: {
+              userIdx: 1,
+              category: 'TYPE0',
+              title: itemTitle,
+              content: itemContent,
+              itemImges: itemImage, //file 배열,
+              itemFirstImgIdx: 0, //file 배열에서 대표 이미지의 인덱스
+            },
+            headers: {
+              'access-token': token,
+            },
+          });
+
+          return response.data;
+        } catch (error) {
+          throw error;
+        }
+      };
+      post_item_create();
     }
   };
-
-  // const [mutate, { status, error }] = useMutation(async data => {
-  //   const response = await axios.post('https://my-api.com/data', data);
-  //   return response.data;
-  // });
-
-  // const handleSubmit = event => {
-  //   event.preventDefault();
-  //   mutate({
-  //     name: event.target.name.value,
-  //     email: event.target.email.value,
-  //   });
-  // };
   return (
     <div>
       <TopBar2 pageTitle="게시글 작성" />
-      {/* <form onSubmit={handleSubmit}>
-        <input type="text" name="name" />
-        <input type="email" name="email" />
-        <button type="submit">Submit</button>
-        {status === 'loading' && <div>Loading...</div>}
-        {status === 'error' && <div>Error: {error.message}</div>}
-        {status === 'success' && <div>Success!</div>}
-      </form> */}
       <form onSubmit={handleSubmit}>
         <input type="file" accept="img/*" onChange={handleItemImage} />
         {itemImageError && <div style={{ color: 'red' }}>{itemImageError}</div>}

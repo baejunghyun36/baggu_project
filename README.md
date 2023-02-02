@@ -8,6 +8,7 @@
 - merge는 각자 알아서 하지 않고 모여있을 때 하기
 - merge 후 브랜치 바로 삭제하기
 - commit은 최소 1인과 함께하는 코드 리뷰와 함께 진행하기
+- release branch와 main branch 에서 직접 작업하지 않기
 
 ## 2. 브랜치 규칙
 
