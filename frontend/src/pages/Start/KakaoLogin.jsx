@@ -40,9 +40,10 @@ function KakaoLogin() {
     // 3. 가입된 사용자인지 확인
     check_is_signed(AUTHORIZE_CODE)
       .then(response => {
-        // access-token localStorage에 저장
+        // access-token, isLoggedIn localStorage에 저장
         const access_token = response.headers['authorization'];
-        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('isLoggedIn', true);
 
         // kakaoId 저장
         saveToken(access_token);
