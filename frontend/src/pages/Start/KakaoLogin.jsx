@@ -6,66 +6,51 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { defaultInstance, authInstance } from 'api/axios';
 import requests from 'api/config';
 
-// Store
-import { signUpStore, userStore } from 'store/store';
-
-// Main Component
 function KakaoLogin() {
   // 2. Redirect URI로 받은 인가코드 저장
   const location = useLocation();
   const navigate = useNavigate();
-  const PARAMS = new URL(document.location).searchParams;
-  // URI에서 받은 인가코드
-  const AUTHORIZE_CODE = PARAMS.get('code');
+  // 인가코드
+  const AUTHORIZE_CODE = location.search.split('=')[1];
+  console.log(AUTHORIZE_CODE);
+  const REST_API_KEY = 'dcea227af64fcf0366810e14b850e4d6';
+  const REDIRECT_URI = 'http://localhost:8080/auth/callback/kakao';
 
-  // 3. 토큰 발급 후 서버로 가입된 사용자인지 아닌지 get 요청
-  // localstorage에 access-token 저장
+  // 4. 토큰 발급 후 서버로 가입된 사용자인지 아닌지 get 요청
   const check_is_signed = async code => {
     try {
-      console.log('send request');
-      const response = await defaultInstance.get(
+      const { data } = await defaultInstance.get(
         requests.CHECK_IS_SIGNED(code, 'jijj123kl2jlkhjfkuhddfnhh22')
       );
-      return response;
+      return data;
     } catch (error) {
       throw error;
     }
   };
 
-  // store
-  const { saveKakaoId } = signUpStore(state => state);
-  const { saveToken, saveUserIdx, saveDong } = userStore(state => state);
+  // 3. 토큰 받기
+  const getKakaoToken = () => {
+    fetch('https://kauth.kakao.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${AUTHORIZE_CODE}`,
+    })
+      .then(res => res.json())
+      .then(data => {
+        const code = data.access_token;
+        check_is_signed(code).then(data => {
+          // 가입된 사용자라면 홈으로
+          if (data.isSigned) navigate('/');
+          // 가입되지 않은 사용자라면 온보딩 페이지로
+          else navigate('/start/nickname');
+        });
+      });
+  };
 
   useEffect(() => {
-    // 3. 가입된 사용자인지 확인
-    check_is_signed(AUTHORIZE_CODE)
-      .then(response => {
-        // access-token, isLoggedIn localStorage에 저장
-        const access_token = response.headers['authorization'];
-        localStorage.setItem('token', access_token);
-        localStorage.setItem('isLoggedIn', true);
-
-        // kakaoId 저장
-        saveToken(access_token);
-        saveKakaoId(response.kakaoId);
-        saveUserIdx(response.data.user.userIdx);
-        console.log('userIdx', response.data.user.userIdx);
-
-        // 리다이렉트
-        if (response.data.signed) {
-          // 가입된 사용자
-          // token, kakaoId, userIdx, dong 모두 저장
-          saveDong(response.data.user.dong);
-          navigate('/');
-        } else {
-          // 가입되지 않은 사용자
-          // token, kakaoId, userIdx 저장
-          navigate('/start/nickname');
-        }
-      })
-      .catch(error => {
-        throw error;
-      });
+    if (!location.search) return;
+    // 2. 토큰 받기
+    getKakaoToken();
   }, []);
   return <div>KakaoLogin</div>;
 }

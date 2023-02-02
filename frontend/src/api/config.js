@@ -1,16 +1,12 @@
 const requests = {
-  // 소정님 IP
-  // base_url: 'http://70.12.247.158:8080',
-
-  // 안채님 IP
-  base_url: 'http://70.12.247.174:8080',
+  base_url: 'http://70.12.247.158:8080',
 
   // 개발 테스트용 토큰 발급
   TEST_TOKEN: '/baggu/auth/token/dev',
 
   // 카카오로 시작하기 (GET)
   CHECK_IS_SIGNED(code, state) {
-    return `/baggu/auth/login/kakao?code=${code}&state=${state}`;
+    return `/auth/login?code=${code}&state=${state}`;
   },
 
   // 유저 회원가입 (POST)

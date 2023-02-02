@@ -39,7 +39,7 @@ spring:
           kakao:
             authorization-grant-type: authorization_code
             client-id: dcea227af64fcf0366810e14b850e4d6
-            redirect-uri: http://localhost:3000/kakaoLogin
+            redirect-uri: http://localhost:8080/auth/callback/kakao
             client-authentication-method: POST
             client-name: kakao
         provider:

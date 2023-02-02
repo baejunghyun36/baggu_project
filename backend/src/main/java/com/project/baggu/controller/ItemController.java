@@ -57,8 +57,6 @@ public class ItemController {
   @PostMapping
   public BaseIsSuccessDto registItem(@ModelAttribute UserRegistItemDto u) throws Exception {
 
-    System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-
     Long authUserIdx = Long.parseLong(
         SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
     if (authUserIdx != u.getUserIdx()) {
