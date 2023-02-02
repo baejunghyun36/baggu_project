@@ -1,4 +1,4 @@
-# 컨벤션 정리!
+# 컨벤션 정리!!!
 
 # ✔ Git Commit Convention
 
