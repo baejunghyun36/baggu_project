@@ -108,5 +108,14 @@ public class Item extends BaseTimeEntity {
     user.getItems().add(this);
   }
 
+  public List<String> getItemImageUrls(){
+    List<String> itemImageUrls = new ArrayList<>();
+    this.itemImages.forEach((itemImage)->{
+      itemImageUrls.add(itemImage.getItemImg());
+    });
+
+    return itemImageUrls;
+  }
+
 
 }

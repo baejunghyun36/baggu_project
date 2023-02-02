@@ -2,21 +2,22 @@ package com.project.baggu.service;
 
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.ItemImage;
-import com.project.baggu.domain.ItemKeep;
 import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.TradeDetail;
 import com.project.baggu.domain.TradeRequest;
 import com.project.baggu.domain.User;
 import com.project.baggu.domain.enumType.TradeState;
+import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;
 import com.project.baggu.dto.TradeRequestDto;
 import com.project.baggu.dto.UpdateItemDto;
-import com.project.baggu.dto.UpdatedItemDto;
+import com.project.baggu.dto.UpdateItemResponseDto;
 import com.project.baggu.dto.UserDto;
 import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
+import com.project.baggu.exception.BaseException;
 import com.project.baggu.repository.ItemImageRepository;
 import com.project.baggu.repository.ItemKeepRepository;
 import com.project.baggu.repository.ItemRepository;
@@ -104,13 +105,45 @@ public class ItemService {
   }
 
   @Transactional
-  public UpdateItemDto updateItem(Long itemIdx, UpdatedItemDto item) {
+  public UpdateItemResponseDto updateItem(Long itemIdx, UpdateItemDto updateItemDto) {
 
-    Item i = itemRepository.findById(itemIdx).get();
-    i.setTitle(item.getTitle());
-    i.setCategory(item.getCategory());
-    i.setContent(item.getContent());
-    return new UpdateItemDto(i.getCategory().ordinal(), i.getTitle(), i.getContent());
+    Item item = itemRepository.findById(itemIdx).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
+    item.setTitle(updateItemDto.getTitle());
+    item.setCategory(updateItemDto.getCategory());
+    item.setContent(updateItemDto.getContent());
+
+    //업로드 이미지들에 대해서 요청을 수행한다.
+    //그 전에 이미 저장된 이미지들을 삭제한다.
+    item.getItemImages().forEach((itemImage)->{
+      itemImageRepository.delete(itemImage);
+    });
+
+    item.setItemImages(new ArrayList<>());
+
+    //현재 저장된 이미지 리스트를 갱신하는데, 이 때 대표 이미지는 따로 저장해줘야한다.
+    int tempImageOrder = 0;
+    List<String> uploadImageUrls = updateItemDto.getUploadImgUrls();
+    for(int i=0; i<uploadImageUrls.size(); i++){
+      //해당 이미지가 대표 이미지라면
+      if(i==updateItemDto.getItemFirstImgIdx()){
+        item.setFirstImg(uploadImageUrls.get(i));
+        continue;
+      }
+
+      //해당 이미지가 대표 이미지가 아니라면 순서에 맞게 저장해준다.
+      ItemImage itemImage = ItemImage.builder()
+              .itemImg(uploadImageUrls.get(i))
+              .imgOrder(tempImageOrder++)
+              .item(item)
+              .build();
+
+      item.getItemImages().add(itemImage);
+      itemImageRepository.save(itemImage);
+    }
+
+    itemRepository.save(item);
+
+    return new UpdateItemResponseDto(item.getCategory().ordinal(), item.getTitle(), item.getContent(), item.getFirstImg(),item.getItemImageUrls());
   }
 
   @Transactional
@@ -133,19 +166,23 @@ public class ItemService {
     if(u.getItemImges().size()>0){
       ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImges(), IMAGE_DIR_ITEM);
 
+      int tempImageOrder = 0;
       for(int i=0; i<uploadUrls.size(); i++){
+        if(i==u.getItemFirstImgIdx()){
+          item.setFirstImg(uploadUrls.get(i));
+          continue;
+        }
+
         ItemImage itemImage = ItemImage.builder()
-            .imgOrder(i+1)
-            .itemImg(uploadUrls.get(i))
-            .build();
+                .imgOrder(tempImageOrder++)
+                .itemImg(uploadUrls.get(i))
+                .item(item)
+                .build();
 
         itemImage.setItem(item);
 
         itemImageRepository.save(itemImage);
       }
-
-      //첫번째 이미지는 대표이미지로 저장
-      item.setFirstImg(uploadUrls.get(u.getItemFirstImgIdx()));
     }
 
     itemRepository.save(item);
@@ -221,5 +258,10 @@ public class ItemService {
     Item item = itemRepository.findById(itemIdx).get();
     user.setTradeCount(user.getTradeCount()+1);
     item.setUserRequestCount(item.getUserRequestCount()+1);
+  }
+
+  public Long getUserIdxByItemIdx(Long itemIdx){
+    return itemRepository.findById(itemIdx).orElseThrow(()-> new BaseException(
+            BaseResponseStatus.DATABASE_GET_ERROR)).getUser().getUserIdx();
   }
 }

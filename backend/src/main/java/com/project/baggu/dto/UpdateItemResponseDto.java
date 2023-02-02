@@ -1,15 +1,17 @@
 package com.project.baggu.dto;
 
-import com.project.baggu.domain.enumType.CategoryType;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdatedItemDto {
+public class UpdateItemResponseDto {
 
-  private CategoryType category;
+  private int category;
   private String title;
   private String content;
+  private String itemFirstImgUrl;
+  private List<String> itemImgUrls;
 }
