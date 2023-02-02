@@ -40,6 +40,7 @@ spring:
             authorization-grant-type: authorization_code
             client-id: dcea227af64fcf0366810e14b850e4d6
             redirect-uri: http://localhost:3000/kakaoLogin
+#            redirect-uri: http://localhost:8080/baggu/auth/callback/kakao
             client-authentication-method: POST
             client-name: kakao
         provider:
@@ -48,10 +49,11 @@ spring:
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
-  cache:
-    type: redis
-    redis:
-      cache-null-values: true
+#redis설정
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
 #log설정
 logging:
   level:

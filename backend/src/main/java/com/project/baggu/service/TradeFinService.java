@@ -1,6 +1,6 @@
 package com.project.baggu.service;
 
-import static com.project.baggu.config.RedisConfig.RedisCacheKey.TRADE_FIN_LIST;
+//import static com.project.baggu.config.RedisConfig.RedisCacheKey.TRADE_FIN_LIST;
 
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.BaseResponseStatus;
@@ -36,7 +36,7 @@ public class TradeFinService {
   private final HeartRepository heartRepository;
 
 
-  @Cacheable(value = "trade", cacheManager = "redisCacheManager")
+//  @Cacheable(value = "trade", cacheManager = "redisCacheManager")
   public List<TradeFinDto> getTradeFinList(Long userIdx) {
     User user = userRepository.findById(userIdx).orElseThrow();
 
