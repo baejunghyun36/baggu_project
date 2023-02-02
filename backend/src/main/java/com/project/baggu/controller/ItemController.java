@@ -4,6 +4,7 @@ import com.project.baggu.dto.BaseIsSuccessDto;
 import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.TradeRequestDto;
+import com.project.baggu.dto.TradeRequestNotifyDto;
 import com.project.baggu.dto.UpdateItemDto;
 import com.project.baggu.dto.UpdateItemResponseDto;
 import com.project.baggu.dto.UploadImagesDto;
@@ -98,9 +99,9 @@ public class ItemController {
   //POST baggu/item/{itemIdx}
   //유저가 신청메세지와 함께 바꾸신청을 보낸다.
   @PostMapping("/{itemIdx}")
-  public void tradeRequest(@PathVariable("itemIdx") Long itemIdx, @RequestBody TradeRequestDto tradeRequestDto){
+  public TradeRequestNotifyDto tradeRequest(@PathVariable("itemIdx") Long itemIdx, @RequestBody TradeRequestDto tradeRequestDto){
 
-    itemService.tradeRequest(itemIdx, tradeRequestDto);
+    return itemService.tradeRequest(itemIdx, tradeRequestDto);
   }
 
 

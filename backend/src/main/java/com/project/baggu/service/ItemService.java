@@ -12,6 +12,7 @@ import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;
 import com.project.baggu.dto.TradeRequestDto;
+import com.project.baggu.dto.TradeRequestNotifyDto;
 import com.project.baggu.dto.UpdateItemDto;
 import com.project.baggu.dto.UpdateItemResponseDto;
 import com.project.baggu.dto.UserDto;
@@ -241,7 +242,7 @@ public class ItemService {
   }
 
   @Transactional
-  public void tradeRequest(Long itemIdx, TradeRequestDto tradeRequestDto) {
+  public TradeRequestNotifyDto tradeRequest(Long itemIdx, TradeRequestDto tradeRequestDto) {
 
     TradeRequest tradeRequest = new TradeRequest();
     tradeRequest.setRequestUser(userRepository.findById(tradeRequestDto.getRequestUserIdx()).get());
@@ -258,6 +259,14 @@ public class ItemService {
     Item item = itemRepository.findById(itemIdx).get();
     user.setTradeCount(user.getTradeCount()+1);
     item.setUserRequestCount(item.getUserRequestCount()+1);
+
+    TradeRequestNotifyDto tn = new TradeRequestNotifyDto();
+
+    tn.setReceiveUserIdx(item.getUser().getUserIdx());
+    tn.setType(0);
+    tn.setTypeIdx(item.getItemIdx());
+    tn.setRequestUserNickName(item.getUser().getNickname());
+    return tn;
   }
 
   public Long getUserIdxByItemIdx(Long itemIdx){
