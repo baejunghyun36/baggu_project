@@ -76,7 +76,6 @@ function App() {
         </Routes>
         <BottomNav />
       </BrowserRouter>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }
