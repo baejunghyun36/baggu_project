@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  baggu-backend:
+    container_name: baggu-backend
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    environment:
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=A708
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://baggu-database-deploy:3306/baggu
+    ports:
+      - "9999:9999"
+    restart: always
+  baggu-frontend:
+    container_name: baggu-frontend
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    restart: always
+networks:
+  default:
+    external:
+      name: cd_network

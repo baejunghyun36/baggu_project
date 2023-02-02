@@ -20,39 +20,22 @@ const Wrapper = styled.div`
         ${tw`h-5`}
       }
     }
+
     .kakao {
-      ${tw`w-[80%]`}
+      ${tw`w-[240px]`}
     }
   }
 `;
 
 function StartLogin() {
   const navigate = useNavigate();
+  const REST_API_KEY = 'dcea227af64fcf0366810e14b850e4d6';
+  const REDIRECT_URI = 'http://localhost:8080/auth/callback/kakao';
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&state=jijj123kl2jlkhjfkuhddfnhh22`;
 
+  // 1. 인가 코드 받기
   const kakaoHandler = () => {
-    // 사용자가 회원가입한 사용자인지 아닌지
-    let isSignedUp = false;
-
-    // 백엔드로 카카오 로그인 요청 후 회원가입된 사용자인지 아닌지의 값을 boolean으로 응답받기
-
-    // API URL
-    // const API_URL = 'urlurlurl';
-
-    //   axios.get(API_URL, {
-    //     data: {
-    //       //...
-    //     },
-    //   });
-    // 구현용 임시 변경
-    //   isSignedUp = true;
-
-    if (isSignedUp) {
-      // 가입된 사용자의 경우 home으로
-      navigate('/');
-    } else {
-      // 가입되지 않은 사용자의 경우 nickname 설정 페이지로
-      navigate('/start/nickname');
-    }
+    window.location.href = KAKAO_AUTH_URL;
   };
 
   return (

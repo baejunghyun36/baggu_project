@@ -5,6 +5,9 @@ import { useState } from 'react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// store
+import signUpstore from 'store/store';
+
 // components
 import TopBar2 from 'components/common/TopBar2';
 import FormSubmitBtn from 'components/common/FormSubmitBtn';
@@ -45,11 +48,15 @@ const BtnContainer = styled.div`
   ${tw`flex pt-2 pb-2 px-4 fixed bottom-0 w-full h-[98px]`}
 `;
 
+// Main Component
 function StartNickname() {
   const [nickname, setNickname] = useState('');
   const [nicknameMessage, setNicknameMessage] = useState('');
   const [isTouched, setIsTouched] = useState(false);
   const [isNicknameValid, setIsNicknameValid] = useState(false);
+
+  // store
+  const { saveNickname } = signUpstore(state => state);
 
   // input이 입력될 때마다 유효성 검사를 진행
   // 입력 중간에 유효성이 통과되면 제출버튼 활성화
@@ -79,7 +86,7 @@ function StartNickname() {
   const submitHandler = () => {
     // {nickname : nickname}으로 중앙저장소에 저장
     if (isValid) {
-      console.log({ nickname: nickname });
+      saveNickname(nickname);
       navigate('/start/town');
     }
   };
