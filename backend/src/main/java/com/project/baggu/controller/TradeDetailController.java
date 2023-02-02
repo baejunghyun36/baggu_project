@@ -1,6 +1,7 @@
 package com.project.baggu.controller;
 
 import com.project.baggu.domain.TradeDetail;
+import com.project.baggu.dto.ChatRoomDto;
 import com.project.baggu.service.TradeDetailService;
 import com.project.baggu.service.TradeRequestService;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,9 @@ public class TradeDetailController {
   private final TradeDetailService tradeDetailService;
   //신청받은 아이템 중 교환할 물건을 선택한다.
   @GetMapping("/{tradeDetailIdx}")
-  public void tradeRequestSelect(@PathVariable("tradeDetailIdx") Long tradeDetailIdx){
+  public ChatRoomDto tradeRequestSelect(@PathVariable("tradeDetailIdx") Long tradeDetailIdx){
 
-    tradeDetailService.tradeRequestSelect(tradeDetailIdx);
+    return tradeDetailService.tradeRequestSelect(tradeDetailIdx);
   }
 
   @DeleteMapping("/{tradeDetailIdx}")
