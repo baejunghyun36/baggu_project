@@ -14,6 +14,12 @@ public enum BaseResponseStatus {
   FILE_CONVERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"파일 저장에 실패했습니다."),
   DATABASE_GET_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"객체를 찾을 수 없습니다."),
   UNVALID_PARAMETER(HttpStatus.NOT_FOUND,"요청 파라미터를 확인해주세요."),
+
+
+  //500
+  //  1. db get 에러
+  NOT_FOUND_REFRESH_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR, "리프레시 토큰을 찾을 수 없습니다."),
+
   FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"파일 업로드에 실패했습니다.");
 
   private final HttpStatus status;
