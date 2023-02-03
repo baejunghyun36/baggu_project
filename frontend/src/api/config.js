@@ -1,9 +1,9 @@
 const requests = {
   // baggu 공식
-  // base_url: 'http://i8A708.p.ssafy.io:9999',
+  base_url: 'http://baggu.shop/api',
 
   // 소정님 IP
-  base_url: 'http://70.12.247.158:8080',
+  // base_url: 'http://70.12.247.158:8080',
 
   // 안채님 IP
   // base_url: 'http://70.12.247.174:8080',
