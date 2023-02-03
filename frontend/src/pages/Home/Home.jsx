@@ -7,7 +7,6 @@ import FeedList from 'components/common/FeedList';
 import TabBar from 'components/common/TabBar';
 
 function Home() {
-  // const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(0);
   const tabNames = ['최근물건', '최근바꾸'];
   const getIndex = data => {

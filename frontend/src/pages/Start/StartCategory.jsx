@@ -97,7 +97,7 @@ function StartCategory() {
     lat,
     kakaoId,
     saveCategory,
-  } = signUpstore(state => state);
+  } = signUpStore(state => state);
 
   // 클릭된 카테고리 수,
   const clickedCount = Object.values(clickedCategories).filter(
