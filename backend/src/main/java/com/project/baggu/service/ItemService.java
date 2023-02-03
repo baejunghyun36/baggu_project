@@ -164,8 +164,8 @@ public class ItemService {
     itemRepository.save(item);
 
     //이미지 존재시 이미지 저장 -> 순서대로
-    if(u.getItemImges().size()>0){
-      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImges(), IMAGE_DIR_ITEM);
+    if(u.getItemImgs().size()>0){
+      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImgs(), IMAGE_DIR_ITEM);
 
       int tempImageOrder = 0;
       for(int i=0; i<uploadUrls.size(); i++){
