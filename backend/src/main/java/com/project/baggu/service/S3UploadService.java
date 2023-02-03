@@ -1,5 +1,7 @@
 package com.project.baggu.service;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -8,13 +10,11 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 
+import com.project.baggu.exception.BaseResponseStatus;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,133 +44,144 @@ public class S3UploadService {
 
   private String localDir;
 
-  private AmazonS3 amazonS3Client;
-
   private final String CLOUD_FRONT_DOMAIN = "https://d21fcuishx9n20.cloudfront.net/";
   private final String S3_DOMAIN = "https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/";
 
+  private AmazonS3 amazonS3Client;
+
   @PostConstruct
-  private void init(){
+  private void init() {
+    //실제 프로젝트 경로와 대상 폴더 경로를 합쳐 최종 저장 디렉토리 생성
     this.localDir = System.getProperty("user.dir") + staticDir;
 
     //임시 로컬 저장소가 없을 경우 생성
     makeDirectory(localDir);
 
     //amazonS3Client 생성
-     this.amazonS3Client = AmazonS3ClientBuilder
+    this.amazonS3Client = AmazonS3ClientBuilder
         .standard()
-        .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(acceesKey, privateKey)))
+        .withCredentials(
+            new AWSStaticCredentialsProvider(new BasicAWSCredentials(acceesKey, privateKey)))
         .withRegion(Regions.AP_NORTHEAST_2)
         .build();
   }
 
-  public ArrayList<String> upload(List<MultipartFile> multipartFiles, String dirName) throws Exception{
+  public ArrayList<String> upload(List<MultipartFile> multipartFiles, String dirName) {
+
     ArrayList<String> uploadUrls = new ArrayList<>();
 
-    multipartFiles.forEach((file) -> {
-      try {
-        uploadUrls.add(upload(file,dirName));
-      } catch (IOException e) {
-        throw new BaseException(BaseResponseStatus.FILE_UPLOAD_ERROR);
-      }
-    });
-
+    multipartFiles.forEach((file) -> uploadUrls.add(upload(file, dirName)));
     return uploadUrls;
   }
 
-  public String upload(MultipartFile multipartFile, String dirName)
-      throws IOException, BaseException {
-    //로컬 저장 후 업로드 가능 형태로 변환
-    File uploadFile = convert(multipartFile)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.FILE_CONVERT_ERROR));
+  public String upload(MultipartFile multipartFile, String dirName) {
 
-    try{
+      //로컬 저장 후 업로드 가능 형태로 변환
+      File uploadFile = convert(multipartFile)
+          .orElseThrow(() -> new BaseException(BaseResponseStatus.FILE_SAVE_ERROR));
+
       //S3로 파일 업로드
       String fileName = dirName + "/" + uploadFile.getName();
-      String uploadUrl = CLOUD_FRONT_DOMAIN + putS3(uploadFile, bucket, fileName).replace(S3_DOMAIN,"");
+      String uploadUrl =
+          CLOUD_FRONT_DOMAIN + putS3(uploadFile, bucket, fileName).replace(S3_DOMAIN, "");
 
       //로컬 파일 삭제
       removeLocalFile(uploadFile);
 
       return uploadUrl;
-    } catch(Exception e){
-      throw new BaseException(BaseResponseStatus.FILE_UPLOAD_ERROR);
-    }
+
   }
 
-  public boolean delete(String uploadUrl){
-    try{
-      String fileObjectKey = uploadUrl.replace("https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/","");
+  public boolean delete(String uploadUrl) {
+    try {
+      String fileObjectKey = uploadUrl.replace(
+          "https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/", "");
       amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileObjectKey));
-    } catch(Exception e){
+    } catch (Exception e) {
       return false;
     }
     return true;
   }
 
-  private void removeLocalFile(File file){
-    file.delete();
+  private void removeLocalFile(File file) {
+    try {
+      file.delete();
+    } catch (SecurityException se) {
+      throw new BaseException(BaseResponseStatus.FILE_DELETE_ERROR);
+    }
   }
 
   // S3로 업로드
   private String putS3(File uploadFile, String bucket, String fileName) {
-    amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(
-        CannedAccessControlList.PublicRead));
-    return amazonS3Client.getUrl(bucket, fileName).toString();
+    try {
+
+      amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(
+          CannedAccessControlList.PublicRead));
+      return amazonS3Client.getUrl(bucket, fileName).toString();
+
+    } catch (AmazonServiceException ase) {
+      throw new BaseException(BaseResponseStatus.FILE_SAVE_ERROR);
+    } catch (SdkClientException sce) {
+      throw new BaseException(BaseResponseStatus.S3_CLIENT_ERROR);
+    }
   }
 
 
   //로컬 저장 후 파일 반환
-  private Optional<File> convert(MultipartFile multipartFile) throws BaseException {
-    try{
+  private Optional<File> convert(MultipartFile multipartFile) {
+    try {
       isValidFile(multipartFile);
 
-      String originalFileName = multipartFile.getOriginalFilename();
-      String newFileName = createNewFileName(originalFileName);
+      String originalFileName = multipartFile.getOriginalFilename();  //들어온 파일명
+      String newFileName = createNewFileName(originalFileName); //난수회된 파일명
 
-      File file = new File(localDir + newFileName);
+      File file = new File(localDir + newFileName); //파일 로컬에 저장
       multipartFile.transferTo(file);
 
       return Optional.of(file);
-    } catch(Exception e){
-      throw new BaseException(BaseResponseStatus.FILE_CONVERT_ERROR);
+    } catch (Exception e) {
+      throw new BaseException(BaseResponseStatus.FILE_SAVE_ERROR, e.toString());
     }
   }
 
   //파일명 난수화
-  private String createNewFileName(String originalFileName) throws BaseException {
+  private String createNewFileName(String originalFileName) {
     String extension = getExtension(originalFileName);
     String uuid = UUID.randomUUID().toString();
-    return uuid+"."+extension;
+    return uuid + "." + extension;
   }
 
   //파일 확장자 검사 후 추출
-  private String getExtension(String originalFileName) throws BaseException {
-    String extension = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
-    if(extension==null || !(extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg"))){
-      throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+  private String getExtension(String originalFileName) {
+
+    try{
+      String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1)
+          .toLowerCase();
+      if(!(extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg"))) {
+        throw new BaseException(BaseResponseStatus.FILE_FORMAT_ERROR);
+      }
+      return extension;
+    } catch(IndexOutOfBoundsException iob){
+      throw new BaseException(BaseResponseStatus.FILE_FORMAT_ERROR);
     }
-    return extension;
   }
 
   //제대로 된 파일인지 확인
   private void isValidFile(MultipartFile file) throws BaseException {
-    if(file.isEmpty() || file.getSize()==0){
-      throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+    if (file.isEmpty() || file.getSize() == 0) {
+      throw new BaseException(BaseResponseStatus.FILE_UPLOAD_ERROR);
     }
   }
 
 
   private void makeDirectory(String fileDir) {
-    File Folder = new File(fileDir);
-
-    if (!Folder.exists()) {
-      try {
-        Folder.mkdir(); //폴더 생성합니다.
-      } catch (Exception e) {
-        e.getStackTrace();
+    try {
+      File Folder = new File(fileDir);
+      if (!Folder.exists()) {
+        Folder.mkdir();
       }
+    } catch (Exception e) {
+      throw new BaseException(BaseResponseStatus.FILE_DIRECTORY_MAKE_ERROR, e.toString());
     }
   }
-
 }

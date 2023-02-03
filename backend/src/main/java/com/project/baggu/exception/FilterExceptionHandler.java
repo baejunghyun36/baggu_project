@@ -1,7 +1,6 @@
 package com.project.baggu.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.baggu.dto.BaseResponseStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import javax.servlet.FilterChain;

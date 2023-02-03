@@ -2,8 +2,9 @@ package com.project.baggu.controller;
 
 import com.project.baggu.domain.TokenInfo;
 import com.project.baggu.dto.AuthDevTokenDto;
+import com.project.baggu.dto.BaseIsSuccessDto;
 import com.project.baggu.dto.BaseMessageResponse;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.utils.CookieUtils;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +29,7 @@ public class AuthController {
   @Autowired
   private final JwtTokenService jwtTokenService;
 
+  //access token 재발급 요청
   @GetMapping("/token")
   public BaseMessageResponse tokenRefresh(HttpServletRequest request, HttpServletResponse response){
     try{
@@ -44,6 +45,7 @@ public class AuthController {
     return new BaseMessageResponse("ACCEPT");
   }
 
+  //dev용 토큰 발급
   @PostMapping("/token/dev")
   public String tokenAllocateForDev(@RequestBody AuthDevTokenDto authDevTokenDto, HttpServletResponse response){
 
@@ -56,24 +58,9 @@ public class AuthController {
 //      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx()).getAccessToken();
   }
 
-  @GetMapping("/token/dev/{userIdx}")
-  public TokenInfo tokenAllocateForDev(@PathVariable("userIdx") Long userIdx, HttpServletResponse response){
-
-    TokenInfo tokenInfo = JwtTokenUtils.allocateDevToken(userIdx);
-    response.addHeader("Authorization", tokenInfo.getAccessToken());
-    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
-        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
-
-    return tokenInfo;
-//      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx()).getAccessToken();
+  @GetMapping("/healthCheck")
+  public BaseIsSuccessDto healthCheck(){
+    return new BaseIsSuccessDto(true);
   }
-
-//  @GetMapping("/baggu/auth/login")
-//  public boolean loginUserTrueOrFalse(
-//      @RequestParam(name = "code") String code,
-//      @RequestParam(name = "state") String state){
-//    String email = "bae1004kin@naver.com";
-//    return userService.findUserByEmail(email);
-//  }
 
 }
