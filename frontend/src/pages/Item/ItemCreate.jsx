@@ -6,6 +6,7 @@ import { defaultInstance, authInstance } from 'api/axios';
 import requests from 'api/config';
 import Preview from './Preview';
 import ImageAddButton from './ImageAddButton';
+import ItemCategory from './ItemCategory';
 
 function ItemCreate() {
   const [itemTitle, setItemtitle] = useState('');
@@ -17,6 +18,9 @@ function ItemCreate() {
   const [itemCategories, setItemCategories] = useState('');
   const [itemCategoriesError, setItemCategoriesError] = useState('');
   const [token, setToken] = useState(null);
+  const [page, setPage] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('카테고리 선택');
+
   useEffect(() => {
     const get_token = async () => {
       try {
@@ -35,6 +39,9 @@ function ItemCreate() {
     const files = Array.from(event.target.files);
     setItemImage(prevItemImage => [...prevItemImage, ...files]);
   };
+  const moveToCategoryPage = () => {
+    setPage(1);
+  };
   const handleClickAddImage = () => {
     document.getElementById('imageInput').click();
   };
@@ -48,8 +55,11 @@ function ItemCreate() {
   const handleItemContentChange = event => {
     setItemcontent(event.target.value);
   };
-  const handleItemCategoriesChange = event => {
-    setItemCategories(event.target.value);
+  const handleItemCategoriesChange = value => {
+    setItemCategories(value);
+  };
+  const handleSelectedCategory = name => {
+    setSelectedCategory(name);
   };
   const handleSubmit = event => {
     event.preventDefault();
@@ -83,7 +93,7 @@ function ItemCreate() {
       data.append('userIdx', '1');
       data.append('title', itemTitle);
       data.append('content', itemContent);
-      data.append('category', 'TYPE0');
+      data.append('category', itemCategories);
       itemImage.forEach((image, index) => {
         data.append('itemImgs', image);
       });
@@ -112,58 +122,63 @@ function ItemCreate() {
   };
   return (
     <div>
-      <TopBar2 pageTitle="게시글 작성" />
-      <form onSubmit={handleSubmit}>
-        <Preview itemImages={itemImage} onDelete={handleDeleteItemImage} />
-        <ImageAddButton clickFunction={handleClickAddImage} />
-        <input
-          id="imageInput"
-          type="file"
-          multiple
-          accept="img/*"
-          onChange={handleItemImage}
-          className="display: hidden"
+      <div className={`${page === 0 ? '' : 'hidden'}`}>
+        <TopBar2 title="게시글 작성" />
+      </div>
+      <div className={`${page === 1 ? '' : 'hidden'}`}>
+        <TopBar2 title="카테고리 선택" />
+      </div>
+      <div className={`${page === 0 ? '' : 'hidden'}`}>
+        <form onSubmit={handleSubmit}>
+          <Preview itemImages={itemImage} onDelete={handleDeleteItemImage} />
+          <ImageAddButton clickFunction={handleClickAddImage} />
+          <input
+            id="imageInput"
+            type="file"
+            multiple
+            accept="img/*"
+            onChange={handleItemImage}
+            className="display: hidden"
+          />
+          {itemImageError && (
+            <div style={{ color: 'red' }}>{itemImageError}</div>
+          )}
+          <input
+            type="text"
+            placeholder="제목"
+            value={itemTitle}
+            onChange={handleItemTitleChange}
+          />
+          {itemTitleError && (
+            <div style={{ color: 'red' }}>{itemTitleError}</div>
+          )}
+          <br />
+          <div>
+            <span onClick={moveToCategoryPage}>{selectedCategory}</span>
+          </div>
+          {itemCategoriesError && (
+            <div style={{ color: 'red' }}>{itemCategoriesError}</div>
+          )}
+          <br />
+          <input
+            type="text"
+            placeholder="내용"
+            value={itemContent}
+            onChange={handleItemContentChange}
+          />
+          {itemContentError && (
+            <div style={{ color: 'red' }}>{itemContentError}</div>
+          )}
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      <div className={`${page === 1 ? '' : 'hidden'}`}>
+        <ItemCategory
+          setPage={setPage}
+          handleItemCategoriesChange={handleItemCategoriesChange}
+          handleSelectedCategory={handleSelectedCategory}
         />
-        {itemImageError && <div style={{ color: 'red' }}>{itemImageError}</div>}
-        <input
-          type="text"
-          placeholder="제목"
-          value={itemTitle}
-          onChange={handleItemTitleChange}
-        />
-        {itemTitleError && <div style={{ color: 'red' }}>{itemTitleError}</div>}
-        <br />
-        <select
-          defaultValue="placeholder"
-          onChange={handleItemCategoriesChange}
-        >
-          <option value="placeholder" disabled style={{ display: 'none' }}>
-            카테고리 선택
-          </option>
-          <option value="디지털기기">디지털기기</option>
-          <option value="생활가전">생활가전</option>
-          <option value="가구/인테리어">가구/인테리어</option>
-          <option value="생활/주방">생활/주방</option>
-          <option value="유아동">유아동</option>
-          <option value="유아도서">유아도서</option>
-          <option value="여성의류">여성의류</option>
-          <option value="여성잡화">여성잡화</option>
-        </select>
-        {itemCategoriesError && (
-          <div style={{ color: 'red' }}>{itemCategoriesError}</div>
-        )}
-        <br />
-        <input
-          type="text"
-          placeholder="내용"
-          value={itemContent}
-          onChange={handleItemContentChange}
-        />
-        {itemContentError && (
-          <div style={{ color: 'red' }}>{itemContentError}</div>
-        )}
-        <button type="submit">Submit</button>
-      </form>
+      </div>
     </div>
   );
 }
