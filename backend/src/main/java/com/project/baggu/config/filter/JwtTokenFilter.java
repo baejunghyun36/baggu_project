@@ -1,5 +1,8 @@
 package com.project.baggu.config.filter;
 
+import com.project.baggu.exception.BaseException;
+import com.project.baggu.exception.BaseResponseStatus;
+import com.project.baggu.exception.JwtAuthenticationException;
 import com.project.baggu.utils.JwtTokenProvider;
 import com.project.baggu.utils.JwtTokenUtils;
 import io.jsonwebtoken.MalformedJwtException;
@@ -47,14 +50,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Authentication authentication = jwtTokenProvider.getAuthentication(jwt); // 정상 토큰이면 SecurityContext 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else{ //만료된 경우
-                throw new ServletException();
+                throw new BaseException(BaseResponseStatus.TOKEN_EXPIRED);
             }
-        } catch (ServletException e){ //만료된 경우
-            request.setAttribute("exception", "EXPIRED_TOKEN");
-        } catch (MalformedJwtException e){
-            request.setAttribute("exception", "UNVALID_TOKEN");
+        } catch (BaseException e){
+            request.setAttribute("exception", e.getStatus());
         }
-
         doFilter(request, response, filterChain);
     }
 }

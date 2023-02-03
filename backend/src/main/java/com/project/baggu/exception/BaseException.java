@@ -24,5 +24,9 @@ public class BaseException extends RuntimeException {
         return String.format("%s. %s ", status.getMessage(),message);
       }
     }
+
+    public BaseResponseStatus getBaseResponseStatus(){
+    return this.status;
+    }
 }
 

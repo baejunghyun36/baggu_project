@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2UserFailureHandler extends SimpleUrlAuthenticationFailureHandler implements OAuth2CustomHandler{
 
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   private final UserRepository userRepository;
 

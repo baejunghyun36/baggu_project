@@ -11,6 +11,11 @@ import lombok.Data;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+/*
+filter exception handler의 경우는 authentication이 아닌 authorization에서 생긴 오류를 잡는데 사용하는 경우가 많음.
+이미 authentication entry point가 생성되어있기 때문에 이걸 먹여도 사용이 안됨.
+ */
 public class FilterExceptionHandler extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(

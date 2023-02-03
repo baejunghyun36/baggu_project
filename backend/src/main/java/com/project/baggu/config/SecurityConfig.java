@@ -5,6 +5,7 @@ import com.project.baggu.config.oauth.handler.CustomLogoutSuccessHandler;
 import com.project.baggu.config.oauth.handler.OAuth2UserFailureHandler;
 import com.project.baggu.config.oauth.handler.OAuth2UserSuccessHandler;
 import com.project.baggu.config.token.JwtTokenAuthenticationEntryPoint;
+import com.project.baggu.exception.FilterExceptionHandler;
 import com.project.baggu.repository.OAuth2CookieAuthorizationRequestRepository;
 import com.project.baggu.service.OAuth2UserService;
 import com.project.baggu.utils.JwtTokenProvider;
@@ -83,6 +84,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .deleteCookies("refresh-token")
         .logoutSuccessHandler(customLogoutSuccessHandler);
 //        .addLogoutHandler(new LogoutProcessHandler());
+    //error handler 적용
+    http.addFilterBefore(new FilterExceptionHandler(), JwtTokenFilter.class);
   }
 
   @Bean

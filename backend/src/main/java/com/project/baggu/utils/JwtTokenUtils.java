@@ -63,9 +63,8 @@ public class JwtTokenUtils {
   }
 
   //토큰 시간 지났는지 검사
-  public static boolean isValidToken(String token) throws BaseException {
-    Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-    return claims.getBody()
+  public static boolean isValidToken(String token) {
+    return getClaims(token)
         .getExpiration()
         .after(new Date());
   }

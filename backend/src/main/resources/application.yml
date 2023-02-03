@@ -1,11 +1,6 @@
 spring:
   profiles:
     include: SECRET
-
-
----
-#공통 변수
-spring:
   servlet:
     multipart:
       max-file-size: 10MB

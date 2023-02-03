@@ -17,6 +17,8 @@ public class JwtTokenAuthenticationEntryPoint implements AuthenticationEntryPoin
   private ObjectMapper objectMapper = new ObjectMapper();
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+    Object ex = request.getAttribute("exception");
+
     String exception = (String)request.getAttribute("exception");
 
     //jwt filter가 아닌 다른 곳에서 발생한 인증 오류

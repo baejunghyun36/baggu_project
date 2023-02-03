@@ -36,6 +36,7 @@ public enum BaseResponseStatus {
   TOKEN_ALLOCATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "jwt 토큰 발급 중 에러가 발생했습니다. 유저 식별자와 권한을 확인해주세요."),
   TOKEN_CLAIM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "토큰에서 클레임을 추출할 수 없습니다."),
   REFRESH_TOKEN_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "리프레시 토큰을 찾을 수 없습니다."),
+  TOKEN_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "jwt 토큰 인가 과정 중 알 수 없는 에러가 발생했습니다."),
 
   //  3. 파일 관련 에러
   FILE_DIRECTORY_MAKE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 생성 중 에러가 발생했습니다."),

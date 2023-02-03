@@ -1,7 +1,7 @@
 package com.project.baggu.controller;
 
 import com.project.baggu.dto.*;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.TradeFinService;
 import java.util.List;
