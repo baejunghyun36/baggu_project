@@ -5,7 +5,11 @@ function Preview({ itemImages, onDelete }) {
     <div>
       {itemImages.map((itemImage, index) => (
         <div key={index}>
-          <img src={URL.createObjectURL(itemImage)} alt={itemImage.name} />
+          <img
+            src={URL.createObjectURL(itemImage)}
+            alt={itemImage.name}
+            className="w-[40px] h-[40px]"
+          />
           <button onClick={() => onDelete(index)}>Delete</button>
         </div>
       ))}
