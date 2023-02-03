@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 import TopBar2 from '../../components/common/TopBar2';
 import { defaultInstance, authInstance } from 'api/axios';
 import requests from 'api/config';
-import Preview from './Preview';
-import ImageAddButton from './ImageAddButton';
 
 function ItemCreate() {
   const [itemTitle, setItemtitle] = useState('');
@@ -32,14 +30,7 @@ function ItemCreate() {
   }, []);
   // --------------------------------------------------------
   const handleItemImage = event => {
-    const files = Array.from(event.target.files);
-    setItemImage(prevItemImage => [...prevItemImage, ...files]);
-  };
-  const handleClickAddImage = () => {
-    document.getElementById('imageInput').click();
-  };
-  const handleDeleteItemImage = index => {
-    setItemImage(prevItemImage => prevItemImage.filter((_, i) => i !== index));
+    setItemImage(Array.from(event.target.files));
   };
 
   const handleItemTitleChange = event => {
@@ -114,16 +105,7 @@ function ItemCreate() {
     <div>
       <TopBar2 pageTitle="게시글 작성" />
       <form onSubmit={handleSubmit}>
-        <Preview itemImages={itemImage} onDelete={handleDeleteItemImage} />
-        <ImageAddButton clickFunction={handleClickAddImage} />
-        <input
-          id="imageInput"
-          type="file"
-          multiple
-          accept="img/*"
-          onChange={handleItemImage}
-          className="display: hidden"
-        />
+        <input type="file" multiple accept="img/*" onChange={handleItemImage} />
         {itemImageError && <div style={{ color: 'red' }}>{itemImageError}</div>}
         <input
           type="text"
