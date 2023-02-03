@@ -31,20 +31,20 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
     //만약 기존에 쿠키에 저장된 refresh token이 존재할 경우 강제 삭제
-    if(CookieUtils.getCookie(request,"refresh-token")!=null){
-      CookieUtils.deleteCookie(request, response, "refresh-token");
-    }
+//    if(CookieUtils.getCookie(request,"refresh-token")!=null){
+//      CookieUtils.deleteCookie(request, response, "refresh-token");
+//    }
 
     //user attributes 추출
     OAuth2KakaoUser kakaoUser = OAuth2KakaoUser.mapToObj(((DefaultOAuth2User)authentication.getPrincipal()).getAttributes());
 
     //jwt 토큰 생성 후 refresh token 저장
     TokenInfo tokenInfo = JwtTokenUtils.allocateToken(kakaoUser.getUserIdx(), kakaoUser.getRole().getKey());
-    jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
+//    jwtTokenService.saveRefreshToken(kakaoUser.getUserIdx(), tokenInfo.getRefreshToken());
 
     //token 설정
     response.setHeader("Authorization",tokenInfo.getAccessToken());
-    CookieUtils.addCookie(response,"refresh-token",tokenInfo.getRefreshToken(), REFRESH_PERIOD);
+//    CookieUtils.addCookie(response,"refresh-token",tokenInfo.getRefreshToken(), REFRESH_PERIOD);
 
     //임시 코드
     System.out.println(tokenInfo);
