@@ -21,7 +21,7 @@ COPY . .
 RUN npm run build
 
 # nginx를 서버로 설정
-FROM nginx:stable-alpain
+FROM nginx:stable-alpine
 
 # 컨테이너의 작업 디렉토리를 /app으로 변경
 WORKDIR /app
