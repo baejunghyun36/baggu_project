@@ -9,6 +9,11 @@ import ProductListItem from 'components/common/ProductListItem';
 // twin.macro
 import tw, { styled, css } from 'twin.macro';
 
+// api
+import { get_user_item } from 'api/apis/user';
+// store
+import { makeRequestStore } from '../../store/makeRequest';
+
 // Styled Component
 const Wrapper = styled.div``;
 
@@ -42,17 +47,8 @@ const SelectedItemContainer = styled.div`
 
 const SelectedItem = styled.div`
   ${tw`rounded border`}
-  ${props =>
-    css`
-      background-image: url(${props.item.itemImgUrl});
-    `}
   ${tw`w-[100px] h-[100px]`}
 `;
-
-// api
-import { get_user_item } from 'api/apis/user';
-// store
-import { makeRequestStore } from '../../store/makeRequest';
 
 // Main Component
 function MakeRequest() {
@@ -67,11 +63,10 @@ function MakeRequest() {
     requestItemIdxList,
     requestUserIdx,
     setRequestItemIdxList,
-    addItem,
-    removeItem,
     saveRequestUserIdx,
     saveComment,
   } = makeRequestStore(state => state);
+
   // 바꾸 신청자 user의 물품목록
   const [userItems, setUserItems] = useState([]);
   // 바꾸 신청자가 선택한 아이템의 itemIdx
@@ -202,7 +197,6 @@ function MakeRequest() {
                   // 선택한 아이템이 3개 이상이 되면
                   if (prev.length >= 3) {
                     if (prev.includes(item.itemIdx)) {
-                      addItem(item.itemIdx);
                       return prev.filter(idx => idx !== item.itemIdx);
                     } else {
                       return prev;

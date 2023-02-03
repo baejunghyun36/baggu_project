@@ -12,7 +12,7 @@ const axiosApi = (url, options) => {
 // 인증이 필요한 axios 인스턴스
 const axiosAuthApi = (url, options) => {
   // 토큰 가져오는 코드 수정 필요
-  const token = localStorage.getItem('userInformation');
+  const token = localStorage.getItem('token');
   const instance = axios.create({
     baseURL: url,
     headers: { Authorization: token },
