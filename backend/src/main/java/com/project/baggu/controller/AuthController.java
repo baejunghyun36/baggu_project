@@ -1,5 +1,6 @@
 package com.project.baggu.controller;
 
+import com.project.baggu.domain.TokenInfo;
 import com.project.baggu.dto.AuthDevTokenDto;
 import com.project.baggu.dto.BaseMessageResponse;
 import com.project.baggu.dto.BaseResponseStatus;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +45,27 @@ public class AuthController {
   }
 
   @PostMapping("/token/dev")
-  public String tokenAllocateForDev(@RequestBody AuthDevTokenDto authDevTokenDto){
-      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx());
+  public String tokenAllocateForDev(@RequestBody AuthDevTokenDto authDevTokenDto, HttpServletResponse response){
+
+    TokenInfo tokenInfo = JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx());
+    response.addHeader("Authorization", tokenInfo.getAccessToken());
+    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
+        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
+
+    return tokenInfo.getAccessToken();
+//      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx()).getAccessToken();
+  }
+
+  @GetMapping("/token/dev/{userIdx}")
+  public TokenInfo tokenAllocateForDev(@PathVariable("userIdx") Long userIdx, HttpServletResponse response){
+
+    TokenInfo tokenInfo = JwtTokenUtils.allocateDevToken(userIdx);
+    response.addHeader("Authorization", tokenInfo.getAccessToken());
+    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
+        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
+
+    return tokenInfo;
+//      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx()).getAccessToken();
   }
 
 //  @GetMapping("/baggu/auth/login")

@@ -14,10 +14,10 @@ public class JwtTokenUtils {
 
 
     //access 토큰 15분
-    private static final long ACCESS_PERIOD = 1000L * 60L * 15L;
+    public static final long ACCESS_PERIOD = 1000L * 60L * 15L;
 
     //refresh 토큰 하루
-    private static final long REFRESH_PERIOD = 1000L * 60L * 60L * 24L;
+    public static final long REFRESH_PERIOD = 1000L * 60L * 60L * 24L;
 
     //개발용 access 토큰 30일
     private static final long DEV_ACCESS_PERIOD = 1000L * 60L * 60L * 24L * 30L;
@@ -65,7 +65,7 @@ public class JwtTokenUtils {
         return req.getHeader("Authorization");
     }
 
-    public static String allocateDevToken(Long userIdx) {
+    public static TokenInfo allocateDevToken(Long userIdx) {
 
         JwtBuilder jwtBuilder = Jwts.builder()
             .setHeaderParam("alg", "HS256")
@@ -76,18 +76,16 @@ public class JwtTokenUtils {
 
         Date now = new Date();
 
-        return jwtBuilder.setIssuedAt(now)
+        return new TokenInfo(
+            jwtBuilder.setIssuedAt(now)
                 .setExpiration(new Date(now.getTime()+DEV_ACCESS_PERIOD))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
+                .compact(),
+            jwtBuilder.setIssuedAt(now)
+                .setExpiration(new Date(now.getTime()+REFRESH_PERIOD))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact()
+        );
     }
 
-
-    public static long getAccessPeriod(){
-        return ACCESS_PERIOD;
-    }
-
-    public static long getRefreshPeriod(){
-        return REFRESH_PERIOD;
-    }
 }

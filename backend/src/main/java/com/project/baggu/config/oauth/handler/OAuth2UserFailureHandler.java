@@ -59,6 +59,7 @@ public class OAuth2UserFailureHandler extends SimpleUrlAuthenticationFailureHand
     //응답 dto 생성
     AuthLoginDto authLoginDto = AuthLoginDto.builder()
         .isSigned(false)
+        .kakaoId(oAuth2KakaoUser.getKakaoId())
         .user(UserProfileDto.builder().userIdx(oAuth2KakaoUser.getUserIdx()).role(oAuth2KakaoUser.getRole()).nickname(oAuth2KakaoUser.getNickname()).build())
         .build();
 
