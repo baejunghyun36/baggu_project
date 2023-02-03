@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/baggu/user")
+@RequestMapping("/user")
 @Slf4j
 public class UserController {
 
