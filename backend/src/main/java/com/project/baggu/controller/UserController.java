@@ -46,10 +46,10 @@ public class UserController {
     //토큰 발급
     TokenInfo tokenInfo = JwtTokenUtils.allocateToken(userProfileDto.getUserIdx(),
         userProfileDto.getRole().toString());
-    jwtTokenService.saveRefreshToken(userProfileDto.getUserIdx(), tokenInfo.getRefreshToken());
-    response.addHeader("access-token", tokenInfo.getAccessToken());
-    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
-        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
+//    jwtTokenService.saveRefreshToken(userProfileDto.getUserIdx(), tokenInfo.getRefreshToken());
+//    response.addHeader("access-token", tokenInfo.getAccessToken());
+//    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
+//        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
 
     return userProfileDto;
   }

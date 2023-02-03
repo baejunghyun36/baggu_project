@@ -32,16 +32,16 @@ public class AuthController {
 
   @GetMapping("/token")
   public BaseMessageResponse tokenRefresh(HttpServletRequest request, HttpServletResponse response){
-    try{
-      String refreshToken = CookieUtils.getCookie(request,"refresh-token").getValue();
-      if(refreshToken==null){
-        throw new BaseException(BaseResponseStatus.UNVALID_TOKEN);
-      }
-      response.setHeader("access-token",jwtTokenService.renewAccessToken(refreshToken));
-    } catch(BaseException e){
-      response.setStatus(401);
-      return new BaseMessageResponse(e.getStatus().getMessage());
-    }
+//    try{
+//      String refreshToken = CookieUtils.getCookie(request,"refresh-token").getValue();
+//      if(refreshToken==null){
+//        throw new BaseException(BaseResponseStatus.UNVALID_TOKEN);
+//      }
+//      response.setHeader("access-token",jwtTokenService.renewAccessToken(refreshToken));
+//    } catch(BaseException e){
+//      response.setStatus(401);
+//      return new BaseMessageResponse(e.getStatus().getMessage());
+//    }
     return new BaseMessageResponse("ACCEPT");
   }
 
