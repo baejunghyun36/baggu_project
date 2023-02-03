@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      host: localhost
+      host: baggu-mongodb-deploy
       port: 27017
       database: notifydb
 server:
-  port: 8081
+  port: 9998

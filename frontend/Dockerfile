@@ -1,20 +1,41 @@
 # node 18 버전을 사용한다.
-FROM node:18
+FROM node:18 as builder
 
-# 작업 디렉토리를 app으로 설정.
-WORKDIR /frontend
+# 작업 디렉토리를 /usr/src/app으로 설정.
+RUN mkdir /usr/src/app
+WORKDIR /usr/src/app
+
+# 환경 변수 PATH를 설정한다.
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
 # package.json, package-lock.json을 복사한다.
 COPY package*.json ./
 
 # 의존성 인스톨.
-RUN npm install
+RUN npm install --silent
 
 # 나머지 파일을 복사한다.
 COPY . .
 
-# 3000번 포트를 사용한다.
+# npm Build
+RUN npm run build
+
+# nginx를 서버로 설정
+FROM nginx:stable-alpine
+
+# 컨테이너의 작업 디렉토리를 /app으로 변경
+WORKDIR /app
+
+# 컨테이너에 build 폴더 복사
+RUN mkdir build
+COPY --from=builder /usr/src/app/build ./build
+
+# nginx의 설정을 개인 설정으로 변경
+RUN rm -rf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/conf.d
+
+# 포트 번호 명시
 EXPOSE 3000
 
-# 프론트 어플리케이션을 시작한다.
-CMD ["npm", "start"]
+# 서버 가동
+CMD ["nginx", "-g", "daemon off;"]

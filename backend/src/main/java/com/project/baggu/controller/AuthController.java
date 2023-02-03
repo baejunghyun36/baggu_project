@@ -2,6 +2,7 @@ package com.project.baggu.controller;
 
 import com.project.baggu.domain.TokenInfo;
 import com.project.baggu.dto.AuthDevTokenDto;
+import com.project.baggu.dto.BaseIsSuccessDto;
 import com.project.baggu.dto.BaseMessageResponse;
 import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
@@ -66,6 +67,11 @@ public class AuthController {
 
     return tokenInfo;
 //      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx()).getAccessToken();
+  }
+
+  @GetMapping("/healthcheck")
+  public BaseIsSuccessDto healthCheck(){
+    return new BaseIsSuccessDto(true);
   }
 
 //  @GetMapping("/baggu/auth/login")
