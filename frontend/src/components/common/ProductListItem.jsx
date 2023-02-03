@@ -49,7 +49,7 @@ function ProductListItem({ item, onClick, selected }) {
 
   return (
     <ItemContainer onClick={onClick ? onClick : moveToDetail}>
-      <ItemImg></ItemImg>
+      {/* <ItemImg></ItemImg> */}
       <div>
         <h2>{item.title}</h2>
         <span>
