@@ -12,6 +12,22 @@ services:
     ports:
       - "9999:9999"
     restart: always
+  baggu-chat:
+    container_name: baggu-chat
+    build:
+      dockerfile: Dockerfile
+      context: ./chat
+    ports:
+      - "9997:9997"
+    restart: always
+  baggu-notify:
+    container_name: baggu-notify
+    build:
+      dockerfile: Dockerfile
+      context: ./notify
+    ports:
+      - "9998:9998"
+    restart: always
   baggu-frontend:
     container_name: baggu-frontend
     build:
