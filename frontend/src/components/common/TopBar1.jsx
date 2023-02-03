@@ -18,8 +18,9 @@ function TopBar1() {
     location.startsWith('/start') ||
     location.startsWith('/chat') ||
     location.startsWith('/bagguReview') ||
-    location.startsWith('/userReview') ||
-    location.startsWith('/item')
+    location.startsWith('/makeRequest') ||
+    location.startsWith('/makeRequest') ||
+    location.startsWith('/userReview')
   ) {
     return null;
   }

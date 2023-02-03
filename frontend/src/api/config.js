@@ -1,3 +1,5 @@
+// 각 key는 API 명세에 'config.js상 이름'으로 명시함
+// 각 key의 상단의 주석으로 API 명세 상 API 제목 명시함
 const requests = {
   // baggu 공식
   base_url: 'http://baggu.shop/api',

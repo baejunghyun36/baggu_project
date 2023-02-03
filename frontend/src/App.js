@@ -36,6 +36,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // styled component
 import tw, { styled, css } from 'twin.macro';
+import MakeRequest from 'pages/MakeRequest/MakeRequest';
+import MakeRequestMessage from 'pages/MakeRequest/MakeRequestMessage';
 
 const queryClient = new QueryClient();
 
@@ -46,13 +48,14 @@ const Wrapper = styled.div`
   `}
 `;
 function App() {
-  const { isLoggedIn, token, kakaoId, userIdx, dong } = userStore();
-  console.log(isLoggedIn, token, kakaoId, userIdx, dong);
+  const { saveToken, saveUserIdx, saveDong } = userStore(state => state);
+
   return (
     <QueryClientProvider client={queryClient} contextSharing={true}>
       <BrowserRouter className="App">
         <TopBar1 />
         <Routes>
+          <Route path="/example" element={<Example />} />
           <Route path="/start" element={<Start />}>
             <Route path="" element={<StartLogin />} />
             <Route path="nickname" element={<StartNickname />} />
@@ -62,10 +65,9 @@ function App() {
             <Route path="introduce" element={<StartIntroduce />} />
           </Route>
           <Route path="/kakaoLogin" element={<KakaoLogin />} />
+          <Route path="/" element={<Home />} />
           <Route path="/userReview" element={<UserReview />} />
           <Route path="/bagguReview" element={<BagguReview />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/example" element={<Example />} />
           <Route path="/item/:id" element={<Item />} />
           <Route path="/item/create" element={<ItemCreate />} />
           <Route path="/mybaggu" element={<MyBaggu />} />
@@ -78,6 +80,12 @@ function App() {
           <Route path="/myprofile/:id/favorite" element={<Favorite />} />
           <Route path="/myprofile/:id/town" element={<ProfileTown />} />
           <Route path="/user/:id" element={<UserDetail />} />
+          {/* 바꾸신청 */}
+          <Route path="/makeRequest/:itemIdx" element={<MakeRequest />} />
+          <Route
+            path="/makeRequest/message/:itemIdx"
+            element={<MakeRequestMessage />}
+          />
         </Routes>
         <BottomNav />
       </BrowserRouter>

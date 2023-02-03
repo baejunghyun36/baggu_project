@@ -1,10 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-// icons
-// import icon_check_unselected from 'assets/icons/check_circle_unselected.svg';
-// import icon_check_selected from 'assets/icons/check_circle_selected.svg';
-
 // Custom Hooks
 import FormatDate from 'hooks/FormatDate';
 import GetRelativeTime from 'hooks/GetRelativeTime';
@@ -14,14 +10,27 @@ import tw, { styled, css } from 'twin.macro';
 import Chip from './Chip';
 
 // Styled Component
-const ItemContainer = tw.div`p-2 flex w-full hover:bg-primary-hover`;
+const ItemContainer = styled.div`
+  ${props => (props.selected ? tw`bg-primary-hover` : '')}
+  ${tw`p-2 flex w-full hover:bg-primary-hover border-b gap-2 relative`}
+`;
 const ItemImg = styled.div`
   ${props =>
     css`
       background-image: url(${props.itemImgUrl});
     `}
-  ${tw`w-[100px] h-[100px]`}
+  ${tw`w-[100px] h-[100px] rounded border`}
 `;
+const ItemInfo = styled.div`
+  p {
+    ${tw`text-main-bold text-black`}
+  }
+  span {
+    ${tw`text-sub text-grey2`}
+  }
+`;
+
+const SubInfo = tw.div`absolute right-2`;
 
 // Main Container
 function ProductListItem({ item, onClick, selected }) {
@@ -42,21 +51,24 @@ function ProductListItem({ item, onClick, selected }) {
   };
 
   // raw 날짜 데이터 포맷
-  const { year, month, day } = FormatDate(item.createdAt);
+  const { year, month, day, hour, minute } = FormatDate(item.createdAt);
 
   // 상대적인 날짜 계산
   const date = GetRelativeTime(year, month, day);
 
   return (
-    <ItemContainer onClick={onClick ? onClick : moveToDetail}>
-      {/* <ItemImg></ItemImg> */}
-      <div>
-        <h2>{item.title}</h2>
+    <ItemContainer
+      onClick={onClick ? onClick : moveToDetail}
+      selected={selected}
+    >
+      <ItemImg></ItemImg>
+      <ItemInfo>
+        <p>{item.title}</p>
         <span>
-          {item.dong} | {item.createdAt}
+          {item.dong} {GetRelativeTime(year, month, day, hour, minute)}
         </span>
-      </div>
-      <div>
+      </ItemInfo>
+      <SubInfo>
         {/* <Chip tradeState={item.tradeState} /> */}
         {selected ? (
           <svg
@@ -89,7 +101,7 @@ function ProductListItem({ item, onClick, selected }) {
             />
           </svg>
         )}
-      </div>
+      </SubInfo>
     </ItemContainer>
   );
 }
