@@ -14,6 +14,8 @@ public enum BaseResponseStatus {
   //401
   OAUTH_REQUIRE(HttpStatus.UNAUTHORIZED, "소셜 인증이 이뤄지지 않은 유저입니다. 소셜 로그인을 선행해주세요."),
   ACCESS_TOKEN_NULL(HttpStatus.UNAUTHORIZED, "access token이 존재하지 않는 요청입니다."),
+  ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "access token이 만료되었습니다. 재발급을 요청하세요."),
+  REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "refresh token이 만료되었습니다. 다시 로그인해주세요."),
   USER_POST_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "post 요청에 대해 권한이 없는 유저입니다."),
 
 
@@ -27,10 +29,13 @@ public enum BaseResponseStatus {
   //  1. db 관련 에러
   DATABASE_GET_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"해당 객체를 찾을 수 없습니다. 식별자를 확인해주세요"),
   DATABASE_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "해당 객체를 업데이트할 수 없습니다. 속성값 이름, 값의 존재 유무, 식별자를 확인해주세요."),
+  DATABASE_INSERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "해당 객체를 데이터베이스에 생성할 수 없습니다."),
+  DATABASE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "해당 객체를 데이터베이스에서 삭제할 수 없습니다."),
 
   //  2. 토큰 관련 에러
   TOKEN_ALLOCATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "jwt 토큰 발급 중 에러가 발생했습니다. 유저 식별자와 권한을 확인해주세요."),
   TOKEN_CLAIM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "토큰에서 클레임을 추출할 수 없습니다."),
+  REFRESH_TOKEN_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "리프레시 토큰을 찾을 수 없습니다."),
 
   //  3. 파일 관련 에러
   FILE_DIRECTORY_MAKE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 생성 중 에러가 발생했습니다."),
@@ -46,14 +51,13 @@ public enum BaseResponseStatus {
   // 핸들링되지 않은 에러
   SERVICE_SERVLET_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서비스단에서 에러가 발생했습니다."),
 
-  CONTROLLER_SERVLET_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "컨트롤러단에서 에러가 발생했습니다."),
+  CONTROLLER_SERVLET_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "컨트롤러단에서 에러가 발생했습니다.");
 
-  NOT_FOUND_REFRESH_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR, "리프레시 토큰을 찾을 수 없습니다.");
 
   private final HttpStatus status;
   private final String message;
 
-  private BaseResponseStatus(HttpStatus status, String message) {
+  BaseResponseStatus(HttpStatus status, String message) {
     this.status = status;
     this.message = message;
   }
