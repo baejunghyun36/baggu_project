@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // store
-import { signUpStore } from 'store/store';
+import { signUpStore, userStore } from '../../store/store.js';
 
 // components
 import TopBar2 from 'components/common/TopBar2';
@@ -56,7 +56,7 @@ function StartNickname() {
   const [isNicknameValid, setIsNicknameValid] = useState(false);
 
   // store
-  const { saveNickname } = signUpstore(state => state);
+  const { saveNickname } = signUpStore(state => state);
 
   // input이 입력될 때마다 유효성 검사를 진행
   // 입력 중간에 유효성이 통과되면 제출버튼 활성화
