@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import heart_unliked from '../../assets/icons/heart_unliked.svg';
 import heart_liked from '../../assets/icons/heart_liked.svg';
 
-function BottomBar() {
+function BottomBar({ showHeart, btnTitle, btnClickHandler }) {
   const [liked, setLiked] = useState(false);
 
   // 좋아요 API 요청
@@ -35,7 +35,11 @@ function BottomBar() {
         />
       </div>
       {/* 사용자와 게시글 작성자 정보를 비교하여 title 변경 */}
-      <Button title="바꾸신청" className="default" />
+      <Button
+        title={btnTitle ? btnTitle : '선택완료'}
+        className="default"
+        onClick={btnClickHandler}
+      />
     </div>
   );
 }

@@ -1,33 +1,32 @@
 import React from 'react';
 
-function Chip({ title }) {
-  let bgColor = '';
-  let textColor = '';
-  let border = '';
-  title = '바꾸완료';
-  switch (title) {
-    case '바꾸중':
-      bgColor = 'bg-success';
-      textColor = 'text-black';
-      border = 'border border-black';
-      break;
-    case '바꾸완료':
-      bgColor = 'bg-grey1';
-      textColor = 'text-grey2';
-      border = '';
-      break;
+// twin.macro
+import tw, { styled } from 'twin.macro';
 
-    default:
-      break;
-  }
+const ChipContainer = styled.div`
+  ${props =>
+    props.tradeState === 1
+      ? tw`bg-success text-black border border-black`
+      : tw`bg-grey1 text-grey2`}
+  ${tw`w-fit h-[24px] p-1 text-black rounded-full flex justify-center items-center`}
+`;
+
+function Chip({ tradeState }) {
+  /*
+  < prop >
+  1. tradeState : 부모 컴포넌트에서 해당 아이템의 거래상태(tradeState)
+  */
+
+  // tradeState에 따른 title
+  const title = {
+    1: '예약중',
+    2: '거래완료',
+  };
+
   return (
-    <div
-      className={`${
-        bgColor + border
-      } w-fit h-[24px] p-1 text-black rounded-full flex justify-center items-center `}
-    >
-      <span className={`${textColor} text-tiny-bold`}>{title}</span>
-    </div>
+    <ChipContainer>
+      <span>{title}</span>
+    </ChipContainer>
   );
 }
 

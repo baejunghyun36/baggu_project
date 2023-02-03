@@ -20,6 +20,7 @@ function BottomNav() {
     location.startsWith('/item') ||
     location.startsWith('/userReview') ||
     location.startsWith('/bagguReview') ||
+    location.startsWith('/makeRequest') ||
     location.startsWith('/chat/')
   ) {
     return null;
