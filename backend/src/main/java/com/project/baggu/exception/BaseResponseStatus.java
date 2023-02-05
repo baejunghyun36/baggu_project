@@ -17,7 +17,7 @@ public enum BaseResponseStatus {
   ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "access token이 만료되었습니다. 재발급을 요청하세요."),
   REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "refresh token이 만료되었습니다. 다시 로그인해주세요."),
   USER_POST_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "post 요청에 대해 권한이 없는 유저입니다."),
-
+  AUTHENTICATE_ERROR(HttpStatus.UNAUTHORIZED, "인증 과정에서 에러가 발생했습니다."),
 
   DUPLICATE_LOGIN(HttpStatus.CONFLICT,"이미 로그인 중입니다."),
   FILE_CONVERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"파일 저장에 실패했습니다."),
@@ -46,7 +46,7 @@ public enum BaseResponseStatus {
   FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 s3 서버 업로드 과정에서 에러가 발생했습니다."),
   FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 로컬 삭제 과정에서 에러가 발생했습니다."),
 
-  S3_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "유효하지 않ㅇ느 S3 클라이언트입니다."),
+  S3_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "유효하지 않은 S3 클라이언트입니다."),
 
 
   // 핸들링되지 않은 에러

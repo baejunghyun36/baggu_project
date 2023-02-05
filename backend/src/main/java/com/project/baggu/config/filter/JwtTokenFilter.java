@@ -30,14 +30,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String jwt = JwtTokenUtils.resolveAccessToken(request);
-
-        //jwt가 없다면 -> 다음 필터로
-        if(!StringUtils.hasText(jwt)){
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         //login 요청의 경우 다음 필터로
         if ((request.getRequestURI()).equals(excludeUrl)) {
             filterChain.doFilter(request, response);
@@ -45,6 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         try{
+            String jwt = JwtTokenUtils.resolveAccessToken(request);
             //유효할 경우
             if(JwtTokenUtils.isValidToken(jwt)){
                 Authentication authentication = jwtTokenProvider.getAuthentication(jwt); // 정상 토큰이면 SecurityContext 저장
@@ -53,7 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 throw new BaseException(BaseResponseStatus.TOKEN_EXPIRED);
             }
         } catch (BaseException e){
-            request.setAttribute("exception", e.getStatus());
+            request.setAttribute("exception", e.getStatus().name());
         }
         doFilter(request, response, filterChain);
     }
