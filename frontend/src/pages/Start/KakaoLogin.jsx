@@ -51,6 +51,7 @@ function KakaoLogin() {
         localStorage.setItem('isLoggedIn', true);
         localStorage.setItem('token', access_token);
         localStorage.setItem('kakaoId', response.data.kakaoId);
+        saveKakaoId(response.data.kakaoId);
         localStorage.setItem('userIdx', response.data.user.userIdx);
 
         // kakaoId 저장

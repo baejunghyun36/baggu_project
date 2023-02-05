@@ -116,7 +116,7 @@ function StartCategory() {
           dong: dong,
           lng: lng,
           lat: lat,
-          kakaoId: '12',
+          kakaoId: kakaoId,
         },
       });
       return response.data;
