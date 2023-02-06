@@ -107,7 +107,7 @@ function StartCategory() {
   // signup API 요청 함수
   const sign_up = async category_types => {
     try {
-      const response = await defaultInstance.post(requests.SIGNUP, {
+      const response = await authInstance.post(requests.SIGNUP, {
         data: {
           nickname: nickname,
           category: category_types,

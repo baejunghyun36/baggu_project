@@ -12,7 +12,7 @@ export const get_user_item = async userIdx => {
 };
 
 // 유저 동네 설정
-export const put_user_dong = async (userIdx, data) => {
+export const put_user_dong = async ({ userIdx, data }) => {
   /*
   data = {
 	"si": "서울시",
@@ -23,6 +23,8 @@ export const put_user_dong = async (userIdx, data) => {
 }
   */
   try {
+    console.log('userIdx', userIdx);
+    console.log('data', data);
     const response = await authInstance.put(
       requests.PUT_USER_TOWN(userIdx),
       data

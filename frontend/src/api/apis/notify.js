@@ -19,3 +19,13 @@ export const post_notify = async data => {
     throw error;
   }
 };
+
+// 알림 서버와 연결
+export const get_notify = async userIdx => {
+  try {
+    const { data } = await authInstance.get(requests.GET_NOTIFY(userIdx));
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
