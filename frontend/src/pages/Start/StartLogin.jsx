@@ -30,8 +30,10 @@ const Wrapper = styled.div`
 function StartLogin() {
   const navigate = useNavigate();
   const REST_API_KEY = 'dcea227af64fcf0366810e14b850e4d6';
-  // const REDIRECT_URI = 'http://localhost:3000/kakaoLogin';
-  const REDIRECT_URI = 'http://baggu.shop/kakaoLogin';
+  const REDIRECT_URI = `${window.location.href.replace(
+    window.location.pathname,
+    ''
+  )}/kakaoLogin`;
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&state=jijj123kl2jlkhjfkuhddfnhh22`;
 
   // 1. 인가 코드 받기

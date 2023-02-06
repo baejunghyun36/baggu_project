@@ -2,10 +2,10 @@
 // 각 key의 상단의 주석으로 API 명세 상 API 제목 명시함
 const requests = {
   // baggu 공식
-  base_url: 'http://baggu.shop/api',
+  // base_url: 'https://test.baggu.shop/api',
 
   // 소정님 IP
-  // base_url: 'http://70.12.247.158:8080',
+  base_url: 'http://70.12.247.158:9999',
 
   // 안채님 IP
   // base_url: 'http://70.12.247.174:8080',
@@ -121,6 +121,14 @@ const requests = {
 
   // 거래 완료 후 거래에 대한 후기 작성 (POST)
   POST_TRADE_REVIEW: `/baggu/tradeFin/reviewText`,
+
+  // 최근 알림 (알림 서버와 연결)
+  GET_NOTIFY(userIdx) {
+    return `/baggu/user/notify/${userIdx}`;
+  },
+
+  // 교환 신청시 알림 서버에 post
+  POST_NOTIFY: '/baggu/notify',
 };
 
 export default requests;
