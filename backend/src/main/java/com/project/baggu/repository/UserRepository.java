@@ -30,4 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query("select u from User u where u.kakaoId = :kakaoId")
   Optional<User> findUserByKakaoId(@Param("kakaoId") String kakaoId);
+
+  @Modifying
+  @Query("update User u set u.tradeCount = 0 ")
+  void initUserTradeCount();
 }
