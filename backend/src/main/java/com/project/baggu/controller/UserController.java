@@ -1,7 +1,6 @@
 package com.project.baggu.controller;
 
 import com.project.baggu.domain.TokenInfo;
-import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.*;
 import com.project.baggu.service.JwtTokenService;
@@ -9,6 +8,7 @@ import com.project.baggu.service.UserService;
 import com.project.baggu.utils.CookieUtils;
 import com.project.baggu.utils.JwtTokenUtils;
 import java.util.List;
+import com.project.baggu.exception.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
