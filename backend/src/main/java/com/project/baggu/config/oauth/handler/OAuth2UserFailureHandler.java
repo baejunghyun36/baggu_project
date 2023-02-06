@@ -30,6 +30,12 @@ public class OAuth2UserFailureHandler extends SimpleUrlAuthenticationFailureHand
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException exception) throws IOException, ServletException {
 
+    if(!(exception instanceof OAuth2LoginException)){
+      response.setStatus(500);
+      response.getWriter().write("OAUTH_SETTING_ERROR");
+      return;
+    }
+
     OAuth2LoginException loginException = (OAuth2LoginException)exception;
     OAuth2KakaoUser kakaoUser = loginException.getOAuth2KakaoUser();
 
@@ -60,6 +66,7 @@ public class OAuth2UserFailureHandler extends SimpleUrlAuthenticationFailureHand
     AuthLoginDto authLoginDto = AuthLoginDto.builder()
         .isSigned(false)
         .kakaoId(oAuth2KakaoUser.getKakaoId())
+        .email(oAuth2KakaoUser.getEmail())
         .user(UserProfileDto.builder().userIdx(oAuth2KakaoUser.getUserIdx()).role(oAuth2KakaoUser.getRole()).nickname(oAuth2KakaoUser.getNickname()).build())
         .build();
 

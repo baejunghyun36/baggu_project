@@ -109,15 +109,21 @@ public class ItemController {
   //유저의 동네에 최근 등록된 물품 리스트를 받는다.
   //유저가 등록한 아이템 리스트를 받는다.
   //유저가 입력한 검색어를 기반으로 아이템 리스트를 받는다. pathvariable로 하면 한글 안넘어와
+  //페이지가 있을 경우
   @GetMapping()
   public List<?> getItemList(@RequestParam(name = "dong", required = false) String dong,
       @RequestParam(name="userIdx", required=false) Long userIdx,
-      @RequestParam(name="keyword", required=false) String keyword){
+      @RequestParam(name="keyword", required=false) String keyword,
+      @RequestParam(name="page", required=false) Integer page){
+
+    if(page==null){
+      page = 0;
+    }
 
     if(dong!=null){
-      return itemService.itemListOrderByNeighbor(dong);
+      return itemService.itemListOrderByNeighbor(dong,page);
     } else if(userIdx!=null){
-      return itemService.getUserItemList(userIdx);
+      return itemService.getUserItemList(userIdx, page);
     } else if(keyword!=null){
       return itemService.itemListByItemName(keyword);
     } else{
