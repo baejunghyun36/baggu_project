@@ -15,10 +15,11 @@ public class CorsConfig {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
 
-    config.setAllowCredentials(true);
+//    config.setAllowCredentials(true);
     // config.addAllowedOrigin("*");
     config.addAllowedOriginPattern("https://**"); // addAllowedOriginPattern("*") 대신 사용
     config.addAllowedOriginPattern("http://**"); // addAllowedOriginPattern("*") 대신 사용
+    config.addAllowedOrigin("https//test.baggu.shop/**");
     config.addAllowedOrigin("http://localhost:3000");
     config.addAllowedOrigin("https://localhost:3000");
     config.addAllowedOrigin("http://localhost:8080");
