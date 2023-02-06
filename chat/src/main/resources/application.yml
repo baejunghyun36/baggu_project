@@ -1,6 +1,8 @@
 spring:
   data:
     mongodb:
-      host: localhost
+      host: baggu-mongodb-deploy
       port: 27017
       database: chatdb
+server:
+  port: 9997

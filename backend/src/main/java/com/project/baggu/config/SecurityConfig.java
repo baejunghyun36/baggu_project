@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //uri 설정
     //"/auth/callback/**"은 카카오 로그인 리다이렉션 url로 사용하기 위해 임시 지정
     http.authorizeRequests()
-            .antMatchers("/", "/baggu/auth/**").permitAll()
+            .antMatchers("/", "/baggu/auth/**" ).permitAll()
             .anyRequest().authenticated();
 
     //oauth2 설정

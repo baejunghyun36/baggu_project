@@ -1,9 +1,11 @@
+// 각 key는 API 명세에 'config.js상 이름'으로 명시함
+// 각 key의 상단의 주석으로 API 명세 상 API 제목 명시함
 const requests = {
   // baggu 공식
-  // base_url: 'http://i8A708.p.ssafy.io:9999',
+  base_url: 'http://baggu.shop/api',
 
   // 소정님 IP
-  base_url: 'http://70.12.247.158:8080',
+  // base_url: 'http://70.12.247.158:8080',
 
   // 안채님 IP
   // base_url: 'http://70.12.247.174:8080',

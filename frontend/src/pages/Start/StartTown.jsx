@@ -10,6 +10,7 @@ import { signUpStore } from 'store/store';
 // components
 import TopBar2 from 'components/common/TopBar2';
 import FormSubmitBtn from 'components/common/FormSubmitBtn';
+
 import axios from 'axios';
 
 // styled component
@@ -82,7 +83,7 @@ function StartTown() {
   };
 
   // 현재 위치로 설정 버튼 클릭시
-  const onBtnClickHandler = () => {
+  const onBtnClickHandler = async () => {
     getPosition()
       .then(position => {
         const lat = position.coords.latitude;

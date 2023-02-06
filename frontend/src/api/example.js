@@ -23,7 +23,6 @@ useEffect(() => {
 // post 예시
 const post_user_review = async clickedReviewsIndex => {
   try {
-    authInstance.post();
     const response = await authInstance.post(
       requests.POST_USER_REVIEW,
       {
