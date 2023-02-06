@@ -27,11 +27,16 @@ import com.project.baggu.repository.TradeDetailRepository;
 import com.project.baggu.repository.TradeFinRepository;
 import com.project.baggu.repository.TradeRequestRepository;
 import com.project.baggu.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,9 +61,10 @@ public class ItemService {
 
   private final String IMAGE_DIR_ITEM = "item";
 
-  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(String dong) {
+  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(String dong, int page) {
 
-    List <Item> itemList = itemRepository.itemListOrderByNeighbor(dong);
+    List <Item> itemList = itemRepository.itemListOrderByNeighbor(dong, PageRequest.of(page,20,
+        Sort.by(Direction.DESC, "createdAt")));
     List<ItemOrderByNeighborDto> ItemDtoList = new ArrayList<>();
     for(Item i : itemList){
       ItemOrderByNeighborDto itemDto = new ItemOrderByNeighborDto();
@@ -67,14 +73,16 @@ public class ItemService {
       itemDto.setCreatedAt(i.getCreatedAt());
       itemDto.setState(i.getState());
       itemDto.setItemImgUrl(i.getFirstImg());
+      itemDto.setDong(i.getDong());
       ItemDtoList.add(itemDto);
     }
     return ItemDtoList;
   }
 
-  public List<UserItemDto> getUserItemList(Long userIdx) {
+  public List<UserItemDto> getUserItemList(Long userIdx, int page) {
 
-    List <Item> itemList = itemRepository.getUserItemList(userIdx);
+    List <Item> itemList = itemRepository.getUserItemList(userIdx, PageRequest.of(page, 20, Sort.by(
+        Direction.DESC, "createdAt")));
     List<UserItemDto> userItemDtoList = new ArrayList<>();
     for(Item i : itemList){
       UserItemDto itemDto = new UserItemDto();

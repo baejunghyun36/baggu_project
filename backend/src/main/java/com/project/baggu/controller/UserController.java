@@ -1,16 +1,21 @@
 package com.project.baggu.controller;
 
 import com.project.baggu.domain.TokenInfo;
+import com.project.baggu.domain.User;
+import com.project.baggu.domain.enumType.Role;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.*;
+import com.project.baggu.repository.UserRepository;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.service.UserService;
 import com.project.baggu.utils.CookieUtils;
 import com.project.baggu.utils.JwtTokenUtils;
 import java.util.List;
 import com.project.baggu.exception.BaseResponseStatus;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/baggu/user")
 @Slf4j
 public class UserController {
+
+  private final UserRepository userRepository;
 
   private final UserService userService;
   private final JwtTokenService jwtTokenService;
@@ -47,7 +55,7 @@ public class UserController {
     TokenInfo tokenInfo = JwtTokenUtils.allocateToken(userProfileDto.getUserIdx(),
         userProfileDto.getRole().toString());
     jwtTokenService.saveRefreshToken(userProfileDto.getUserIdx(), tokenInfo.getRefreshToken());
-    response.addHeader("access-token", tokenInfo.getAccessToken());
+    response.addHeader("Authorization", tokenInfo.getAccessToken());
     CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
         (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
 
@@ -83,9 +91,13 @@ public class UserController {
   //[GET] /baggu/user/{userIdx}/item
   //해당 유저에 대한 프로필 정보와 등록한 아이템 리스트를 받는다.
   @GetMapping("/{userIdx}/item")
-  public UserDetailDto getUserDetail(@PathVariable("userIdx") Long userIdx) {
+  public UserDetailDto getUserDetail(@PathVariable("userIdx") Long userIdx,
+      @RequestParam(required = false, name = "page") Integer page) {
 
-    UserDetailDto userDetailDto = userService.getUserDetail(userIdx);
+    if(page==null){
+      page = 0;
+    }
+    UserDetailDto userDetailDto = userService.getUserDetail(userIdx, page);
 
     return userDetailDto;
   }
@@ -131,6 +143,15 @@ public class UserController {
   public List<ItemListDto> userKeepItemList(@PathVariable("userIdx") Long userIdx) {
 
     return userService.userKeepItemList(userIdx);
+  }
+
+  //page test
+  @GetMapping
+  public Page<User> getUserPage(@RequestParam(required = false) Integer page){
+    if(page==null){
+      page = 0;
+    }
+    return userService.getUserPage(page);
   }
 
 }

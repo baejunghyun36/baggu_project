@@ -2,16 +2,18 @@ package com.project.baggu.repository;
 
 import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.TradeFin;
+
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 public interface TradeFinRepository extends JpaRepository<TradeFin, Long> {
 
-  @Query("select t from TradeFin t where t.receiveUserIdx= :userIdx or t.requestUserIdx= :userIdx order by t.createdAt desc")
-  List<TradeFin> userTradeFinList(@Param("userIdx") Long userIdx);
+  @Query("select t from TradeFin t where t.receiveUserIdx= ?1 or t.requestUserIdx= ?1 order by t.createdAt desc")
+  List<TradeFin> userTradeFinList(Long userIdx, Pageable pabeable);
 
   @Query("select count(t) from TradeFin t where t.receiveItemIdx = :receiveItemIdx or t.requestItemIdx = :receiveItemIdx")
   int findTradeFinByItemIdx(@Param("receiveItemIdx") Long receiveItemIdx);

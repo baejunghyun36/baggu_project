@@ -13,6 +13,14 @@ services:
     ports:
       - "3307:3306"
     restart: always
+  baggu-redis-test:
+    container_name: baggu-redis-test
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    ports:
+      - "6380:6379"
+    restart: always
   baggu-backend-test:
     container_name: baggu-backend-test
     build:

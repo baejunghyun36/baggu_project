@@ -42,6 +42,12 @@ public class TradeFin extends BaseTimeEntity {
   @Column(name = "request_nickname")
   private String requestNickname;
 
+  @Column(name = "request_profile_img_url")
+  private String requestProfileImgUrl;
+
+  @Column(name = "receive_profile_img_url")
+  private String receiveProfileImgUrl;
+
   @Column(name = "is_valid")
   @Builder.Default
   private boolean isValid = true;

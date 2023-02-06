@@ -1,16 +1,25 @@
 import React from 'react';
 import ProductListItem from './ProductListItem';
 
-function ProductList({ movies }) {
+import tw, { styled, css } from 'twin.macro';
+
+const ListWrapper = styled.div`
+  ${tw`border-t-4 mt-[60px] overflow-scroll`}
+  ${css`
+    height: calc(100vh - 218px);
+  `}
+`;
+
+function ProductList({ items }) {
   return (
-    <div className="border-t-4">
-      {movies.map(movie => (
-        <div key={movie.id}>
-          <ProductListItem movie={movie} />
+    <ListWrapper id="list-wrapper">
+      {items.map(item => (
+        <div key={item.itemIdx}>
+          <ProductListItem item={item} />
         </div>
       ))}
       <hr />
-    </div>
+    </ListWrapper>
   );
 }
 

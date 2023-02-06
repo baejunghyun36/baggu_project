@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.Cacheable;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -37,10 +38,10 @@ public class TradeFinService {
 
 
 //  @Cacheable(value = "trade", cacheManager = "redisCacheManager")
-  public List<TradeFinDto> getTradeFinList(Long userIdx) {
+  public List<TradeFinDto> getTradeFinList(Long userIdx, int page) {
     User user = userRepository.findById(userIdx).orElseThrow();
 
-    List<TradeFin> tradeFinList = tradeFinRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    List<TradeFin> tradeFinList = tradeFinRepository.findAll(PageRequest.of(page,20,Sort.by(Sort.Direction.DESC, "createdAt"))).getContent();
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
     for(TradeFin tf : tradeFinList){
       TradeFinDto tradeFinDto = new TradeFinDto();
@@ -50,6 +51,8 @@ public class TradeFinService {
       tradeFinDto.setRequestItemIdx(tf.getRequestItemIdx());
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
+      tradeFinDto.setReceiveUserImgUrl(tf.getReceiveProfileImgUrl());
+      tradeFinDto.setReceiveUserImgUrl(tf.getRequestProfileImgUrl());
 
       Item item1 = itemRepository.findById(tf.getReceiveItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
       Item item2 = itemRepository.findById(tf.getRequestItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
@@ -68,11 +71,11 @@ public class TradeFinService {
     return tradeFinDtos;
   }
 
-  public List<TradeFinDto> getTradeFinList(Long userIdx, Long authUserIdx) {
+  public List<TradeFinDto> getTradeFinList(Long userIdx, Long authUserIdx, int page) {
 
     User user = userRepository.findById(authUserIdx).orElseThrow();
 
-    List<TradeFin> tradeFinList = tradeFinRepository.userTradeFinList(userIdx);
+    List<TradeFin> tradeFinList = tradeFinRepository.userTradeFinList(userIdx, PageRequest.of(page,20,Sort.by(Sort.Direction.DESC, "createdAt")));
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
     for(TradeFin tf : tradeFinList){
       TradeFinDto tradeFinDto = new TradeFinDto();
@@ -82,6 +85,8 @@ public class TradeFinService {
       tradeFinDto.setRequestItemIdx(tf.getRequestItemIdx());
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
+      tradeFinDto.setReceiveUserImgUrl(tf.getReceiveProfileImgUrl());
+      tradeFinDto.setReceiveUserImgUrl(tf.getRequestProfileImgUrl());
 
       Item item1 = itemRepository.findById(tf.getReceiveItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
       Item item2 = itemRepository.findById(tf.getRequestItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
@@ -158,10 +163,12 @@ public class TradeFinService {
               .receiveItemIdx(receiveItem.getItemIdx())
               .receiveNickname(receiveUser.getNickname())
               .receiveUserIdx(receiveUser.getUserIdx())
+          .receiveProfileImgUrl(receiveUser.getProfileImg())
               .requestItemIdx(tradeDetail.getRequestItemIdx())
               .requestNickname(requestUser.getNickname())
               .requestUserIdx(requestUser.getUserIdx())
-              .build();
+          .requestProfileImgUrl(requestUser.getProfileImg())
+          .build();
 
     } else{
       receiveUser = writeUser;
@@ -177,9 +184,11 @@ public class TradeFinService {
               .receiveItemIdx(receiveItem.getItemIdx())
               .receiveNickname(receiveUser.getNickname())
               .receiveUserIdx(receiveUser.getUserIdx())
+          .receiveProfileImgUrl(receiveUser.getProfileImg())
               .requestItemIdx(requestItem.getItemIdx())
               .requestNickname(requestUser.getNickname())
               .requestUserIdx(requestUser.getUserIdx())
+          .requestProfileImgUrl(requestUser.getProfileImg())
               .build();
     }
 

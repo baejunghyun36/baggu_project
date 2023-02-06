@@ -2,6 +2,7 @@ package com.project.baggu;
 
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
+import com.project.baggu.domain.TradeRequest;
 import com.project.baggu.domain.User;
 import com.project.baggu.domain.enumType.CategoryType;
 import com.project.baggu.domain.enumType.Role;
@@ -82,6 +83,7 @@ class DummyDataTest {
                     .lng(lng)
                     .lat(lat)
                     .role(Role.TYPE1)
+                    .profileImg("https://i.pinimg.com/236x/6f/f0/83/6ff083374ce2118f4ea1c35a4593a070.jpg")
                     .build();
 
       userRepository.save(testU);
@@ -114,16 +116,12 @@ class DummyDataTest {
                 .title(i+j+title)
                 .user(u)
                 .category(CategoryType.valueOf("TYPE"+ran))
+                .firstImg("https://i1.sndcdn.com/avatars-IsvhjlUsarXgDHFQ-dSTRxw-t240x240.jpg")
                 .build();
 
         itemRepository.save(testI);
       }
-
-
     }
   }
-
-
-
 
 }

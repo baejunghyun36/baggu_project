@@ -17,9 +17,9 @@ const ItemContainer = styled.div`
 const ItemImg = styled.div`
   ${props =>
     css`
-      background-image: url(${props.itemImgUrl});
+      background-image: url(${props.item.itemImgUrl});
     `}
-  ${tw`w-[100px] h-[100px] rounded border`}
+  ${tw`w-[100px] h-[100px] rounded border bg-cover bg-center`}
 `;
 const ItemInfo = styled.div`
   p {
@@ -61,15 +61,16 @@ function ProductListItem({ item, onClick, selected }) {
       onClick={onClick ? onClick : moveToDetail}
       selected={selected}
     >
-      <ItemImg></ItemImg>
+      <ItemImg item={item}></ItemImg>
       <ItemInfo>
         <p>{item.title}</p>
         <span>
-          {item.dong} {GetRelativeTime(year, month, day, hour, minute)}
+          {item.dong}
+          {GetRelativeTime(year, month, day, hour, minute)}
         </span>
       </ItemInfo>
       <SubInfo>
-        {/* <Chip tradeState={item.tradeState} /> */}
+        <Chip tradeState={item.state} />
         {selected ? (
           <svg
             width="32"
