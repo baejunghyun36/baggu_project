@@ -50,9 +50,9 @@ public class OAuth2KakaoUser {
     public static OAuth2KakaoUser mapToObj(Map<String, Object> attributes){
         return OAuth2KakaoUser.builder()
                 .userIdx((Long)(attributes.getOrDefault("userIdx", "null")))
-                .kakaoId(attributes.getOrDefault("id","null").toString())
+                .kakaoId(attributes.getOrDefault("kakaoId","null").toString())
                 .nickname(attributes.getOrDefault("nickname","null").toString())
-                .email(attributes.getOrDefault("email","null").toString())
+                .email(attributes.getOrDefault("email","unregistered_email").toString())
                 .isEmailValid(Boolean.valueOf(attributes.getOrDefault("isEmailValid",false).toString()))
                 .isEmailVerified(Boolean.valueOf(attributes.getOrDefault("isEmailVerified",false).toString()))
                 .role((Role)attributes.getOrDefault("role","ROLE_UNAUTHORIZED"))

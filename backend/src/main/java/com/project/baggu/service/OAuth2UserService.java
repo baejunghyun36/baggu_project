@@ -70,7 +70,7 @@ public class OAuth2UserService implements
             .builder()
             .kakaoId(attributes.get("id").toString())
             .nickname(kakaoProfile.get("nickname").toString())
-            .email(kakaoAccount.getOrDefault("email","null").toString())
+            .email(kakaoAccount.getOrDefault("email","unregistered_email").toString())
             .isEmailValid(Boolean.valueOf(kakaoAccount.getOrDefault("is_email_valid","false").toString()))
             .isEmailVerified(Boolean.valueOf(kakaoAccount.getOrDefault("is_email_verified","false").toString()))
             .build();

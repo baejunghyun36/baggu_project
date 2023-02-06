@@ -19,6 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -109,7 +114,7 @@ public class UserService {
 
   }
 
-  public UserDetailDto getUserDetail(Long userIdx) throws BaseException {
+  public UserDetailDto getUserDetail(Long userIdx, int page) throws BaseException {
 
     User user = userRepository.findById(userIdx)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
@@ -120,7 +125,7 @@ public class UserService {
         .profileImg(user.getProfileImg())
         .build();
 
-    itemRepository.getUserItemList(userIdx).forEach(
+    itemRepository.getUserItemList(userIdx, PageRequest.of(page, 20, Sort.by(Direction.DESC, "createdAt"))).forEach(
         (item) ->
             userDetailDto.getItemList().add(
                 ItemListDto.builder()
@@ -290,5 +295,13 @@ public class UserService {
 
   public Optional<User> findUserByKakaoId(String kakaoId) {
     return userRepository.findUserByKakaoId(kakaoId);
+  }
+
+  //page test
+  public Page<User> getUserPage(int page){
+//    return userRepository.findAll(new Pa)
+//    PageRequest pr = new PageRequest(0,20, Sort.by(Direction.DESC));
+    PageRequest pageRequest = PageRequest.of(page,20, Sort.by(Sort.Direction.DESC, "createdAt"));
+  return userRepository.findAll(pageRequest);
   }
 }
