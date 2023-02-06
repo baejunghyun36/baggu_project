@@ -73,7 +73,7 @@ class SampleUserServiceTest {
             .lng("37.5666")
             .lat("126.9784")
             .kakaoId(testUser.getKakaoId())
-            .role(Role.TYPE3).build();
+            .build();
 
     //when
     userService.userSignUp(userSignUpDto);
