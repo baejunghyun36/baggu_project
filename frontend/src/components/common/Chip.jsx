@@ -1,5 +1,6 @@
 import React from 'react';
-
+import { useState } from 'react';
+import { useEffect } from 'react';
 // twin.macro
 import tw, { styled } from 'twin.macro';
 
@@ -16,17 +17,28 @@ function Chip({ tradeState }) {
   < prop >
   1. tradeState : 부모 컴포넌트에서 해당 아이템의 거래상태(tradeState)
   */
-
-  // tradeState에 따른 title
-  const title = {
-    1: '예약중',
-    2: '거래완료',
-  };
-
+  const [state, setState] = useState(0);
+  useEffect(() => {
+    setState(tradeState);
+  }, []);
   return (
-    <ChipContainer>
-      <span>{title}</span>
-    </ChipContainer>
+    <>
+      {/* <div className={`${state === 0 ? '' : 'hidden'}`}>
+        <ChipContainer tradeState={state}>
+          <span>놉</span>
+        </ChipContainer>
+      </div> */}
+      <div className={`${state === 1 ? '' : 'hidden'}`}>
+        <ChipContainer tradeState={state}>
+          <span>예약중</span>
+        </ChipContainer>
+      </div>
+      <div className={`${state === 2 ? '' : 'hidden'}`}>
+        <ChipContainer tradeState={state}>
+          <span>거래완료</span>
+        </ChipContainer>
+      </div>
+    </>
   );
 }
 

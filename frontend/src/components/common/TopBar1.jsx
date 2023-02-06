@@ -7,7 +7,7 @@ import notification from '../../assets/icons/notification.svg';
 import locationIcon from '../../assets/icons/location.svg';
 import tw, { styled } from 'twin.macro';
 
-const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border-grey1 h-[60px] w-full`;
+const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border-grey1 h-[60px] w-full z-10`;
 
 function TopBar1() {
   const town = '역삼동';
@@ -21,7 +21,8 @@ function TopBar1() {
     location.startsWith('/makeRequest') ||
     location.startsWith('/makeRequest') ||
     location.startsWith('/myprofile') ||
-    location.startsWith('/userReview')
+    location.startsWith('/userReview') ||
+    location.startsWith('/item')
   ) {
     return null;
   }
@@ -31,7 +32,7 @@ function TopBar1() {
   return (
     <Container
       id="top-bar-1"
-      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px]"
+      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px] bg-white"
     >
       <div>
         {/* 동네설정 url은 임시 */}
