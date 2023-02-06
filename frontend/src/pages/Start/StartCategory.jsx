@@ -86,18 +86,8 @@ function StartCategory() {
   ];
 
   // store
-  const {
-    email,
-    nickname,
-    category,
-    si,
-    gu,
-    dong,
-    lng,
-    lat,
-    kakaoId,
-    saveCategory,
-  } = signUpStore(state => state);
+  const { email, userIdx, kakaoId, nickname, si, gu, dong, lng, lat } =
+    signUpStore(state => state);
 
   // 클릭된 카테고리 수,
   const clickedCount = Object.values(clickedCategories).filter(
@@ -107,19 +97,30 @@ function StartCategory() {
   // signup API 요청 함수
   const sign_up = async category_types => {
     try {
-      const response = await authInstance.post(requests.SIGNUP, {
-        data: {
-          nickname: nickname,
-          category: category_types,
-          si: si,
-          gu: gu,
-          dong: dong,
-          lng: lng,
-          lat: lat,
-          kakaoId: kakaoId,
-        },
+      console.log(
+        'data from store',
+        email,
+        userIdx,
+        nickname,
+        si,
+        gu,
+        dong,
+        lng,
+        lat,
+        kakaoId
+      );
+      const response = await defaultInstance.post(requests.SIGNUP, {
+        email: email,
+        nickname: nickname,
+        category: category_types,
+        si: si,
+        gu: gu,
+        dong: dong,
+        lng: lng,
+        lat: lat,
+        kakaoId: kakaoId,
       });
-      return response.data;
+      return response;
     } catch (error) {
       throw error;
     }
@@ -138,7 +139,10 @@ function StartCategory() {
       // API 요청
       sign_up(category_types)
         .then(res => {
-          console.log('sign up success', res);
+          console.log('sign up success');
+          window.localStorage.setItem('isLoggedIn', true);
+          window.localStorage.setItem('token', res.headers['authorization']);
+          window.localStorage.setItem('dong', dong);
           navigate('/start/ready');
         })
         .catch(error => {
