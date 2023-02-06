@@ -1,7 +1,6 @@
 package com.project.baggu.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.baggu.dto.BaseResponseStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -12,6 +11,11 @@ import lombok.Data;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+/*
+filter exception handler의 경우는 authentication이 아닌 authorization에서 생긴 오류를 잡는데 사용하는 경우가 많음.
+이미 authentication entry point가 생성되어있기 때문에 사용이 되진 않는다.
+ */
 public class FilterExceptionHandler extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(

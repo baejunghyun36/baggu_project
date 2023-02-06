@@ -1,5 +1,8 @@
 package com.project.baggu.config.filter;
 
+import com.project.baggu.exception.BaseException;
+import com.project.baggu.exception.BaseResponseStatus;
+import com.project.baggu.exception.JwtAuthenticationException;
 import com.project.baggu.utils.JwtTokenProvider;
 import com.project.baggu.utils.JwtTokenUtils;
 import io.jsonwebtoken.MalformedJwtException;
@@ -27,14 +30,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String jwt = JwtTokenUtils.resolveAccessToken(request);
-
-        //jwt가 없다면 -> 다음 필터로
-        if(!StringUtils.hasText(jwt)){
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         //login 요청의 경우 다음 필터로
         if ((request.getRequestURI()).equals(excludeUrl)) {
             filterChain.doFilter(request, response);
@@ -42,19 +37,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         try{
+            String jwt = JwtTokenUtils.resolveAccessToken(request);
             //유효할 경우
             if(JwtTokenUtils.isValidToken(jwt)){
                 Authentication authentication = jwtTokenProvider.getAuthentication(jwt); // 정상 토큰이면 SecurityContext 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else{ //만료된 경우
-                throw new ServletException();
+                throw new BaseException(BaseResponseStatus.TOKEN_EXPIRED);
             }
-        } catch (ServletException e){ //만료된 경우
-            request.setAttribute("exception", "EXPIRED_TOKEN");
-        } catch (MalformedJwtException e){
-            request.setAttribute("exception", "UNVALID_TOKEN");
+        } catch (BaseException e){
+            request.setAttribute("exception", e.getStatus().name());
         }
-
         doFilter(request, response, filterChain);
     }
 }

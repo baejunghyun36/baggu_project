@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHandler implements OAuth2CustomHandler{
 
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
   private final JwtTokenService jwtTokenService;
   private static final int REFRESH_PERIOD = 60 * 60 * 24 * 14;
 
@@ -45,9 +45,6 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     //token 설정
     response.setHeader("Authorization",tokenInfo.getAccessToken());
 //    CookieUtils.addCookie(response,"refresh-token",tokenInfo.getRefreshToken(), REFRESH_PERIOD);
-
-    //임시 코드
-    System.out.println(tokenInfo);
 
     writeJsonResponse(response,kakaoUser);
   }

@@ -6,12 +6,16 @@ import com.project.baggu.domain.TradeRequest;
 import com.project.baggu.dto.ItemListDto;
 import com.project.baggu.dto.TradeDeleteDto;
 import com.project.baggu.dto.TradeRequestDto;
+import com.project.baggu.exception.BaseException;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.repository.ItemRepository;
 import com.project.baggu.repository.TradeDetailRepository;
 import com.project.baggu.repository.TradeRequestRepository;
 import com.project.baggu.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,12 +33,16 @@ public class TradeRequestService {
 
   @Transactional
   public void tradeDelete(Long tradeRequestIdx) {
-
-    tradeDetailRepository.deleteTradeDetail(tradeRequestIdx);
-    tradeRequestRepository.deleteTradeRequest(tradeRequestIdx);
+    try{
+      tradeDetailRepository.deleteTradeDetail(tradeRequestIdx);
+      tradeRequestRepository.deleteTradeRequest(tradeRequestIdx);
+    } catch (Exception e){
+      throw new BaseException(BaseResponseStatus.DATABASE_DELETE_ERROR);
+    }
   }
 
   public List<ItemListDto> requestItemList(Long userIdx) {
+    try{
 
     List <TradeRequest> list = tradeRequestRepository.findItemByUserIdx(userIdx);
     List<ItemListDto> userItemDtoList = new ArrayList<>();
@@ -51,11 +59,12 @@ public class TradeRequestService {
       userItemDto.setItemImgUrl(t.getReceiveItemIdx().getFirstImg());
       userItemDtoList.add(userItemDto);
     }
-
-
     return userItemDtoList;
-  }
 
+    } catch (Exception e){
+      throw new BaseException(BaseResponseStatus.DATABASE_GET_ERROR);
+    }
+  }
 
 
 

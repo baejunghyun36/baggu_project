@@ -1,11 +1,6 @@
 spring:
   profiles:
     include: SECRET
-
-
----
-#공통 변수
-spring:
   servlet:
     multipart:
       max-file-size: 10MB
@@ -75,3 +70,10 @@ cloud:
         false
 server:
   port: 9999
+
+#swagger
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /swagger/api-docs

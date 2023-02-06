@@ -25,7 +25,6 @@ public class TradeRequestController {
   private final TradeRequestService tradeRequestService;
 
 
-
 //  신청한 내역을 취소한다.
 //  선택한 신청자를 삭제한다. -> 신청자와 관련된 아이템을 모두 삭제
   @DeleteMapping("/{tradeRequestIdx}")

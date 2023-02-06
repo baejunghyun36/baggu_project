@@ -17,7 +17,7 @@ public class BasicExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity handleCustomException(BaseException e) {
     log.error("Error occurs {}", e.toString());
     return ResponseEntity.status(e.getStatus().getStatus())
-        .body(e.getStatus().name());
+        .body(e.getStatus().getMessage());
   }
 
   @ExceptionHandler({Exception.class})

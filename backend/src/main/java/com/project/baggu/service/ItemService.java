@@ -7,7 +7,7 @@ import com.project.baggu.domain.TradeDetail;
 import com.project.baggu.domain.TradeRequest;
 import com.project.baggu.domain.User;
 import com.project.baggu.domain.enumType.TradeState;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;

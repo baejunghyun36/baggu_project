@@ -3,7 +3,7 @@ package com.project.baggu.service;
 //import static com.project.baggu.config.RedisConfig.RedisCacheKey.TRADE_FIN_LIST;
 
 import com.project.baggu.exception.BaseException;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.domain.*;
 import com.project.baggu.dto.ReviewTagDto;
 import com.project.baggu.dto.ReviewTextDto;
