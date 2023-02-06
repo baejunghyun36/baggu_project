@@ -23,7 +23,7 @@ export const post_notify = async data => {
 // 알림 서버와 연결
 export const get_notify = async userIdx => {
   try {
-    const { data } = await authInstance.get(requests.GET_NOTIFY(userIdx));
+    const { data } = await authInstance.get(requests.GET_NOTIFY(42));
     return data;
   } catch (error) {
     throw error;

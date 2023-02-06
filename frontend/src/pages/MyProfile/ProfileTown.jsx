@@ -28,9 +28,9 @@ function ProfileTown() {
 
   // mutation
   const userIdx = localStorage.getItem('userIdx');
-  const { data, isLoading, mutate, isSuccess } = useMutation(() =>
-    put_user_dong(userIdx)
-  );
+  const { data, isLoading, mutate, isSuccess } = useMutation(put_user_dong, {
+    onSuccess: () => {},
+  });
 
   // geolocation 비동기 처리
   const getPosition = function (options) {
@@ -72,7 +72,8 @@ function ProfileTown() {
         return data;
       })
       .then(data => {
-        mutate(data);
+        // console.log('here', data);
+        mutate({ userIdx: userIdx, data: data });
       })
       .catch(err => {
         console.log(err.message);
