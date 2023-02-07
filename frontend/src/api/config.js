@@ -30,12 +30,14 @@ const requests = {
   },
 
   // 동네의 최근 등록된 물품 목록 (GET)
-  GET_MAIN_ITEM(dong) {
-    return `/baggu/item?dong=${dong}`;
+  GET_MAIN_ITEM(dong, page) {
+    return `/baggu/item?dong=${dong}&page=${page}`;
   },
 
   // 최근 성사된 바꾸 목록 (GET)
-  GET_MAIN_TRADE: `/baggu/tradeFin`,
+  GET_MAIN_TRADE(page) {
+    return `/baggu/tradeFin?page=${page}`;
+  },
 
   //피드 좋아요 (POST), 피드 좋아요 취소 (DELETE)
   FEED_LIKE(tradeFinIdx) {
