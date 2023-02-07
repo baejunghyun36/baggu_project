@@ -52,9 +52,13 @@ public class S3UploadService {
   @PostConstruct
   private void init() {
     //실제 프로젝트 경로와 대상 폴더 경로를 합쳐 최종 저장 디렉토리 생성
-    this.localDir = System.getProperty("user.dir") + staticDir;
+    String superDir = "/app/s3";
+
+    this.localDir = staticDir;
+
 
     //임시 로컬 저장소가 없을 경우 생성
+    makeDirectory(superDir);
     makeDirectory(localDir);
 
     //amazonS3Client 생성
