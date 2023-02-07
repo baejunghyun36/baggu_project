@@ -20,9 +20,9 @@ function Home() {
     const get_main_items = async () => {
       try {
         const { data } = await authInstance.get(
-          requests.GET_MAIN_ITEM('역삼동'),
+          requests.GET_MAIN_ITEM('역삼동', 0),
           {
-            dong: '',
+            dong: '역삼동',
           }
         );
         console.log(data);
@@ -33,8 +33,9 @@ function Home() {
     };
     const get_main_feeds = async () => {
       try {
-        const { data } = await authInstance.get(requests.GET_MAIN_TRADE);
+        const { data } = await authInstance.get(requests.GET_MAIN_TRADE(0));
 
+        console.log(data);
         return setBaggus(data);
       } catch (error) {
         console.log(error);

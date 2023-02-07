@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TradeFinDto {
+  private Long tradeFinIdx;
   private String requestNickname;
   private String receiveNickname;
   private Long requestUserIdx;

@@ -2,13 +2,13 @@
 // 각 key의 상단의 주석으로 API 명세 상 API 제목 명시함
 const requests = {
   // baggu 공식
-  // base_url: 'https://test.baggu.shop/api',
+  base_url: 'https://test.baggu.shop/api',
 
   // 알림 서버 URL
   notify_base_url: 'https://baggu.shop/notifyapi',
 
   // 소정님 IP
-  base_url: 'http://70.12.247.158:9999',
+  // base_url: 'http://70.12.247.158:9999',
 
   // 안채님 IP
   // base_url: 'http://70.12.247.174:8080',
@@ -30,12 +30,14 @@ const requests = {
   },
 
   // 동네의 최근 등록된 물품 목록 (GET)
-  GET_MAIN_ITEM(dong) {
-    return `/baggu/item?dong=${dong}`;
+  GET_MAIN_ITEM(dong, page) {
+    return `/baggu/item?dong=${dong}&page=${page}`;
   },
 
   // 최근 성사된 바꾸 목록 (GET)
-  GET_MAIN_TRADE: `/baggu/tradeFin`,
+  GET_MAIN_TRADE(page) {
+    return `/baggu/tradeFin?page=${page}`;
+  },
 
   //피드 좋아요 (POST), 피드 좋아요 취소 (DELETE)
   FEED_LIKE(tradeFinIdx) {
