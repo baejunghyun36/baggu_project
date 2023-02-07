@@ -30,17 +30,6 @@ function Chat() {
   // 중앙에 저장된 채팅방 리스트
   const { chatRoomList } = chatStore(state => state);
 
-  const { isLoading, isError, data, error } = useQuery('getChat', getChat, {
-    staleTime: 10000,
-  });
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
-  if (isError) {
-    return <span>Error : {error.message}</span>;
-  }
-  const movies = data.data.data.movies;
-
   // 채팅방 정보 예시
   // {
   //   "roomId":"63da08172a56c42cc9b85a61",
