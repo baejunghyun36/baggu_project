@@ -16,6 +16,10 @@ RUN ./gradlew -x compileTestJava build
 # 빌드가 완료된 jar파일을 작업 디렉토리의 root로 가져온다.
 FROM openjdk:11-jdk-slim
 
+WORKDIR /app
+
+RUN mkdir ./s3/temp
+
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 # 9999 포트를 사용
