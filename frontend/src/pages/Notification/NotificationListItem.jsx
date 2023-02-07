@@ -1,14 +1,21 @@
-import { put_notify } from 'api/apis/notify';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// API
+import { useMutation } from 'react-query';
+import { put_notify } from 'api/apis/notify';
+
 // twin.macro
 import tw, { styled } from 'twin.macro';
+import { notificationStore } from 'store/notication';
 
 // Styled Component
 const Container = styled.div`
-  ${tw`w-full p-2 flex gap-2 border-b hover:bg-primary-hover`}
-  ${props => (props.readState ? tw`bg-grey1 text-grey2` : tw`bg-white`)}
+  ${tw`w-full p-2 flex gap-2 border-b `}
+  ${props =>
+    props.readState
+      ? tw`bg-grey1 text-grey2`
+      : tw`bg-white hover:bg-primary-hover`}
 `;
 const TextContainer = styled.div`
   ${tw`flex flex-col gap-1  text-main-bold`}
@@ -42,13 +49,27 @@ function NotificationListItem({
   // 현재 로그인한 유저의 idx
   const userIdx = window.localStorage.getItem('userIdx');
 
+  // 일림 클릭시 put nofity로 mutate
+  const { data, isLoading, mutate, isSuccess } = useMutation(put_notify, {
+    onSuccess: () => {},
+  });
+
+  // 알림 중앙저장소
+  const { readNotify } = notificationStore(state => state);
+
   // 알림 클릭시 실행될 함수
   const navigate = useNavigate();
   const onClickHandler = (type, notifyIdx) => {
-    put_notify({ notifyIdx: notifyIdx });
+    // 알림 서버에 읽음 처리
+    mutate({ notifyIdx: notifyIdx });
+    // 중앙저장소에 읽음 처리
+    readNotify(notifyIdx);
+
+    // url 이동
     if (type === 0) navigate(`/item/${typeIdx}`);
     else if (type === 1) navigate(`/chat`);
   };
+
   return (
     <Container
       onClick={() => onClickHandler(type, notifyIdx)}

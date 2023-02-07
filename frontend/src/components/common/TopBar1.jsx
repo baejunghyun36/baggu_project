@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 
 // API
 import requests from 'api/config';
-import { sseInstance } from 'api/axios';
 
 // icon
 import search from '../../assets/icons/search.svg';
@@ -17,7 +16,7 @@ const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border
 
 const Notify = styled.div`
   ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px]`}
-  ${props => (props.unread ? tw`` : tw`hidden`)}
+  ${props => (props.notifyCount > 0 ? tw`` : tw`hidden`)}
 `;
 
 // Main Component
@@ -26,11 +25,17 @@ function TopBar1() {
   const dong = localStorage.getItem('dong');
 
   // 알림 리스트 전역 저장소
-  const { unread, countUnread } = notificationStore(state => state);
+  const { notifyList, unread, countUnread } = notificationStore(state => state);
+
+  // 읽지 않은 알림 수에 대한 state
+  const [notifyCount, setNotifyCount] = useState(0);
 
   useEffect(() => {
-    // countUnread();
-  });
+    const unreadNotifyCount = notifyList.filter(
+      x => x.readState === false
+    ).length;
+    setNotifyCount(unreadNotifyCount);
+  }, [notifyList]);
 
   // 온보딩 페이지에서 상단바 숨기기
   const location = useLocation().pathname;
@@ -75,7 +80,7 @@ function TopBar1() {
             alt="icon-notification"
             className="absolute w-[40px] h-[40px]"
           />
-          <Notify></Notify>
+          <Notify notifyCount={notifyCount}></Notify>
         </Link>
       </div>
     </Container>
