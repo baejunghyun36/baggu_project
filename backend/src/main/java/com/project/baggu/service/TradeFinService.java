@@ -45,6 +45,7 @@ public class TradeFinService {
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
     for(TradeFin tf : tradeFinList){
       TradeFinDto tradeFinDto = new TradeFinDto();
+      tradeFinDto.setTradeFinIdx(tf.getTradeFinIdx());
       tradeFinDto.setHeartCount(tf.getHeartCount());
       tradeFinDto.setCreatedAt(tf.getCreatedAt());
 
@@ -82,6 +83,7 @@ public class TradeFinService {
     List<TradeFinDto> tradeFinDtos = new ArrayList<>();
     for(TradeFin tf : tradeFinList){
       TradeFinDto tradeFinDto = new TradeFinDto();
+      tradeFinDto.setTradeFinIdx(tf.getTradeFinIdx());
       tradeFinDto.setHeartCount(tf.getHeartCount());
       tradeFinDto.setCreatedAt(tf.getCreatedAt());
       tradeFinDto.setReceiveItemIdx(tf.getReceiveItemIdx());
