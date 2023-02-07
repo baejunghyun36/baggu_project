@@ -19,10 +19,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Slf4j
 @AutoConfigureMockMvc
+@Transactional
 public class SampleSecurityTest{
 
   @Autowired
@@ -36,7 +38,7 @@ public class SampleSecurityTest{
   @DisplayName("인증 테스트")
   @WithMockCustomTokenAccount(userIdx = "1")
   public void getItemTest() throws Exception{
-    mockMvc.perform(get("/baggu/auth/item"))
+    mockMvc.perform(get("/baggu/item/1"))
         .andDo(print())
         .andExpect(status().isOk());
   }
@@ -44,7 +46,6 @@ public class SampleSecurityTest{
   @Test
   @DisplayName("인가 테스트")
   @WithMockCustomTokenAccount(userIdx="1")
-  @Rollback
   public void putUserTest() throws Exception{
     User testU = User.builder()
             .info("before test")
