@@ -18,12 +18,10 @@ export const notificationStore = create(
     readNotify: notifyIdx => {
       set(state => {
         const targetIdx = state.notifyList.findIndex(
-          notify => (notify.notifyIdx = notifyIdx)
+          notify => notify.notifyIdx === notifyIdx
         );
         // DOM에서 notifyList를 reverse하여 맵핑하였으므로 인덱스를 거꾸로
-        state.notifyList[
-          state.notifyList.length - targetIdx - 1
-        ].readState = true;
+        state.notifyList[targetIdx].readState = 'hi';
         return { notifyList: [...state.notifyList] };
       });
     },
