@@ -18,7 +18,7 @@ import org.springframework.data.redis.core.RedisHash;
  */
 @RedisHash(
     value = "refreshToken",
-    timeToLive = 30L
+    timeToLive = 60L * 60L * 24L
 )
 @Getter
 @Setter
