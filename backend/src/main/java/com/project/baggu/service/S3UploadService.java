@@ -44,8 +44,8 @@ public class S3UploadService {
 
   private String localDir;
 
-  private final String CLOUD_FRONT_DOMAIN = "https://d21fcuishx9n20.cloudfront.net/";
-  private final String S3_DOMAIN = "https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/";
+  private final String CLOUD_FRONT_DOMAIN = "https://d9f4zibn3mxwq.cloudfront.net/";
+  private final String S3_DOMAIN = "https://bagguimg.s3.ap-northeast-2.amazonaws.com/";
 
   private AmazonS3 amazonS3Client;
 
@@ -178,7 +178,9 @@ public class S3UploadService {
     try {
       File Folder = new File(fileDir);
       if (!Folder.exists()) {
-        Folder.mkdir();
+        if(!Folder.mkdir()){
+          throw new Exception();
+        }
       }
     } catch (Exception e) {
       throw new BaseException(BaseResponseStatus.FILE_DIRECTORY_MAKE_ERROR, e.toString());

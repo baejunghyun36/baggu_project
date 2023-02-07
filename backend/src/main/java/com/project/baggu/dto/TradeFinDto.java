@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 public class TradeFinDto {
   private String requestNickname;
   private String receiveNickname;
+  private Long requestUserIdx;
+  private Long receiveUserIdx;
   private Long requestItemIdx;
   private Long receiveItemIdx;
   private String requestItemImgUrl;
