@@ -18,7 +18,8 @@ FROM openjdk:11-jdk-slim
 
 WORKDIR /app
 
-RUN mkdir ./s3/temp
+RUN mkdir /app/s3
+RUN mkdir /app/s3/temp
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 
