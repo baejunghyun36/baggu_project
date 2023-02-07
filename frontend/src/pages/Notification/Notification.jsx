@@ -30,7 +30,7 @@ function Notification() {
     <div>
       <TopBar2 title="알림" />
       <NotificationListWrapper>
-        {notifications.map(notification => (
+        {[...notifications].reverse().map(notification => (
           <NotificationListItem
             key={notification.notifyIdx}
             title={notification.title}
