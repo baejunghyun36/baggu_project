@@ -24,6 +24,7 @@ public class CorsConfig {
 //    config.addAllowedOrigin("https://baggu.shop"); //deploy 서버
 //    config.addAllowedOrigin("http://baggu.shop"); //deploy 서버
 
+
     //method 설정
     config.addAllowedMethod("PUT");
     config.addAllowedMethod("OPTIONS");
