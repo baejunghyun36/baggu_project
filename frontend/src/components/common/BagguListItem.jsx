@@ -1,8 +1,14 @@
 import React from 'react';
+import { useState } from 'react';
 import icon_exchange from 'assets/icons/exchange.svg';
 import { useNavigate } from 'react-router';
+import { Link, useLocation } from 'react-router-dom';
 // import styled from 'styled-components';
 import tw, { styled, css } from 'twin.macro';
+import heart_unliked from '../../assets/icons/heart_unliked.svg';
+import heart_liked from '../../assets/icons/heart_liked.svg';
+import FormatDate from 'hooks/FormatDate';
+import GetRelativeTime from 'hooks/GetRelativeTime';
 
 const Container = styled.div`
   ${tw`w-full`}
@@ -11,7 +17,7 @@ const Container = styled.div`
 const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
 
 const Avatar = styled.div`
-  ${tw`bg-primary rounded-full w-6 h-6 bg-cover bg-center mr-2`}
+  ${tw`bg-primary rounded-full w-5 h-5 bg-cover bg-center mr-2`}
   ${props => css`
     background-image: url(${props.img});
   `}
@@ -29,11 +35,9 @@ const Info = styled.div`
     }
   }
 `;
-const Nickname = tw.p`text-main-bold `;
-const Message = tw.span`text-sub`;
-const Notifycation = tw.div`w-1 h-1 rounded-full bg-secondary absolute right-0`;
+
 const Product = styled.div`
-  ${tw`w-6 h-6 rounded bg-cover bg-center`}
+  ${tw`w-10 h-10 rounded bg-cover bg-center`}
   ${props =>
     css`
       background-image: url(${props.img});
@@ -41,25 +45,65 @@ const Product = styled.div`
 `;
 
 function BagguListItem({ baggu }) {
-  const navigate = useNavigate();
+  const { year, month, day, hour, minute } = FormatDate(baggu.createdAt);
 
+  // 상대적인 날짜 계산
+  const navigate = useNavigate();
+  const [liked, setLiked] = useState(false);
+  // 좋아요 API 요청
+  // const feed_like = async () => {
+  //   try {
+  //     const { data } = await authInstance.get(requests.FEED_LIKE({}));
+
+  //     console.log(data);
+  //     return setLiked(!liked);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  const location = useLocation().pathname;
   return (
     <Container>
       <Wrapper>
-        <Avatar img={baggu.requestProfileImgUrl}></Avatar>
-        <Avatar img={baggu.receiveProfileImgUrl}></Avatar>
+        <Avatar img={baggu.requestUserImgUrl} />
+        <Avatar img={baggu.receiveUserImgUrl} />
         <Info>
           <section>
-            <Nickname>{baggu.requestNickname}</Nickname>
-            <Nickname>{baggu.requestNickname}</Nickname>
+            {/* <Link to={`/user/${baggu.}`}></Link> */}
+            <span className=" text-primary">{baggu.requestNickname}</span>
+            님과 <span className=" text-primary">{baggu.receiveNickname}</span>
+            님의 바꾸
+            <br />
+            <span>{GetRelativeTime(year, month, day, hour, minute)}</span>
           </section>
-          <Notifycation />
         </Info>
       </Wrapper>
       <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
-        <Product img={baggu.requestItemImgUrl}></Product>
+        <Link to={`/item/${baggu.requestItemImgUrl}`}>
+          <Product img={baggu.requestItemImgUrl} />
+        </Link>
         <img src={icon_exchange} alt="" />
-        <Product img={baggu.receiveItemImgUrl}></Product>
+        <Link to={`/item/${baggu.receiveItemImgUrl}`}>
+          <Product img={baggu.receiveItemImgUrl} />
+        </Link>
+      </div>
+      <div className="flex flex-wrap justify-between gap-2 bg-white border-t w-full h-[60px] px-4 py-2">
+        <div
+          // onClick={feed_like}
+          className={`${location.startsWith('/myprofile') ? 'hidden' : ''}`}
+        >
+          <img
+            src={heart_unliked}
+            alt="like button"
+            className={`${liked ? 'hidden' : ''}`}
+          />
+          <img
+            src={heart_liked}
+            alt="like button"
+            className={`${liked ? '' : 'hidden'}`}
+          />
+        </div>
+        {/* 사용자와 게시글 작성자 정보를 비교하여 title 변경 */}
       </div>
     </Container>
   );
