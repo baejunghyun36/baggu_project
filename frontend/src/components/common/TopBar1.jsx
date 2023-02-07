@@ -10,13 +10,27 @@ import search from '../../assets/icons/search.svg';
 import notification from '../../assets/icons/notification.svg';
 import locationIcon from '../../assets/icons/location.svg';
 import tw, { styled } from 'twin.macro';
+import { notificationStore } from 'store/notication';
 
 // Styled Component
 const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border-grey1 h-[60px] w-full`;
 
+const Notify = styled.div`
+  ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px]`}
+  ${props => (props.unread ? tw`` : tw`hidden`)}
+`;
+
 // Main Component
 function TopBar1() {
+  // 유저의 동네 정보
   const dong = localStorage.getItem('dong');
+
+  // 알림 리스트 전역 저장소
+  const { unread, countUnread } = notificationStore(state => state);
+
+  useEffect(() => {
+    // countUnread();
+  });
 
   // 온보딩 페이지에서 상단바 숨기기
   const location = useLocation().pathname;
@@ -61,7 +75,7 @@ function TopBar1() {
             alt="icon-notification"
             className="absolute w-[40px] h-[40px]"
           />
-          <div className="absolute right-0 rounded-full bg-secondary w-[12px] h-[12px]"></div>
+          <Notify></Notify>
         </Link>
       </div>
     </Container>

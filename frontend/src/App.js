@@ -58,24 +58,27 @@ const Wrapper = styled.div`
 function App() {
   const { saveToken, saveUserIdx, saveDong } = userStore(state => state);
   const userIdx = window.localStorage.getItem('userIdx');
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
 
   // 알림서버와의 구독 상태
   const [listeningToNotify, setListeningToNotify] = useState(false);
   // 알림 리스트 전역 저장소
-  const { saveNotify, addNotify } = notificationStore(state => state);
+  const { unread, saveNotify, addNotify, countUnread } = notificationStore(
+    state => state
+  );
+  let notifyEvent = undefined;
 
   useEffect(() => {
-    // 알림서버를 구독하고 있지 않은 상태라면 연결
-    if (!listeningToNotify) {
-      const notifyEvent = new EventSource(
+    // 로그인을 했고, 알림서버를 구독하고 있지 않은 상태라면 연결
+    if (isLoggedIn && !listeningToNotify) {
+      notifyEvent = new EventSource(
+        // 42는 테스트용 userIdx
         `${requests.notify_base_url + requests.GET_NOTIFY(42)}`
       );
+
       // 최초 연결
       notifyEvent.onopen = event => {
-        console.log('open', event);
-        const parsedData = JSON.parse(event.data);
-        console.log('first received notify', parsedData);
-        saveNotify(parsedData);
+        console.log('open : notify connection', event);
       };
 
       // 새로운 알림 도착
@@ -84,9 +87,22 @@ function App() {
         console.log('new received notify', parsedData);
         addNotify(parsedData);
       };
+
+      // 에러 발생
+      notifyEvent.onerror = event => {
+        console.log('closed : notify connection');
+        notifyEvent.close();
+      };
+
+      setListeningToNotify(true);
     }
-    setListeningToNotify(!listeningToNotify);
+
+    return () => {
+      notifyEvent.close();
+      console.log('useEffect ended & notify closed');
+    };
   }, []);
+
   return (
     <QueryClientProvider client={queryClient} contextSharing={true}>
       <BrowserRouter className="App">
