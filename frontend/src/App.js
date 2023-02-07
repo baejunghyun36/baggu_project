@@ -44,6 +44,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // styled component
 import tw, { styled, css } from 'twin.macro';
+import { chatStore } from 'store/chat';
 
 const queryClient = new QueryClient();
 
@@ -63,21 +64,26 @@ function App() {
   // 알림서버와의 구독 상태
   const [listeningToNotify, setListeningToNotify] = useState(false);
   // 알림 리스트 전역 저장소
-  const { unread, saveNotify, addNotify, countUnread } = notificationStore(
-    state => state
-  );
+  const { addNotify } = notificationStore(state => state);
   let notifyEvent = undefined;
 
+  // 채팅서버와의 구독 상태
+  const [listeningToChat, setListeningToChat] = useState(false);
+  // 채팅방 리스트 전역 저장소
+  const { addChatRoom, addChatMessage } = chatStore(state => state);
+  let chatEvent = undefined;
+  let messageEvent = undefined;
+
   useEffect(() => {
-    // 로그인을 했고, 알림서버를 구독하고 있지 않은 상태라면 연결
+    // 1. 알림 SSE 연결
     if (isLoggedIn && !listeningToNotify) {
       notifyEvent = new EventSource(
         `${requests.notify_base_url + requests.GET_NOTIFY(userIdx)}`
       );
 
-      // 최초 연결
+      // 최초 연결 확인
       notifyEvent.onopen = event => {
-        // console.log('open : notify connection', event);
+        console.log('open : notify connection', event);
       };
 
       // 새로운 알림 도착
@@ -97,8 +103,63 @@ function App() {
       setListeningToNotify(true);
     }
 
+    // 2. 채팅 SSE 연결
+    if (isLoggedIn && !listeningToChat) {
+      chatEvent = new EventSource(
+        `${requests.chat_base_url + requests.GET_CHATROOM(userIdx)}`
+      );
+
+      // 최초 연결 확인
+      chatEvent.onopen = event => {
+        console.log('open : chat connection', event);
+      };
+
+      // 새로운 알림 도착
+      chatEvent.onmessage = event => {
+        const parsedData = JSON.parse(event.data);
+        // console.log('new received data', event);
+        // console.log('new received notify', parsedData);
+        addChatRoom(parsedData);
+      };
+
+      // 에러 발생
+      chatEvent.onerror = event => {
+        // console.log('closed : notify connection');
+        chatEvent.close();
+      };
+
+      // 채팅 SSE 연결되고 나면 메세지에 대한 SSE 연결 (callback)
+      setListeningToChat(true, () => {
+        messageEvent = new EventSource(
+          `${requests.chat_base_url + requests.GET_MESSAGE(userIdx)}`
+        );
+
+        // 채팅 메세지 수신 시작
+        messageEvent.onopen = event => {
+          console.log('open : message connection', event);
+        };
+
+        // 새로운 메세지 도착
+        // 이어서 채팅방 리스트에 변경사항을 감지하는 API 요청
+        messageEvent.onmessage = event => {
+          const parsedData = JSON.parse(event.data);
+          console.log('new received message', parsedData);
+          addChatMessage(parsedData);
+        };
+
+        // 에러 발생
+        messageEvent.onerror = event => {
+          console.log('error : message connection', event);
+          messageEvent.close();
+        };
+      });
+
+      // 3. 채팅방들에 대한 SSE 연결
+    }
     return () => {
       notifyEvent.close();
+      chatEvent.close();
+      messageEvent.close();
       // console.log('useEffect ended & notify closed');
     };
   }, []);

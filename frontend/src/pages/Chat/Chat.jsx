@@ -9,6 +9,7 @@ import HeadingBar from 'components/common/HeadingBar';
 // react-query
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import { chatStore } from 'store/chat';
 
 // styled components
 const Wrapper = styled.div`
@@ -26,10 +27,8 @@ const ChatList = styled.div`
 `;
 
 function Chat() {
-  const API_URL = `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`;
-  const getChat = () => {
-    return axios.get(API_URL);
-  };
+  // 중앙에 저장된 채팅방 리스트
+  const { chatRoomList } = chatStore(state => state);
 
   const { isLoading, isError, data, error } = useQuery('getChat', getChat, {
     staleTime: 10000,
@@ -42,21 +41,24 @@ function Chat() {
   }
   const movies = data.data.data.movies;
 
+  // 채팅방 정보 예시
+  // {
+  //   "roomId":"63da08172a56c42cc9b85a61",
+  //   "userIdx":[5,6],
+  //   "readNotCnt":[3,0],
+  //   "userActive":[false,false],
+  //   "nickname":["서울사람","당산사람"],
+  //   "userImg":["유저A 이미지 링크","유저B 이미지 링크"],
+  //   "itemImg":["아이템A 이미지 링크","아이템B 이미지 링크"],
+  //   "itemIdx":[5,6],"lastContent":"야야야야ㅑ",
+  //   "createdAt":"2023-02-01T15:35:03.381"
+  // }
   return (
     <Wrapper id="chat-wrapper">
       <HeadingBar title="채팅" />
       <ChatList>
-        {movies.map(chat => (
-          <ChatListItem
-            key={chat.id}
-            userProfile={chat.background_image}
-            nickname={chat.title}
-            recentMessage={chat.title}
-            isAlert={true}
-            itemImg={chat.background_image}
-            bagguStatus="바꾸중"
-            id={chat.id}
-          />
+        {chatRoomList.map(chatRoom => (
+          <ChatListItem key={chatRoom.roomId} info={chatRoom} />
         ))}
       </ChatList>
     </Wrapper>

@@ -47,20 +47,24 @@ const SendReviewBtn = styled.div`
     }
   }
 `;
-function ChatListItem({
-  userProfile,
-  nickname,
-  recentMessage,
-  isAlert,
-  itemImg,
-  bagguStatus,
-  id,
-}) {
+function ChatListItem({ info }) {
   const navigate = useNavigate();
 
   const goChatDetail = () => {
-    navigate(`/chat/${id}`);
+    navigate(`/chat/${info.roomId}`);
   };
+  // 현재 로그인하고 있는 사용자
+  const userIdx = localStorage.getItem('userIdx');
+
+  // 채팅방 정보의 userIdx 중 현재 로그인한 사용자의 인덱스
+  const targetIdx = info.userIdx.findIndex(idx => idx === userIdx);
+
+  // 유저에게 보여줘야할 데이터 선택
+  const userProfile = info.userImg[targetIdx];
+  const nickname = info.nickname[targetIdx];
+  const recentMessage = info.lastContent;
+  const itemImg = info.itemImg[targetIdx];
+
   return (
     <Container>
       <Wrapper onClick={goChatDetail}>

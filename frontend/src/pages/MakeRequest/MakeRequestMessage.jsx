@@ -10,11 +10,13 @@ import tw, { styled, css } from 'twin.macro';
 import { useState } from 'react';
 
 // api
+import requests from 'api/config';
 import { post_request } from 'api/apis/request';
 import { post_notify } from 'api/apis/notify';
 
 // store
 import { makeRequestStore } from '../../store/makeRequest';
+import { defaultInstance } from 'api/axios';
 
 // Styled Component
 const Wrapper = styled.div``;
@@ -29,7 +31,6 @@ const TextContainer = styled.div`
   }
 `;
 
-// Main Component
 const InputContainer = styled.div`
   ${tw`flex-col pt-2 pb-2 px-4`}
 
@@ -47,6 +48,17 @@ const InputContainer = styled.div`
   }
 `;
 
+const get_token = async () => {
+  try {
+    await defaultInstance.post(requests.TEST_TOKEN, {
+      userIdx: 1,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Main Component
 function MakeRequestMessage() {
   // API 요청시 파라미터로 전송
   const { itemIdx } = useParams();
@@ -64,8 +76,9 @@ function MakeRequestMessage() {
       requestItemIdxList: requestItemIdxList,
       requestUserIdx: requestUserIdx,
       comment: comment,
+      itemIdx: itemIdx,
     };
-    console.log(data);
+
     // 즉시 실행 익명 함수
     (async () => {
       await post_request(itemIdx, data).then(data => {

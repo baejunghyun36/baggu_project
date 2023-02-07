@@ -7,6 +7,9 @@ const requests = {
   // 알림 서버 URL
   notify_base_url: 'https://baggu.shop/notifyapi',
 
+  // 채팅 서버 URL
+  chat_base_url: 'https://baggu.shop/chatapi',
+
   // 소정님 IP
   // base_url: 'http://70.12.247.158:9999',
 
@@ -136,7 +139,21 @@ const requests = {
   // 알림 읽음 처리시 put, data는 notifyIdx
   POST_NOTIFY: '/baggu/notify',
 
-  // 알림 읽음처리 (PUT)
+  // 유저의 채팅방 목록(채팅 서버 연결, GET)
+  GET_CHATROOM: userIdx => {
+    return `/baggu/${userIdx}/chatRoomList `;
+  },
+
+  // 새로운 채팅방 메세지 수신시
+  // 변경사항이 발생한 채팅방 정보에 대한 GET 요청
+  GET_UPDATED_CHATROOM: roomId => {
+    return `/baggu/chatRoomUpdate/${roomId}`;
+  },
+
+  // 유저의 채팅방 구독
+  GET_MESSAGE: userIdx => {
+    return `/baggu/${userIdx}/chatRoom`;
+  },
 };
 
 export default requests;

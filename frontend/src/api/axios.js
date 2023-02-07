@@ -24,7 +24,7 @@ const axiosAuthApi = (url, options) => {
   return instance;
 };
 
-// 서버로 요청보내는 axios 인스턴ㅅ
+// 알림서버로 요청 보내는 axios 인스턴스
 const axiosNotifyApi = (url, options) => {
   const instance = axios.create({
     baseURL: requests.notify_base_url,
@@ -34,7 +34,17 @@ const axiosNotifyApi = (url, options) => {
   return instance;
 };
 
+// 채팅서버로 요청 보내는 axios 인스턴스
+const axiosChatApi = (url, options) => {
+  const instance = axios.create({
+    baseURL: requests.chat_base_url,
+    headers: { Authorization: token },
+    ...options,
+  });
+  return instance;
+};
+
 export const defaultInstance = axiosApi(BASE_URL);
 export const authInstance = axiosAuthApi(BASE_URL);
 export const notifyAuthApi = axiosNotifyApi(BASE_URL);
-// export const sseInstance = sseApi(BASE_URL);
+export const chatAuthApi = axiosChatApi(BASE_URL);
