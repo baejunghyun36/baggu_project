@@ -29,9 +29,10 @@ export const put_notify = async data => {
           }
     */
   try {
-    console.log('send request : put notify');
-    await notifyAuthApi.put('/baggu/notify', data);
-    console.log('success request : put notify');
+    // console.log('send request : put notify');
+    const response = await notifyAuthApi.put('/baggu/notify', data);
+    // 응답값으로 받은 notifyIdx로 중앙에 저장된 알림 읽음 처리
+    return response.data.notifyIdx;
   } catch (error) {
     throw error;
   }

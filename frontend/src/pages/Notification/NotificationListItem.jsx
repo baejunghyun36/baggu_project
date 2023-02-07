@@ -51,7 +51,10 @@ function NotificationListItem({
 
   // 일림 클릭시 put nofity로 mutate
   const { data, isLoading, mutate, isSuccess } = useMutation(put_notify, {
-    onSuccess: () => {},
+    // API 요청 성공시 프론트의 중앙저장소에 저장된 해당 알림을 읽음 처리
+    onSuccess: data => {
+      readNotify(data);
+    },
   });
 
   // 알림 중앙저장소
@@ -62,8 +65,6 @@ function NotificationListItem({
   const onClickHandler = (type, notifyIdx) => {
     // 알림 서버에 읽음 처리
     mutate({ notifyIdx: notifyIdx });
-    // 중앙저장소에 읽음 처리
-    readNotify(notifyIdx);
 
     // url 이동
     if (type === 0) navigate(`/item/${typeIdx}`);
