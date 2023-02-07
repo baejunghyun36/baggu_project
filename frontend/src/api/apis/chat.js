@@ -12,3 +12,13 @@ export const get_updated_chatroom = async roomId => {
     throw error;
   }
 };
+
+// 특정 채팅방의 메세지 GET
+export const get_chatroom_message = async roomId => {
+  try {
+    const { data } = await chatAuthApi.get(requests.GET_CHAT_DETAIL(roomId));
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

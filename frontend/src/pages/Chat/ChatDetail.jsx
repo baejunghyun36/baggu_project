@@ -15,7 +15,7 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { useState } from 'react';
 
-// styled components
+// Styled Components
 const Summary = styled.div`
   ${tw`flex justify-center p-2 gap-3 border-b`}
   & {
@@ -97,7 +97,7 @@ const Bubble = styled.p`
   ${props => MessageStyles[props.type]}
 `;
 
-// Chat Detail component
+// Main Component
 function ChatDetail() {
   const navigate = useNavigate();
 
@@ -105,11 +105,7 @@ function ChatDetail() {
   const [message, setMessage] = useState('');
 
   // API
-  const { id } = useParams();
-  const API_URL = `https://yts.mx/api/v2/movie_details.json?movie_id=${id}`;
-  const queryFn = () => {
-    return axios.get(API_URL);
-  };
+  const { roomId } = useParams();
 
   const { isLoading, isError, data, error } = useQuery(
     'getChatDetail',

@@ -154,6 +154,11 @@ const requests = {
   GET_MESSAGE: userIdx => {
     return `/baggu/${userIdx}/chatRoom`;
   },
+
+  // 채팅방 상세 정보 GET
+  GET_CHAT_DETAIL: roomId => {
+    return `/baggu/chatRoom/${roomId}`;
+  },
 };
 
 export default requests;
