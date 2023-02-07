@@ -3,8 +3,10 @@ package com.project.baggu.repository;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.enumType.CategoryType;
 import java.util.List;
+import javax.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +32,12 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
   @Query("select i from Item i, ItemKeep ik where ik.user.userIdx = :userIdx and ik.item = i")
   List<Item> userKeepItemList(@Param("userIdx") Long userIdx);
 
+
+  @Modifying
+  @Query("update Item i set i.userRequestCount = :cnt where i.itemIdx = :itemIdx" )
+  void updateUserRequsetCount(@Param("itemIdx") Long itemIdx, @Param("cnt") int cnt);
+
+  @Lock(LockModeType.OPTIMISTIC)
+  @Query("select i from Item i where i.itemIdx = :itemIdx" )
+  Item findByIdLock(@Param("itemIdx") Long itemIdx);
 }

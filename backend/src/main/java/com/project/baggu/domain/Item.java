@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import javax.persistence.Version;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -117,5 +118,7 @@ public class Item extends BaseTimeEntity {
     return itemImageUrls;
   }
 
+  @Version
+  private Long version;
 
 }
