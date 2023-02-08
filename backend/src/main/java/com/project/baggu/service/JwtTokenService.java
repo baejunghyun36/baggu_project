@@ -68,15 +68,10 @@ public class JwtTokenService {
   }
 
   public void deleteRefreshToken(String userIdx) {
-    try{
-      RefreshToken rf = refreshTokenRepository.findById(userIdx)
-          .orElseThrow(() -> new BaseException(BaseResponseStatus.REFRESH_TOKEN_NOT_FOUND));
-      refreshTokenRepository.delete(rf);
-    } catch(BaseException be){
-      throw be;
-    } catch(Exception e){
-      throw new BaseException(BaseResponseStatus.DATABASE_DELETE_ERROR, e.toString());
-    }
+    RefreshToken rf = refreshTokenRepository.findById(userIdx)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.REFRESH_TOKEN_NOT_FOUND));
+    refreshTokenRepository.delete(rf);
+
   }
 
 }

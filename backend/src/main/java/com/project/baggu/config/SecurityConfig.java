@@ -86,11 +86,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticationEntryPoint(new JwtTokenAuthenticationEntryPoint());
 
 
-    //logout 설정
-    http.logout()
-        .logoutUrl("/baggu/auth/logout")
-        .deleteCookies("refresh-token")
-        .logoutSuccessHandler(customLogoutSuccessHandler);
 //        .addLogoutHandler(new LogoutProcessHandler());
     //error handler 적용
     http.addFilterBefore(new FilterExceptionHandler(), JwtTokenFilter.class);
