@@ -5,10 +5,12 @@
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 //import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 //
+//import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.project.baggu.Security.WithMockCustomTokenAccount;
 //import com.project.baggu.domain.User;
+//import com.project.baggu.domain.enumType.CategoryType;
 //import com.project.baggu.domain.enumType.Role;
 //import com.project.baggu.dto.UserProfileDto;
 //import com.project.baggu.dto.UserSignUpDto;
@@ -21,64 +23,77 @@
 //import org.junit.jupiter.api.Order;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.TestMethodOrder;
+//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 //import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.http.MediaType;
+//import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.transaction.annotation.Transactional;
 //import org.springframework.util.LinkedMultiValueMap;
 //import org.springframework.util.MultiValueMap;
 //
+//import java.util.ArrayList;
+//import java.util.Arrays;
+//
 ///*
 //시나리오
-//1. 특정 유저가 카카오 로그인을 완료한다.
-//  1) 해당 유저가 이미 가입이 완료된 유저라면 토큰을 발급한다.
-//    -> 해당 토큰으로 getUser 해보기
-//  2) 해당 유저가 가입이 완료되지 않은 유저라면 회원가입 절차를 시작하도록 값을 반환한다.
-//2. 유저가 회원가입을 완료한다.
-//  -> 토큰이 발급되면 해당 토큰의 유효성을 판단
-//3. 유저가
+//1. 가입 안한 유저에 대해 회원가입 진행 -> 헤더 authorization, 쿠키 refresh-token 존재 여부 확인
+//2. 사용자 정보 가져오는것 -> Mock으로 repository로 요청 가는지 정도만
+//3. 유저 정보 수정 test유저 save해놓고 location 바꾸기 & detail 바꾸기
+//    -> s3의 경우 롤백 안되니까 delete 메소드로 사진 삭제까지
+//4.
 // */
 //
 //@SpringBootTest
 //@Slf4j
 //@AutoConfigureMockMvc
 //@Transactional
-//@RequiredArgsConstructor
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 //public class UserControllerTest {
+//    @Autowired
+//  private UserRepository userRepository;
 //
-//  private final UserRepository userRepository;
+//    @Autowired
+//  private  MockMvc mockMvc;
 //
+//    @Autowired
+//  private ObjectMapper objectMapper;
 //
-//
-//  @BeforeAll
+////  @BeforeAll
 //
 //
 //  @Test
-//  @DisplayName("회원가입 후 유효한 토큰이 발급되는지 검사한다.")
-//  @WithMockCustomTokenAccount(userIdx = "1")
+//  @DisplayName("1. 아직 가입이 되지 않은 유저라면 회원가입을 진행한다.")
 //  @Order(1)
 //  public void signup () throws Exception{
 //
-//    userRepository.save()
-//    User testUser = User.builder()
-//        .nickname("")
-//        .kakaoId(kakaoUser.getKakaoId())
-//        .email(kakaoUser.getEmail())
-//        .role(isUserHasEmail(kakaoUser)? Role.TYPE3 : Role.TYPE4)
-//        .build();
+//      User kakaoUser = User.builder()
+//              .nickname("testNickname")
+//              .kakaoId("testKakao")
+//              .email("testEmail@test.com")
+//              .role(Role.TYPE3)
+//              .build();
 //
-//    UserSignUpDto usd = UserSignUpDto.builder()
-//            .email()
+//      userRepository.save(
+//            kakaoUser);
 //
+//      UserSignUpDto usd = UserSignUpDto.builder()
+//              .email(kakaoUser.getEmail())
+//              .category(new ArrayList<>(Arrays.asList(new CategoryType[] {CategoryType.TYPE1, CategoryType.TYPE2})))
+//              .si("서울시")
+//              .gu("강남구")
+//              .dong("역삼동")
+//              .lng("127")
+//              .lat("37")
+//              .kakaoId(kakaoUser.getKakaoId()).build();
 //
-//        UserProfileDto.builder()
-//        .ema
-//        .build()
+//    mockMvc.perform(post("/baggu/user")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(usd)))
+//            .andDo(print()).andExpectAll(header().exists("Authorization"),
+//                    cookie().exists("refresh-token"),
+//                    status().isOk());
 //
-//
-//    MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
-//    info.add("dong", "당산동");
-//    mockMvc.perform(get("/baggu/item").params(info)).andDo(print()).andExpect(status().isOk());
 //  }
 //}
 //
