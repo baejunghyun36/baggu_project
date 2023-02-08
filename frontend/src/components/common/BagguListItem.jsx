@@ -3,6 +3,8 @@ import { useState } from 'react';
 import icon_exchange from 'assets/icons/exchange.svg';
 import { useNavigate } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
+import { authInstance } from 'api/axios';
+import requests from 'api/config';
 // import styled from 'styled-components';
 import tw, { styled, css } from 'twin.macro';
 import heart_unliked from '../../assets/icons/heart_unliked.svg';
@@ -50,17 +52,30 @@ function BagguListItem({ baggu }) {
   // 상대적인 날짜 계산
   const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
-  // 좋아요 API 요청
-  // const feed_like = async () => {
-  //   try {
-  //     const { data } = await authInstance.get(requests.FEED_LIKE({}));
+  const feed_like = async () => {
+    try {
+      const { data } = await authInstance.post(
+        requests.FEED_LIKE(baggu.tradeFinIdx)
+      );
 
-  //     console.log(data);
-  //     return setLiked(!liked);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+      console.log(data);
+      return setLiked(!liked);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const feed_like_delete = async () => {
+    try {
+      const { data } = await authInstance.delete(
+        requests.FEED_LIKE(baggu.tradeFinIdx)
+      );
+
+      console.log(data);
+      return setLiked(!liked);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const location = useLocation().pathname;
   return (
     <Container>
@@ -69,9 +84,13 @@ function BagguListItem({ baggu }) {
         <Avatar img={baggu.receiveUserImgUrl} />
         <Info>
           <section>
-            {/* <Link to={`/user/${baggu.}`}></Link> */}
-            <span className=" text-primary">{baggu.requestNickname}</span>
-            님과 <span className=" text-primary">{baggu.receiveNickname}</span>
+            <Link to={`/user/${baggu.requestUserIdx}`}>
+              <span className=" text-primary">{baggu.requestNickname}</span>
+            </Link>
+            님과
+            <Link to={`/user/${baggu.receiveUserIdx}`}>
+              <span className=" text-primary">{baggu.receiveNickname}</span>
+            </Link>
             님의 바꾸
             <br />
             <span>{GetRelativeTime(year, month, day, hour, minute)}</span>
@@ -88,16 +107,15 @@ function BagguListItem({ baggu }) {
         </Link>
       </div>
       <div className="flex flex-wrap justify-between gap-2 bg-white border-t w-full h-[60px] px-4 py-2">
-        <div
-          // onClick={feed_like}
-          className={`${location.startsWith('/myprofile') ? 'hidden' : ''}`}
-        >
+        <div className={`${location.startsWith('/myprofile') ? 'hidden' : ''}`}>
           <img
+            onClick={feed_like}
             src={heart_unliked}
             alt="like button"
             className={`${liked ? 'hidden' : ''}`}
           />
           <img
+            onClick={feed_like_delete}
             src={heart_liked}
             alt="like button"
             className={`${liked ? '' : 'hidden'}`}
