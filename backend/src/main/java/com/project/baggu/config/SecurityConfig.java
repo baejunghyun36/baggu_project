@@ -107,10 +107,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     configuration.addAllowedOriginPattern("*");
 
-        //custom header 설정
+    //custom header 설정
     configuration.addAllowedHeader("Authorization");
     configuration.addAllowedHeader("Content-Type");
     configuration.addExposedHeader("Authorization");
+    configuration.addExposedHeader("Content-Type");
 
     configuration.addAllowedMethod("*");
     configuration.setAllowCredentials(true);
