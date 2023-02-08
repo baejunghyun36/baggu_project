@@ -107,15 +107,15 @@ function ChatDetail() {
   // API
   const { roomId } = useParams();
 
-  const { isLoading, isError, data, error } = useQuery(
-    'getChatDetail',
-    queryFn
-  );
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
+  // const { isLoading, isError, data, error } = useQuery(
+  //   'getChatDetail',
+  //   queryFn
+  // );
+  // if (isLoading) {
+  //   return <span>Loading...</span>;
+  // }
 
-  const movie = data.data.data.movie;
+  // const movie = data.data.data.movie;
   const status = '바꾸중';
 
   // 상단 버튼 클릭 시 실행될 함수들
@@ -130,12 +130,12 @@ function ChatDetail() {
   };
   return (
     <div>
-      <TopBar2 title={movie.title} isCheck={false} />
+      <TopBar2 title="" isCheck={false} />
       <Summary>
         <div>
-          <Product img={movie.background_image}></Product>
+          <Product img="" alt="" />
           <img src={icon_exchange} alt="" />
-          <Product img={movie.background_image}></Product>
+          <Product img="" alt="" />
         </div>
         <Button
           status="바꾸중"
@@ -162,7 +162,7 @@ function ChatDetail() {
       <ChatContent>
         {/* CSS용 임시 */}
         <MessageSection type="send">
-          <Avatar img={img_avatar} type="send"></Avatar>
+          <Avatar img="" type="send" />
           <MessageColumn type="send">
             <div>
               <Bubble type="send">안녕하세요.</Bubble>
@@ -175,7 +175,7 @@ function ChatDetail() {
           </MessageColumn>
         </MessageSection>
         <MessageSection type="receive">
-          <Avatar img={img_avatar} type="receive"></Avatar>
+          <Avatar img={img_avatar} type="receive" />
           <MessageColumn type="receive">
             <div>
               <Bubble type="receive">안녕하세요.</Bubble>
@@ -193,7 +193,7 @@ function ChatDetail() {
       </ChatContent>
       <MessageForm action="">
         <TextInput type="text" value={message} />
-        <img src={icon_send} onClick={sendMessageHandler} />
+        <img src={icon_send} onClick={sendMessageHandler} alt="" />
       </MessageForm>
     </div>
   );
