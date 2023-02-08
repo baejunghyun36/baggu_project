@@ -8,10 +8,12 @@ import com.project.baggu.repository.RefreshTokenRepository;
 import com.project.baggu.utils.JwtTokenUtils;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenService {
 
   private final RefreshTokenRepository refreshTokenRepository;
@@ -70,6 +72,7 @@ public class JwtTokenService {
   public void deleteRefreshToken(String userIdx) {
     RefreshToken rf = refreshTokenRepository.findById(userIdx)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.REFRESH_TOKEN_NOT_FOUND));
+    log.info(rf.toString());
     refreshTokenRepository.delete(rf);
 
   }
