@@ -3,6 +3,7 @@ package com.cos.chatapp.controller;
 import com.cos.chatapp.domain.ChatRoom;
 import com.cos.chatapp.dto.ChatRoomDto;
 import com.cos.chatapp.dto.RoomFocusStateDto;
+import com.cos.chatapp.dto.UpdateDto;
 import com.cos.chatapp.repository.ChatRoomRepository;
 import com.cos.chatapp.repository.ChatRepository;
 import com.cos.chatapp.domain.Chat;
@@ -11,18 +12,20 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators.In;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
+//63e39cc8477705699cf3851f
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/baggu")
@@ -32,18 +35,69 @@ public class ChatController {
   private final ChatRepository chatRepository;
   private final ChatRoomRepository chatRoomRepository;
 
+  //거래완료 수정 (거래완료, 리뷰태그 완료, 리뷰 텍스트 완료)
+  @CrossOrigin
+  @PutMapping("/{userIdx}/chatRoomList")
+  public Mono<ChatRoom> chatRoomUpdate(@RequestBody UpdateDto updateDto){
+    if(updateDto.getUserIdx()==null){
+      //현재 유저가 null이라면 complete만 진행
+      return chatRoomRepository.findById(updateDto.getRoomId())
+          .switchIfEmpty(Mono.error(new Exception("TASK_NOT_FOUND")))
+          .map(b -> {
+            b.setTradeCompleteStatus(true);
+            return b;
+          })
+          .flatMap(chatRoomRepository::save);
+    }
+    else{
+      return chatRoomRepository.findById(updateDto.getRoomId())
+          .switchIfEmpty(Mono.error(new Exception("TASK_NOT_FOUND")))
+          .map(b -> {
+            Integer [] reviewState = b.getReviewState();
+            if(updateDto.getReviewNumber()==1){
+              if(b.getUserIdx()[0]==updateDto.getUserIdx()){
+                reviewState[0] = 1;
+              }
+              else{
+                reviewState[1] = 1;
+              }
+            }
+            else{
+              if(b.getUserIdx()[0]==updateDto.getUserIdx()){
+                reviewState[0] = 2;
+              }
+              else{
+                reviewState[1] = 2;
+              }
+            }
+            b.setTradeCompleteStatus(true);
+            b.setReviewState(reviewState);
+            return b;
+          })
+          .flatMap(chatRoomRepository::save);
+    }
+  }
+
+
+
+
   //채팅방 최초 생성 로직 :: 메인 서버에서 바꾸 승낙을 하게 되면 프론트에서 userIdxA,userIdxB를 보내준다.
   @CrossOrigin
   @PostMapping("/chatRoom")
   public Mono<ChatRoom> createChatRoom(@RequestBody ChatRoomDto chatRoomDto){
+
     ChatRoom chatRoom = new ChatRoom();
     chatRoom.setUserIdx(chatRoomDto.getUserIdx());
     chatRoom.setNickname(chatRoomDto.getNickname());
     chatRoom.setUserImg(chatRoomDto.getUserImg());
     chatRoom.setItemImg(chatRoomDto.getItemImg());
     chatRoom.setItemIdx(chatRoomDto.getItemIdx());
+    chatRoom.setReviewState(chatRoomDto.getReviewState());
+    chatRoom.setTradeDetailIdx(chatRoomDto.getTradeDetailIdx());
+
     chatRoom.setCreatedAt(LocalDateTime.now());
     chatRoom.setLastContent("채팅방이 개설되었습니다.");
+
     return chatRoomRepository.save(chatRoom);
   }
 
