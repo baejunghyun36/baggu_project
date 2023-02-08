@@ -34,8 +34,9 @@ spring:
           kakao:
             authorization-grant-type: authorization_code
             client-id: dcea227af64fcf0366810e14b850e4d6
-            # redirect-uri: https://test.baggu.shop/kakaoLogin
+            #테스트용 로컬 리다이렉트
             redirect-uri: http://localhost:3000/kakaoLogin
+            # redirect-uri: https://test.baggu.shop/kakaoLogin
 #            redirect-uri: http://baggu.shop/kakaoLogin
             # redirect-uri: http://baggu-backend:8080/baggu/auth/callback/kakao
             client-authentication-method: POST
