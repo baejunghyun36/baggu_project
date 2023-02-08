@@ -119,6 +119,6 @@ public class Item extends BaseTimeEntity {
   }
 
   @Version
-  private Long version;
+  private Long version = 0L;
 
 }
