@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import tw, { styled, css } from 'twin.macro';
 
@@ -10,10 +10,11 @@ import img_avatar from 'assets/images/avatar_1x.png';
 // components
 import TopBar2 from 'components/common/TopBar2';
 
-// react-query
+// API
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { useState } from 'react';
+import { get_chatroom_detail, get_chatroom_message } from 'api/apis/chat';
+import { chatStore } from 'store/chat';
 
 // Styled Components
 const Summary = styled.div`
@@ -99,26 +100,38 @@ const Bubble = styled.p`
 
 // Main Component
 function ChatDetail() {
-  const navigate = useNavigate();
-
-  // state
-  const [message, setMessage] = useState('');
-
-  // API
+  // 현재 페이지의 파라미터
   const { roomId } = useParams();
+  // 현재 로그인된 사용자
+  const userIdx = localStorage.getItem('userIdx');
 
-  // const { isLoading, isError, data, error } = useQuery(
-  //   'getChatDetail',
-  //   queryFn
-  // );
-  // if (isLoading) {
-  //   return <span>Loading...</span>;
-  // }
+  // 모든 채팅방 정보
+  const { chatRoomList } = chatStore(state => state);
+  // 현재 채팅방에 대한 정보
+  const chatRoomInfo = chatRoomList.find(
+    chatRoom => chatRoom.roomId === roomId
+  );
 
-  // const movie = data.data.data.movie;
+  // 사용자가 입력한 메세지
+  const [messageInput, setMessageInput] = useState();
+
+  // 응답 상태에 따른 content
+  let content = undefined;
+
+  const { data, isLoading, isError } = useQuery(
+    ['getChatDetail', { roomId: roomId }],
+    () => get_chatroom_detail(roomId)
+  );
+
+  // 로딩시
+  if (isLoading) {
+    content = <span>Loading...</span>;
+  }
+
   const status = '바꾸중';
 
   // 상단 버튼 클릭 시 실행될 함수들
+  const navigate = useNavigate();
   const changeStatusHandler = () => {};
   const sendReviewHandler = () => {
     navigate('/review');
@@ -160,7 +173,6 @@ function ChatDetail() {
         </Button>
       </Summary>
       <ChatContent>
-        {/* CSS용 임시 */}
         <MessageSection type="send">
           <Avatar img="" type="send" />
           <MessageColumn type="send">
@@ -192,7 +204,7 @@ function ChatDetail() {
         </MessageSection>
       </ChatContent>
       <MessageForm action="">
-        <TextInput type="text" value={message} />
+        <TextInput type="text" value={messageInput} />
         <img src={icon_send} onClick={sendMessageHandler} alt="" />
       </MessageForm>
     </div>
