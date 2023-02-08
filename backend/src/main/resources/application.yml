@@ -17,8 +17,8 @@ spring:
       hibernate:
 #        show_sql: true
         format_sql: true
-#      open-in-view: false
     defer-datasource-initialization: true
+  #      open-in-view: false
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/baggu?serverTimezone=UTC&characterEncoding=utf84&useSSL=false&useUnicode=true
@@ -35,12 +35,8 @@ spring:
           kakao:
             authorization-grant-type: authorization_code
             client-id: dcea227af64fcf0366810e14b850e4d6
-            #테스트용 로컬 리다이렉트
-#            redirect-uri: http://localhost:3000/kakaoLogin
-            redirect-uri: https://test.baggu.shop/kakaoLogin
-#            redirect-uri: http://baggu.shop/kakaoLogin
-#            redirect-uri: http://baggu-backend:8080/baggu/auth/callback/kakao
-#            redirect-uri: http://localhost:9999/baggu/auth/callback/kakao
+            redirect-uri: http://localhost:3000/kakaoLogin
+#            redirect-uri: https://test.baggu.shop/kakaoLogin
             client-authentication-method: POST
             client-name: kakao
         provider:
@@ -53,6 +49,7 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
+#sql 자동 인젝션
   sql:
     init:
       mode: always
