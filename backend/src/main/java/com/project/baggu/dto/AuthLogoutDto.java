@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Data
 public class AuthLogoutDto {
-  private Long userIdx;
+  private String userIdx;
 
 }

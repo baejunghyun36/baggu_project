@@ -138,10 +138,13 @@ function StartCategory() {
       console.log(nickname, si, gu, dong, lat, lng, category_types);
       // API 요청
       sign_up(category_types)
-        .then(res => {
+        .then(response => {
           console.log('sign up success');
           window.localStorage.setItem('isLoggedIn', true);
-          window.localStorage.setItem('token', res.headers['authorization']);
+          window.localStorage.setItem(
+            'token',
+            response.headers['authorization']
+          );
           window.localStorage.setItem('dong', dong);
           navigate('/start/ready');
         })

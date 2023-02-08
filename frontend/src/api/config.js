@@ -27,6 +27,9 @@ const requests = {
   // 유저 회원가입 (POST)
   SIGNUP: `/baggu/user`,
 
+  // 유저 로그아웃 (POST)
+  LOGOUT: `/baggu/user/logout`,
+
   // 유저 정보 가져오기 (GET)
   GET_USER(userIdx) {
     return `/baggu/user/${userIdx}`;
@@ -139,8 +142,8 @@ const requests = {
   // 알림 읽음 처리시 put, data는 notifyIdx
   POST_NOTIFY: '/baggu/notify',
 
-  // 유저의 채팅방 목록(채팅 서버 연결, GET)
-  GET_CHATROOM: userIdx => {
+  // 유저의 채팅방 목록(GET)
+  GET_CHATROOMS: userIdx => {
     return `/baggu/${userIdx}/chatRoomList `;
   },
 
@@ -153,6 +156,11 @@ const requests = {
   // 유저의 채팅방 구독
   GET_MESSAGE: userIdx => {
     return `/baggu/${userIdx}/chatRoom`;
+  },
+
+  // 채팅방 상세 정보 GET
+  GET_CHAT_DETAIL: roomId => {
+    return `/baggu/chatRoom/${roomId}`;
   },
 };
 

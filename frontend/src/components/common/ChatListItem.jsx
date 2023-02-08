@@ -30,7 +30,10 @@ const Info = styled.div`
 `;
 const Nickname = tw.p`text-main-bold `;
 const Message = tw.span`text-sub`;
-const Notifycation = tw.div`w-1 h-1 rounded-full bg-secondary absolute right-0`;
+const Notification = styled.div`
+  ${props => (props.unreadCnt ? tw`` : tw`hidden`)}
+  ${tw`w-2 h-2 rounded-full bg-secondary absolute right-0 text-tiny flex justify-center items-center text-white`}
+`;
 const Product = styled.div`
   ${tw`w-6 h-6 rounded bg-cover bg-center`}
   ${props =>
@@ -54,16 +57,19 @@ function ChatListItem({ info }) {
     navigate(`/chat/${info.roomId}`);
   };
   // 현재 로그인하고 있는 사용자
-  const userIdx = localStorage.getItem('userIdx');
+  const userIdx = Number(window.localStorage.getItem('userIdx'));
+  console.log(userIdx);
 
   // 채팅방 정보의 userIdx 중 현재 로그인한 사용자의 인덱스
   const targetIdx = info.userIdx.findIndex(idx => idx === userIdx);
+  console.log(info.userIdx.findIndex(idx => idx === userIdx));
 
   // 유저에게 보여줘야할 데이터 선택
   const userProfile = info.userImg[targetIdx];
   const nickname = info.nickname[targetIdx];
   const recentMessage = info.lastContent;
   const itemImg = info.itemImg[targetIdx];
+  const unreadCnt = info.readNotCnt[targetIdx];
 
   return (
     <Container>
@@ -74,7 +80,9 @@ function ChatListItem({ info }) {
             <Nickname>{nickname}</Nickname>
             <Message>{recentMessage}</Message>
           </section>
-          <Notifycation />
+          <Notification unreadCnt={unreadCnt}>
+            <span>{unreadCnt ? unreadCnt : ''}</span>
+          </Notification>
         </Info>
         <Product img={itemImg}></Product>
       </Wrapper>

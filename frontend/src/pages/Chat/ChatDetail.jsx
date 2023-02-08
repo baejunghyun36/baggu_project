@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import tw, { styled, css } from 'twin.macro';
 
@@ -10,12 +10,13 @@ import img_avatar from 'assets/images/avatar_1x.png';
 // components
 import TopBar2 from 'components/common/TopBar2';
 
-// react-query
+// API
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { useState } from 'react';
+import { get_chatroom_detail, get_chatroom_message } from 'api/apis/chat';
+import { chatStore } from 'store/chat';
 
-// styled components
+// Styled Components
 const Summary = styled.div`
   ${tw`flex justify-center p-2 gap-3 border-b`}
   & {
@@ -97,32 +98,40 @@ const Bubble = styled.p`
   ${props => MessageStyles[props.type]}
 `;
 
-// Chat Detail component
+// Main Component
 function ChatDetail() {
-  const navigate = useNavigate();
+  // 현재 페이지의 파라미터
+  const { roomId } = useParams();
+  // 현재 로그인된 사용자
+  const userIdx = localStorage.getItem('userIdx');
 
-  // state
-  const [message, setMessage] = useState('');
-
-  // API
-  const { id } = useParams();
-  const API_URL = `https://yts.mx/api/v2/movie_details.json?movie_id=${id}`;
-  const queryFn = () => {
-    return axios.get(API_URL);
-  };
-
-  const { isLoading, isError, data, error } = useQuery(
-    'getChatDetail',
-    queryFn
+  // 모든 채팅방 정보
+  const { chatRoomList } = chatStore(state => state);
+  // 현재 채팅방에 대한 정보
+  const chatRoomInfo = chatRoomList.find(
+    chatRoom => chatRoom.roomId === roomId
   );
+
+  // 사용자가 입력한 메세지
+  const [messageInput, setMessageInput] = useState();
+
+  // 응답 상태에 따른 content
+  let content = undefined;
+
+  const { data, isLoading, isError } = useQuery(
+    ['getChatDetail', { roomId: roomId }],
+    () => get_chatroom_detail(roomId)
+  );
+
+  // 로딩시
   if (isLoading) {
-    return <span>Loading...</span>;
+    content = <span>Loading...</span>;
   }
 
-  const movie = data.data.data.movie;
   const status = '바꾸중';
 
   // 상단 버튼 클릭 시 실행될 함수들
+  const navigate = useNavigate();
   const changeStatusHandler = () => {};
   const sendReviewHandler = () => {
     navigate('/review');
@@ -134,12 +143,12 @@ function ChatDetail() {
   };
   return (
     <div>
-      <TopBar2 title={movie.title} isCheck={false} />
+      <TopBar2 title="" isCheck={false} />
       <Summary>
         <div>
-          <Product img={movie.background_image}></Product>
+          <Product img="" alt="" />
           <img src={icon_exchange} alt="" />
-          <Product img={movie.background_image}></Product>
+          <Product img="" alt="" />
         </div>
         <Button
           status="바꾸중"
@@ -164,9 +173,8 @@ function ChatDetail() {
         </Button>
       </Summary>
       <ChatContent>
-        {/* CSS용 임시 */}
         <MessageSection type="send">
-          <Avatar img={img_avatar} type="send"></Avatar>
+          <Avatar img="" type="send" />
           <MessageColumn type="send">
             <div>
               <Bubble type="send">안녕하세요.</Bubble>
@@ -179,7 +187,7 @@ function ChatDetail() {
           </MessageColumn>
         </MessageSection>
         <MessageSection type="receive">
-          <Avatar img={img_avatar} type="receive"></Avatar>
+          <Avatar img={img_avatar} type="receive" />
           <MessageColumn type="receive">
             <div>
               <Bubble type="receive">안녕하세요.</Bubble>
@@ -196,8 +204,8 @@ function ChatDetail() {
         </MessageSection>
       </ChatContent>
       <MessageForm action="">
-        <TextInput type="text" value={message} />
-        <img src={icon_send} onClick={sendMessageHandler} />
+        <TextInput type="text" value={messageInput} />
+        <img src={icon_send} onClick={sendMessageHandler} alt="" />
       </MessageForm>
     </div>
   );

@@ -3,6 +3,7 @@ package com.project.baggu.exception;
 import com.fasterxml.jackson.databind.ser.Serializers.Base;
 import java.sql.SQLOutput;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,14 +17,22 @@ public class BasicExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({BaseException.class})
   protected ResponseEntity handleCustomException(BaseException e) {
     log.error("Error occurs {}", e.toString());
-    return ResponseEntity.status(e.getStatus().getStatus())
-        .body(e.getStatus().getMessage());
+
+    HttpHeaders resHeaders = new HttpHeaders();
+    resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+
+    return new ResponseEntity(e.getStatus().getMessage(), resHeaders, e.getStatus().getStatus());
   }
 
   @ExceptionHandler({Exception.class})
   protected ResponseEntity handleServerException(Exception e) {
     log.error("Uncatched Error occurs {}", e.toString());
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+
+    HttpHeaders resHeaders = new HttpHeaders();
+    resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+
+    return new ResponseEntity(e.getMessage(), resHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
 }
