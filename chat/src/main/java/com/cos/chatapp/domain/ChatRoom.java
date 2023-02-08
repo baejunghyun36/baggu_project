@@ -27,4 +27,8 @@ public class ChatRoom {
   private String lastContent;
   private LocalDateTime createdAt;
 
+  private Integer[] reviewState = new Integer[2];
+  private Boolean tradeCompleteStatus = false;
+  private Long tradeDetailIdx;
+
 }

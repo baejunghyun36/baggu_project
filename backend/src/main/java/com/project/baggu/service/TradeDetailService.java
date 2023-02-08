@@ -66,6 +66,7 @@ public class TradeDetailService {
     chatRoomDto.setUserImg(userImg);
     chatRoomDto.setItemImg(itemImg);
     chatRoomDto.setItemIdx(itemIdx);
+    chatRoomDto.setTradeDetailIdx(tradeDetailIdx);
 
     return chatRoomDto;
 
