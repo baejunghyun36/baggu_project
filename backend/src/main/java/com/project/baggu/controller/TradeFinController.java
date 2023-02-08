@@ -6,6 +6,8 @@ import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.TradeFinService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,17 @@ import javax.servlet.http.HttpServletRequest;
 public class TradeFinController {
 
   private final TradeFinService tradeFinService;
+
+
+  //교환 완료
+  @PostMapping
+  public  ResponseEntity<BaseIsSuccessDto> tradeComplete(@RequestBody TradeCompleteDto tradeCompleteDto){
+
+    tradeFinService.tradeComplete(tradeCompleteDto);
+    return new ResponseEntity(new BaseIsSuccessDto(true), HttpStatus.OK);
+  }
+
+
 
   // [GET] /baggu/tradeFin?userIdx={userIdx}&page={page}
   //최근 성사된 거래(바꾸) 리스트를 받는다.

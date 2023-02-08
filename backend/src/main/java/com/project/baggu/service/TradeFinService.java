@@ -2,6 +2,7 @@ package com.project.baggu.service;
 
 //import static com.project.baggu.config.RedisConfig.RedisCacheKey.TRADE_FIN_LIST;
 
+import com.project.baggu.dto.TradeCompleteDto;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.domain.*;
@@ -233,4 +234,33 @@ public class TradeFinService {
   }
 
 
+  @Transactional
+  public void tradeComplete(TradeCompleteDto tcd) {
+
+    TradeDetail tradeDetail = tradeDetailRepository.findById(tcd.getTradeDetailIdx()).get();
+    TradeRequest tradeRequest =  tradeRequestRepository.findById(  tradeDetail.getTradeRequest().getTradeRequestIdx()).get();
+
+    Long itemIdxA = tcd.getItemIdx()[0];
+    Long itemIdxB = tcd.getItemIdx()[1];
+
+    Item a = itemRepository.findById(itemIdxA).get();
+    Item b = itemRepository.findById(itemIdxB).get();
+
+    tradeRequest.setTradeRequestState(2);
+    tradeDetail.setTradeState(2);
+    a.setTradeItemIdx(b.getItemIdx());
+    b.setTradeItemIdx(a.getItemIdx());
+
+    TradeFin tradeFin = new TradeFin();
+    tradeFin.setReceiveItemIdx(tcd.getItemIdx()[0]);
+    tradeFin.setRequestItemIdx(tcd.getItemIdx()[1]);
+    tradeFin.setReceiveNickname(tcd.getUserNickname()[0]);
+    tradeFin.setRequestNickname(tcd.getUserNickname()[1]);
+    tradeFin.setReceiveUserIdx(tcd.getUserIdx()[0]);
+    tradeFin.setRequestUserIdx(tcd.getUserIdx()[1]);
+    tradeFin.setReceiveProfileImgUrl(tcd.getImg()[0]);
+    tradeFin.setRequestProfileImgUrl(tcd.getImg()[1]);
+
+    tradeFinRepository.save(tradeFin);
+  }
 }
