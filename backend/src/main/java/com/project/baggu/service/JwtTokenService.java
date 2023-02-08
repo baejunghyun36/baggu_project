@@ -44,6 +44,7 @@ public class JwtTokenService {
         .isBefore(
             recentAccessProvideTime.plusMinutes((int) (JwtTokenUtils.ACCESS_PERIOD / 1000 * 60)))
     ) {
+      deleteRefreshToken(String.valueOf(userIdx));
       throw new BaseException(BaseResponseStatus.DUPLICATE_LOGIN);
     }
     rf.setAccessProvideTime(LocalDateTime.now());
@@ -56,6 +57,7 @@ public class JwtTokenService {
     try {
       //로그인 중인지 확인
       if (refreshTokenRepository.findById(String.valueOf(userIdx)).isPresent()) {
+        deleteRefreshToken(String.valueOf(userIdx));
         throw new BaseException(BaseResponseStatus.DUPLICATE_LOGIN);
       } else {
         refreshTokenRepository.
