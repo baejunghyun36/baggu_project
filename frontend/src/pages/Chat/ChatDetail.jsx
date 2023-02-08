@@ -118,11 +118,10 @@ function ChatDetail() {
   // 응답 상태에 따른 content
   let content = undefined;
 
-  const { data, isLoading, isError } = useQuery([
-    'getChatDetail',
-    { roomId: roomId },
-    () => get_chatroom_detail(roomId),
-  ]);
+  const { data, isLoading, isError } = useQuery(
+    ['getChatDetail', { roomId: roomId }],
+    () => get_chatroom_detail(roomId)
+  );
 
   // 로딩시
   if (isLoading) {
