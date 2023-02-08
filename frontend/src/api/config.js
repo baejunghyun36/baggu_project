@@ -142,9 +142,14 @@ const requests = {
   // 알림 읽음 처리시 put, data는 notifyIdx
   POST_NOTIFY: '/baggu/notify',
 
-  // 유저의 채팅방 목록(GET)
+  // 유저의 채팅방 목록 SSE(초기연결)
   GET_CHATROOMS: userIdx => {
     return `/baggu/${userIdx}/chatRoomList `;
+  },
+
+  // 유저의 채팅방 변경사항 SSE
+  GET_CHATROOMS_UPDATE: userIdx => {
+    return `/baggu/${userIdx}/chatRoom`;
   },
 
   // 새로운 채팅방 메세지 수신시
@@ -153,15 +158,16 @@ const requests = {
     return `/baggu/chatRoomUpdate/${roomId}`;
   },
 
-  // 유저의 채팅방 구독
-  GET_MESSAGE: userIdx => {
-    return `/baggu/${userIdx}/chatRoom`;
-  },
-
   // 채팅방 상세 정보 GET
-  GET_CHAT_DETAIL: roomId => {
+  GET_MESSAGES: roomId => {
     return `/baggu/chatRoom/${roomId}`;
   },
+
+  // 채팅방 focusState 변경
+  POST_CHATROOM_FOCUS: `/baggu/focusState`,
+
+  // 채팅 보내기 POST
+  POST_MESSAGE: `/baggu/chat`,
 };
 
 export default requests;

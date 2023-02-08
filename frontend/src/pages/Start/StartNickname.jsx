@@ -74,7 +74,7 @@ function StartNickname() {
       e.target.value.trim().length > 10
     ) {
       setIsNicknameValid(false);
-      setNicknameMessage('2글자 이상 5글자 미만으로 입력해주세요.');
+      setNicknameMessage('2글자 이상 10글자 미만으로 입력해주세요.');
       return;
     } else {
       setNicknameMessage('');

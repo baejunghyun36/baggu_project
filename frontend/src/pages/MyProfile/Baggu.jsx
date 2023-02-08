@@ -24,7 +24,7 @@ function Baggu() {
   }, []);
   return (
     <div>
-      <TopBar2 pageTitle="바꾸내역" />
+      <TopBar2 title="바꾸내역" />
       <FeedList feeds={feeds} />
     </div>
   );
