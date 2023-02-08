@@ -55,7 +55,7 @@ spring:
     port: 6379
   sql:
     init:
-      mode:
+      mode: always
 
 #log설정
 logging:
