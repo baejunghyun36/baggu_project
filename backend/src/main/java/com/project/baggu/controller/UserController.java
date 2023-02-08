@@ -156,8 +156,8 @@ public class UserController {
     return userService.getUserPage(page);
   }
   @PostMapping("/logout")
-  public ResponseEntity<String> userLogout(@RequestBody String userIdx) {
-    jwtTokenService.deleteRefreshToken(userIdx);
+  public ResponseEntity<String> userLogout(@RequestBody AuthLogoutDto authLogoutDto) {
+    jwtTokenService.deleteRefreshToken(authLogoutDto.getUserIdx());
     return new ResponseEntity<>("SUCESS", HttpStatus.OK );
   }
 }

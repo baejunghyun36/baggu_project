@@ -56,7 +56,7 @@ public class S3UploadService {
 
     this.localDir = staticDir;
 
-
+//    this.localDir = System.getProperty("user.dir")+staticDir;
     //임시 로컬 저장소가 없을 경우 생성
     makeDirectory(superDir);
     makeDirectory(localDir);
