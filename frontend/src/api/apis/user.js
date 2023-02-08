@@ -1,6 +1,19 @@
 import requests from 'api/config';
 import { authInstance, defaultInstance } from '../axios';
 
+// 유저 로그아웃
+export const logout = async userIdx => {
+  try {
+    await authInstance.post(requests.LOGOUT, {
+      userIdx: userIdx,
+    });
+    localStorage.clear();
+    console.log('logout seccess');
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 유저의 모든 아이템
 export const get_user_item = async userIdx => {
   try {
