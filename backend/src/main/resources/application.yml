@@ -18,12 +18,13 @@ spring:
 #        show_sql: true
         format_sql: true
 #      open-in-view: false
+    defer-datasource-initialization: true
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/baggu?serverTimezone=UTC&characterEncoding=utf84&useSSL=false&useUnicode=true
     username: root
     password: A708
-#console color change
+  #console color change
   output:
     ansi:
       enabled: always
@@ -51,6 +52,9 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
+  sql:
+    init:
+      mode:
 
 #log설정
 logging:
