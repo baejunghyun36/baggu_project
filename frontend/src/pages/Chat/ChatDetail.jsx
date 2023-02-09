@@ -9,6 +9,7 @@ import img_avatar from 'assets/images/avatar_1x.png';
 
 // components
 import TopBar2 from 'components/common/TopBar2';
+import Modal from 'components/common/Modal';
 
 // API
 import { useQuery } from 'react-query';
@@ -19,12 +20,14 @@ import {
   get_updated_chatroom,
   post_chatroom_focus,
   post_message,
+  put_trade_status,
 } from 'api/apis/chat';
 import { chatStore } from 'store/chat';
 import requests from 'api/config';
 
 // hooks
 import FormatDate from 'hooks/FormatDate';
+import { post_trade_status } from 'api/apis/trade';
 
 // Styled Components
 const Summary = styled.div`
@@ -44,12 +47,14 @@ const Product = styled.div`
   ${tw`bg-cover bg-center w-[60px] h-[60px] rounded`}
 `;
 
+const ButtonStyles = {
+  0: tw`bg-white text-secondary border-1 border-secondary hover:bg-secondary hover:text-white`,
+  1: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary`,
+  2: tw`bg-grey1 text-grey2`,
+};
 const Button = styled.div`
-  ${tw`text-tiny-bold rounded flex justify-center items-center h-[60px] w-[60px] p-1`}
-  ${props =>
-    props.status === '바꾸중'
-      ? tw`bg-white border-1 border-secondary text-secondary`
-      : tw`bg-secondary text-white`}
+  ${tw`text-sub-bold rounded-full flex justify-center items-center h-5 w-fit p-2`}
+  ${props => ButtonStyles[props.buttonType]}
 `;
 
 const ChatContent = styled.div`
@@ -59,7 +64,7 @@ const ChatContent = styled.div`
   ${tw`overflow-scroll`}
 `;
 
-const MessageForm = styled.form`
+const MessageForm = styled.div`
   ${tw`h-9 bg-grey1 flex justify-center items-center gap-2`}
 
   & {
@@ -72,7 +77,7 @@ const MessageForm = styled.form`
 const TextInput = tw.input`w-[320px] h-[44px] p-1 rounded`;
 
 const MessageSection = styled.section`
-  ${tw`flex p-2 w-full gap-1`}
+  ${tw`flex p-1 w-full gap-1`}
 `;
 
 const Avatar = styled.div`
@@ -110,53 +115,81 @@ const Bubble = styled.p`
 
 // Main Component
 function ChatDetail() {
+  // 모달 상태
+  const [showModal, setShowModal] = useState(false);
+  // 채팅메세지 SSE 구독 상태
+  const [isListeningToMessage, setIsListeningToMessage] = useState(false);
+  // 이 채팅방에서 주고 받은 모든 메세지 state
+  const [messageList, setMessageList] = useState([]);
+  // 사용자가 입력한 메세지
+  const [messageInput, setMessageInput] = useState('');
+
   // 현재 페이지의 파라미터
   const { roomId } = useParams();
-  // 현재 로그인된 사용자
-  const userIdx = Number(localStorage.getItem('userIdx'));
-  const isLoggedIn = localStorage.getItem('isLoggedIn');
 
   // 모든 채팅방 정보
-  const { chatRoomList } = chatStore(state => state);
-  // 현재 채팅방에 대한 정보
+  const { chatRoomList, updateChatRoom } = chatStore(state => state);
   // 주의! /chat에서 채팅방을 눌러 들어갔을때만 정보를 가져올 수 있음
-  /*
-  {
-    "roomId":"63da08172a56c42cc9b85a61",
-    "userIdx":[5,6],
-    "readNotCnt":[3,0],
-    "userActive":[false,false],
-    "nickname":["서울사람","당산사람"],
-    "userImg":["유저A 이미지 링크","유저B 이미지 링크"],
-    "itemImg":["아이템A 이미지 링크","아이템B 이미지 링크"],
-    "itemIdx":[5,6],"lastContent":"야야야야ㅑ",
-    "createdAt":"2023-02-01T15:35:03.381",
-    "reviewState" : [false, true],
-    "tradeCompleteStatus" : true
-  } 
-*/
+  // 현재 채팅방에 대한 정보
   const chatRoomInfo = chatRoomList.find(
     chatRoom => chatRoom.roomId === roomId
   );
+
+  // 현재 로그인된 사용자
+  const userIdx = Number(localStorage.getItem('userIdx'));
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
 
   // 상대 유저의 정보
   const targetIdx = chatRoomInfo.userIdx.findIndex(x => x !== userIdx);
   const yourNickname = chatRoomInfo.nickname[targetIdx];
   const yourIdx = chatRoomInfo.userIdx[targetIdx];
+  // 내 닉네임
   const myNickname = chatRoomInfo.nickname[1 - targetIdx];
 
-  // 채팅메세지 SSE 구독 상태
-  const [isListeningToMessage, setIsListeningToMessage] = useState(false);
-  // 이 채팅방에서 주고 받은 모든 메세지 state
-  const [messageList, setMessageList] = useState([]);
+  // 거래 요약 정보
+  // 1. 아이템 이미지
+  const myItemImg = chatRoomInfo.itemImg[1 - targetIdx];
+  const yourItemImg = chatRoomInfo.itemImg[targetIdx];
+  // 2. 아이템 idx (이미지 클릭시 해당 아이템 디테일 페이지로 이동)
+  const myItemIdx = chatRoomInfo.itemIdx[1 - targetIdx];
+  const yourItemIdx = chatRoomInfo.itemIdx[targetIdx];
+  // 3. 거래 상태 : true-거래완료, false-거래진행중
+  const status = chatRoomInfo.tradeCompleteStatus;
+  // 4. 리뷰 작성 상태 : 0-아무 후기도 작성하지 않음, 1-유저후기 작성함, 2-거래후기까지 모두 작성
+  const myReviewStatus = chatRoomInfo.reviewState[1 - targetIdx];
 
-  // 채팅방리스트 전역 저장소
-  const { updateChatRoom } = chatStore(state => state);
+  // 상태에 따라 거래요약에 보여질 버튼 타입 설정
+  let buttonType = undefined;
+  if (status === false) {
+    buttonType = 0;
+  } else if (
+    status === true &&
+    (myReviewStatus === 0 || myReviewStatus === 1)
+  ) {
+    buttonType = 1;
+  } else {
+    buttonType = 2;
+  }
+  // buttonType에 따라 버튼 텍스트
+  let buttonText = '';
+  switch (buttonType) {
+    case 0:
+      buttonText = '거래상태 변경';
+      break;
+    case 1:
+      buttonText = '후기 남기기';
+      break;
+    case 2:
+      buttonText = '후기 남기기';
+      break;
+    default:
+      break;
+  }
 
   useEffect(() => {
     // focusState 변경 API 먼저 날리기
     post_chatroom_focus(userIdx, roomId, true).then(res => {
-      console.log('post focusState success to true! roomId :', roomId);
+      // console.log('post focusState success to true! roomId :', roomId);
     });
 
     let messageEvent = undefined;
@@ -169,13 +202,13 @@ function ChatDetail() {
 
       // 최초 연결
       messageEvent.onopen = event => {
-        console.log('open : chat detail message');
+        // console.log('open : chat detail message');
       };
 
       // 새로운 메세지 수신
       messageEvent.onmessage = event => {
         const parsedData = JSON.parse(event.data);
-        console.log('new message', parsedData);
+        // console.log('new message', parsedData);
         setMessageList(prev => {
           return [...prev, parsedData];
         });
@@ -190,84 +223,113 @@ function ChatDetail() {
     return () => {
       messageEvent.close();
       post_chatroom_focus(userIdx, roomId, false).then(res => {
-        console.log('post focusState success to false! roomId :', roomId);
+        // console.log('post focusState success to false! roomId :', roomId);
       });
       // GET 요청으로 받은 데이터로 해당 채팅방 정보를 갈아끼움
       get_updated_chatroom(roomId).then(data => {
-        console.log('get updated chatroom :', data);
+        // console.log('get updated chatroom :', data);ㄴ
         updateChatRoom(roomId, data);
       });
     };
   }, []);
 
-  // 사용자가 입력한 메세지
-  const [messageInput, setMessageInput] = useState();
+  // 모달창 열기, 닫기
+  const openModal = () => {
+    setShowModal(true);
+  };
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
-  const status = '바꾸중';
+  // 거래상태 변경
+  const changeStatusHandler = () => {
+    const data1 = {
+      tradeDetailIdx: chatRoomInfo.tradeDetailIdx,
+      itemIdx: chatRoomInfo.itemIdx,
+      userNickname: chatRoomInfo.nickname,
+      userIdx: chatRoomInfo.userIdx,
+      userImg: chatRoomInfo.userImg,
+    };
+    const data2 = {
+      roomId: roomId,
+    };
 
-  // 상단 버튼 클릭 시 실행될 함수들
-  const navigate = useNavigate();
-  const changeStatusHandler = () => {};
-  const sendReviewHandler = () => {
-    navigate('/review');
+    // 메인서버에 POST
+    post_trade_status(data1);
+    // 채팅서버에 PUT
+    put_trade_status(userIdx, data2);
+  };
+
+  // 유저가 입력한 메세지 state에 저장
+  const onChangeHandler = e => {
+    setMessageInput(e.target.value);
   };
 
   // 메시지 전송 함수
   const sendMessageHandler = async () => {
-    const data = {
-      senderIdx: userIdx,
-      receiverIdx: yourIdx,
-      senderNickname: myNickname,
-      receiverNickname: yourNickname,
-      roomId: roomId,
-      msg: messageInput,
-    };
-
-    await post_message(data);
+    if (messageInput) {
+      const data = {
+        senderIdx: userIdx,
+        receiverIdx: yourIdx,
+        senderNickname: myNickname,
+        receiverNickname: yourNickname,
+        roomId: roomId,
+        msg: messageInput,
+      };
+      console.log('send message data', data);
+      await post_message(data);
+      setMessageInput('');
+    }
   };
 
-  /*
-  메세지 데이터 예시
-  {
-	"chatId":"63da269427abdd671795c90e",
-	"msg":"ㅁㄴㅇ",
-	"receiverIdx":6,
-	"senderIdx":5,
-	"receiverNickname":"배정현",
-	"senderNickname":"김소정",
-	"roomId":"63da08172a56c42cc9b85a61",
-	"createdAt":"2023-02-01T17:45:08.865"
-}
-  */
+  // 후기 남기기
+  const navigate = useNavigate();
+  const sendReviewHandler = () => {
+    if (myReviewStatus === 0) {
+      navigate('/userReview');
+    } else if (myReviewStatus === 1) {
+      navigate('/bagguReview');
+    }
+  };
+
   return (
     <div>
-      <TopBar2 title={yourNickname} isCheck={false} />
+      {showModal ? (
+        <Modal
+          title="거래 상태 변경"
+          content={`${yourNickname}님과의 거래가 완료되었나요?`}
+          confirmText="확인"
+          cancelText="취소"
+          onConfirm={changeStatusHandler}
+          onCancel={closeModal}
+        />
+      ) : (
+        ''
+      )}
+      <TopBar2
+        title={yourNickname}
+        isCheck={false}
+        onClickTitle={() => navigate(`/user/${yourIdx}`)}
+      />
       <Summary>
         <div>
-          <Product img="" alt="" />
+          <Product
+            img={yourItemImg}
+            alt=""
+            onClick={() => navigate(`/item/${yourItemIdx}`)}
+          />
           <img src={icon_exchange} alt="" />
-          <Product img="" alt="" />
+          <Product
+            img={myItemImg}
+            alt=""
+            onClick={() => navigate(`/item/${myItemIdx}`)}
+          />
         </div>
         <Button
-          status="바꾸중"
-          onClick={
-            status === '바꾸중' ? changeStatusHandler : sendReviewHandler
-          }
+          buttonType={buttonType}
+          onClick={!status ? openModal : sendReviewHandler}
         >
-          {status === '바꾸중' ? (
-            <span>
-              거래
-              <br />
-              상태
-              <br />
-              변경
-            </span>
-          ) : (
-            <span>
-              후기 <br />
-              남기기
-            </span>
-          )}
+          <span>{buttonText}</span>
         </Button>
       </Summary>
       <ChatContent>
@@ -293,8 +355,13 @@ function ChatDetail() {
             })
           : ''}
       </ChatContent>
-      <MessageForm action="">
-        <TextInput type="text" value={messageInput} />
+      <MessageForm>
+        <TextInput
+          type="text"
+          value={messageInput}
+          onChange={onChangeHandler}
+          onKeyPress={e => (e.key === 'Enter' ? sendMessageHandler() : '')}
+        />
         <img src={icon_send} onClick={sendMessageHandler} alt="" />
       </MessageForm>
     </div>
