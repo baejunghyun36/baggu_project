@@ -13,5 +13,5 @@ public class TradeCompleteDto {
   private Long[] itemIdx = new Long[2];
   private String[] userNickname = new String[2];
   private Long[] userIdx = new Long[2];
-  private String[] img = new String[2];
+  private String[] userImg = new String[2];
 }
