@@ -43,6 +43,7 @@ public class User extends BaseTimeEntity {
   private String nickname;
 
   @Column(name = "is_valid")
+  @Builder.Default
   private boolean isValid = true;
 
   @Column(name = "trade_count")

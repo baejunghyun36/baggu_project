@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +34,7 @@ public class TradeDetail extends BaseTimeEntity {
   private int tradeState;
 
   @Column(name = "is_valid")
+  @Builder.Default
   private boolean isValid = true;
 
   @Column(name = "request_item_idx")
