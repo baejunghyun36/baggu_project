@@ -5,7 +5,7 @@ import { chatAuthApi } from '../axios';
 export const get_chatrooms = async userIdx => {
   try {
     const { data } = await chatAuthApi.get(requests.GET_CHATROOMS(userIdx));
-    console.log('get chatrooms success', data);
+    // console.log('get chatrooms success', data);
     return data;
   } catch (error) {
     throw error;
@@ -80,7 +80,29 @@ export const put_trade_status = async (userIdx, data) => {
       requests.PUT_CHATROOMS(userIdx),
       data
     );
-    console.log(response);
+    // console.log('chat put trade status :', response);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 채팅서버로 리뷰상태 변경 PUT
+export const put_review_status = async (userIdx, data) => {
+  /*
+  {
+	"roomId" : "63e49ed50abb4d2a42e5357f",
+	"userIdx" : 1,
+  "reviewNumber" : 1
+  }
+
+  */
+  try {
+    const response = await chatAuthApi.put(
+      requests.PUT_CHATROOMS(userIdx),
+      data
+    );
+    // console.log('chat put trade status :', response);
+    return response;
   } catch (error) {
     throw error;
   }

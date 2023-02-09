@@ -28,6 +28,7 @@ import requests from 'api/config';
 // hooks
 import FormatDate from 'hooks/FormatDate';
 import { post_trade_status } from 'api/apis/trade';
+import { reviewStore } from 'store/reviewStore';
 
 // Styled Components
 const Summary = styled.div`
@@ -123,6 +124,15 @@ function ChatDetail() {
   const [messageList, setMessageList] = useState([]);
   // 사용자가 입력한 메세지
   const [messageInput, setMessageInput] = useState('');
+  // 후기 남기기 버튼을 누르면 API 요청시 필요한 데이터를 저장
+  const {
+    saveYourIdx,
+    saveYourNickname,
+    saveTargetItemIdx,
+    saveWriteUserIdx,
+    saveReviewText,
+    saveRoomId,
+  } = reviewStore(state => state);
 
   // 현재 페이지의 파라미터
   const { roomId } = useParams();
@@ -285,6 +295,12 @@ function ChatDetail() {
   // 후기 남기기
   const navigate = useNavigate();
   const sendReviewHandler = () => {
+    saveYourIdx(yourIdx);
+    saveYourNickname(yourNickname);
+    saveTargetItemIdx(yourItemIdx);
+    saveWriteUserIdx(userIdx);
+    saveRoomId(roomId);
+
     if (myReviewStatus === 0) {
       navigate('/userReview');
     } else if (myReviewStatus === 1) {
