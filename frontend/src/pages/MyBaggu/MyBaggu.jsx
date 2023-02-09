@@ -1,42 +1,57 @@
 import React from 'react';
 import ProductList from 'components/common/ProductList';
 import { useEffect, useState } from 'react';
-import FeedList from 'components/common/FeedList';
+import BagguList from 'components/common/BagguList';
 import TabBar from 'components/common/TabBar';
-import axios from 'axios';
+import { authInstance } from 'api/axios';
+import requests from 'api/config';
 
 function MyBaggu() {
-  const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(0);
+  const [myItems, setMyItems] = useState([]);
+  const [offers, setOffers] = useState([]);
   const tabNames = ['나의 물품 관리', '내가 보낸 바꾸신청'];
   const getIndex = data => {
     setPage(data);
   };
-  async function getMovies() {
-    try {
-      //응답 성공
-      const json = await axios.get(
-        `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`
-      );
-      console.log(json);
-      setMovies(json.data.data.movies);
-    } catch (error) {
-      //응답 실패
-      console.error(error);
-    }
-  }
   useEffect(() => {
-    getMovies();
-  }, []);
+    const get_user_items = async () => {
+      try {
+        const { data } = await authInstance.get(requests.GET_USER_ITEM(0));
+        console.log(data);
+        return setMyItems(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const get_my_request = async () => {
+      try {
+        const { data } = await authInstance.get(requests.GET_MY_REQUEST(0));
 
+        console.log(data);
+        return setOffers(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    get_user_items();
+    get_my_request();
+  }, []);
   return (
-    <div>
-      <TabBar tabNames={tabNames} getIndex={getIndex} />
+    <div className="top-[60px] absolute w-full" id="check">
+      <div>
+        <TabBar tabNames={tabNames} getIndex={getIndex} />
+      </div>
       <div className={`${page === 0 ? '' : 'hidden'}`}>
-        <ProductList movies={movies} />
+        {/* {status === 'loading' && <div>Loading...</div>}{' '} */}
+        {/* {status === 'success' && <ProductList items={items} />} */}
+        <ProductList items={myItems} />
       </div>
       <div className={`${page === 1 ? '' : 'hidden'}`}>
-        <FeedList feeds={movies} />
+        {/* {status === 'loading' && <div>Loading...</div>}{' '}
+        {status === 'success' && <FeedList feeds={items} />} */}
+        <ProductList items={offers} />
       </div>
     </div>
   );

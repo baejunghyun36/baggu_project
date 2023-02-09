@@ -1,31 +1,31 @@
 import React from 'react';
-import FeedList from 'components/common/FeedList';
+import BagguList from 'components/common/BagguList';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import TopBar2 from 'components/common/TopBar2';
+import { authInstance } from 'api/axios';
+import requests from 'api/config';
 
 function Baggu() {
-  const [feeds, setFeeds] = useState([]);
-  async function getFeeds() {
-    try {
-      //응답 성공
-      const json = await axios.get(
-        `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`
-      );
-      console.log(json);
-      setFeeds(json.data.data.movies);
-    } catch (error) {
-      //응답 실패
-      console.error(error);
-    }
-  }
+  const [baggus, setBaggus] = useState([]);
   useEffect(() => {
-    getFeeds();
+    const get_user_trade = async () => {
+      try {
+        const { data } = await authInstance.get(requests.GET_MAIN_TRADE(0));
+
+        console.log(data);
+        return setBaggus(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    get_user_trade();
   }, []);
   return (
     <div>
       <TopBar2 title="바꾸내역" />
-      <FeedList feeds={feeds} />
+      <BagguList baggus={baggus} />
     </div>
   );
 }

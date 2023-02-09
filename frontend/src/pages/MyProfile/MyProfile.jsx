@@ -12,7 +12,7 @@ import { logout } from 'api/apis/user';
 
 // Styled Component
 const Container = styled.div`
-  ${tw`flex flex-col`}
+  ${tw`flex flex-col p-2 border-b`}
 `;
 
 // 유저 정보 props 받아오기
@@ -48,7 +48,7 @@ function MyProfile() {
       <UserInfo user={user} />
       {/* 유저정보 컴포넌트 추가 */}
       {/* 바꾸내역 컴포넌트 추가 */}
-      <Container>
+      <Container className="font-bold">
         <h4>나의바꾸</h4>
       </Container>
       <Link to={`/myprofile/${user.userIdx}/baggu`}>
@@ -66,7 +66,7 @@ function MyProfile() {
           <h4>관심목록</h4>
         </Container>
       </Link>
-      <Container>
+      <Container className="font-bold">
         <h4>기타</h4>
       </Container>
       <Container to={`/myprofile/${user.userIdx}/town`}>
