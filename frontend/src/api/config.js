@@ -75,10 +75,6 @@ const requests = {
     return `/baggu/tradeDetail/{tradeDetailIdx}`;
   },
 
-  // 유저의 채팅방 목록
-
-  // 채팅 상세 정보
-
   // 유저의 바꾸 내역 (GET)
   GET_USER_TRADE(userIdx) {
     return `/baggu/tradeFin?userIdx=${userIdx}`;
@@ -147,6 +143,11 @@ const requests = {
     return `/baggu/${userIdx}/chatRoomList `;
   },
 
+  // 유저의 채팅방 목록
+  PUT_CHATROOMS: userIdx => {
+    return `/baggu/${userIdx}/chatRoomList `;
+  },
+
   // 유저의 채팅방 변경사항 SSE
   GET_CHATROOMS_UPDATE: userIdx => {
     return `/baggu/${userIdx}/chatRoom`;
@@ -168,6 +169,9 @@ const requests = {
 
   // 채팅 보내기 POST
   POST_MESSAGE: `/baggu/chat`,
+
+  // 거래상태 변경 POST
+  POST_TRADE_STATUS: `/baggu/tradeFin`,
 };
 
 export default requests;

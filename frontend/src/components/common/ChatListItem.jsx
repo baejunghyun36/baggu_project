@@ -44,6 +44,7 @@ const Product = styled.div`
 
 const SendReviewBtn = styled.div`
   ${tw`w-full bg-white flex justify-center items-center text-black p-1 hover:bg-primary-hover hover:text-primary border-b `}
+  ${props => (props.show ? tw`` : tw`hidden`)}
   & {
     p {
       ${tw`text-sub-bold `}
@@ -63,16 +64,34 @@ function ChatListItem({ info }) {
   const userIdx = Number(window.localStorage.getItem('userIdx'));
 
   // 채팅방 정보의 userIdx 중 현재 로그인한 사용자의 인덱스
-  // const targetIdx = info.userIdx.findIndex(idx => idx === userIdx);
-  // console.log(info.userIdx.findIndex(idx => idx === userIdx));
-  const targetIdx = 0;
+  const targetIdx = info['userIdx'].findIndex(x => x !== userIdx);
+  console.log('상대 타겟 인덱스', targetIdx);
 
   // 유저에게 보여줘야할 데이터 선택
   const userProfile = info.userImg[targetIdx];
   const nickname = info.nickname[targetIdx];
   const recentMessage = info.lastContent;
   const itemImg = info.itemImg[targetIdx];
-  const unreadCnt = info.readNotCnt[targetIdx];
+  const unreadCnt = info.readNotCnt[1 - targetIdx];
+
+  console.log('chatlistitem roominfo', info);
+  // 거래 후기 버튼 관련 데이터 정제
+  // 1. 거래 상태 : true-거래완료, false-거래진행중
+  const tradeStatus = info.tradeCompleteStatus;
+  // 2. 현재 로그인한 유저의 후기 작성 상태 : 0-아무것도 작성하지 않음, 1-유저후기까지 작성, 2-거래후기까지 작성
+  // const myReviewStatus = info.reviewState[1 - targetIdx];
+  const myReviewStatus = 0;
+
+  // 후기 남기기 버튼 보일지 여부
+  const showReviewBtn = tradeStatus === true ? true : false;
+  // 후기 남기기 버튼을 누르면
+  const reviewBtnClickHandler = () => {
+    if (myReviewStatus === 0) {
+      navigate('/userReview');
+    } else if (myReviewStatus === 1) {
+      navigate('/bagguReview');
+    }
+  };
 
   return (
     <Container>
@@ -89,7 +108,7 @@ function ChatListItem({ info }) {
         </Info>
         <Product img={itemImg} />
       </Wrapper>
-      <SendReviewBtn onClick={() => navigate('/userReview')}>
+      <SendReviewBtn onClick={reviewBtnClickHandler} show={showReviewBtn}>
         <p>후기 보내기</p>
       </SendReviewBtn>
     </Container>

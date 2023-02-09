@@ -47,19 +47,40 @@ export const post_chatroom_focus = async (userIdx, roomId, focusOn) => {
   }
 };
 
-// 채팅 보내기
-// {
-//   "senderIdx" : 1,
-//   "receiverIdx" : 2,
-//   "senderNickname" : "senderNickname",
-//   "receiverNickname" : "receiverNickname",
-//   "roomId" : "63e353a7882921148a52480c",
-//   "msg": "안녕"
-// }
-
+// 채팅 메세지 전송 POST
 export const post_message = async data => {
+  /*
+  < request data >
+  {
+    "senderIdx" : 1,
+    "receiverIdx" : 2,
+    "senderNickname" : "senderNickname",
+    "receiverNickname" : "receiverNickname",
+    "roomId" : "63e353a7882921148a52480c",
+    "msg": "안녕"
+  }
+  */
   try {
     await chatAuthApi.post(requests.POST_MESSAGE, data);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 채팅서버로 거래상태 변경 PUT
+export const put_trade_status = async (userIdx, data) => {
+  /*
+  < request data >
+  {
+	  "roomId" : "63e39cc8477705699cf3851f"
+  }
+  */
+  try {
+    const response = await chatAuthApi.put(
+      requests.PUT_CHATROOMS(userIdx),
+      data
+    );
+    console.log(response);
   } catch (error) {
     throw error;
   }

@@ -8,8 +8,8 @@ function FormatDate(rawDate) {
 < 반환값 >
 {년, 월, 일, 시, 분}을 담은 객체를 반환
 */
-  const date = '2023-01-28T18:13:45'.split('T')[0];
-  const time = '2023-01-28T18:13:45'.split('T')[1];
+  const date = rawDate.split('T')[0];
+  const time = rawDate.split('T')[1];
 
   // 년, 월, 일
   const year = date.split('-')[0];
