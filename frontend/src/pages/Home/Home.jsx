@@ -16,13 +16,18 @@ function Home() {
   const getIndex = data => {
     setPage(data);
   };
+
+  // 유저의 정보
+  const userIdx = localStorage.getItem('userIdx');
+  const dong = localStorage.getItem('dong');
+
   useEffect(() => {
     const get_main_items = async () => {
       try {
         const { data } = await authInstance.get(
-          requests.GET_MAIN_ITEM('역삼동', 0),
+          requests.GET_MAIN_ITEM(dong, 0),
           {
-            dong: '역삼동',
+            dong: dong,
           }
         );
         console.log(data);

@@ -9,6 +9,7 @@ import requests from 'api/config';
 
 // twin.macro
 import { logout } from 'api/apis/user';
+import Modal from 'components/common/Modal';
 
 // Styled Component
 const Container = styled.div`
@@ -26,6 +27,9 @@ const logoutHandler = async () => {
 const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
 
 function MyProfile() {
+  // 모달 상태
+  const [showModal, setShowModal] = useState(false);
+
   const [user, setUser] = useState([]);
   useEffect(() => {
     const get_user = async () => {
@@ -44,6 +48,7 @@ function MyProfile() {
 
   return (
     <div>
+      {showModal ? <Modal /> : ''}
       <TopBar2 title="내 프로필" />
       <UserInfo user={user} />
       {/* 유저정보 컴포넌트 추가 */}
