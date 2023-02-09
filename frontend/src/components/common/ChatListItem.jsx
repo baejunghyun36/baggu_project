@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
+import { reviewStore } from 'store/reviewStore';
 import tw, { styled, css } from 'twin.macro';
 
 // Styled Component
@@ -54,8 +55,8 @@ const SendReviewBtn = styled.div`
 
 // Main Component
 function ChatListItem({ info }) {
+  // 채팅방 리스트 클릭시 채팅방 상세 페이지로
   const navigate = useNavigate();
-
   const goChatDetail = () => {
     navigate(`/chat/${info.roomId}`);
   };
@@ -66,6 +67,10 @@ function ChatListItem({ info }) {
   // 채팅방 정보의 userIdx 중 현재 로그인한 사용자의 인덱스
   const targetIdx = info['userIdx'].findIndex(x => x !== userIdx);
   console.log('상대 타겟 인덱스', targetIdx);
+  // 리뷰 작성시 필요한 정보들
+  const yourIdx = info.userIdx[targetIdx];
+  const yourItemIdx = info.itemIdx[targetIdx];
+  const roomId = info.roomId;
 
   // 유저에게 보여줘야할 데이터 선택
   const userProfile = info.userImg[targetIdx];
@@ -79,16 +84,31 @@ function ChatListItem({ info }) {
   // 1. 거래 상태 : true-거래완료, false-거래진행중
   const tradeStatus = info.tradeCompleteStatus;
   // 2. 현재 로그인한 유저의 후기 작성 상태 : 0-아무것도 작성하지 않음, 1-유저후기까지 작성, 2-거래후기까지 작성
-  // const myReviewStatus = info.reviewState[1 - targetIdx];
-  const myReviewStatus = 0;
+  const reviewState = info.reviewState[1 - targetIdx];
 
   // 후기 남기기 버튼 보일지 여부
-  const showReviewBtn = tradeStatus === true ? true : false;
-  // 후기 남기기 버튼을 누르면
+  const showReviewBtn =
+    tradeStatus === true && reviewState !== 2 ? true : false;
+
+  // 후기 남기기 버튼을 누르면 API 요청시 필요한 데이터를 저장
+  const {
+    saveYourIdx,
+    saveYourNickname,
+    saveTargetItemIdx,
+    saveWriteUserIdx,
+    saveRoomId,
+  } = reviewStore(state => state);
+  // 후기 남기기 버튼을 누르면 동작할 함수
   const reviewBtnClickHandler = () => {
-    if (myReviewStatus === 0) {
+    saveYourIdx(yourIdx);
+    saveYourNickname(nickname);
+    saveTargetItemIdx(yourItemIdx);
+    saveWriteUserIdx(userIdx);
+    saveRoomId(roomId);
+
+    if (reviewState === 0) {
       navigate('/userReview');
-    } else if (myReviewStatus === 1) {
+    } else if (reviewState === 1) {
       navigate('/bagguReview');
     }
   };
