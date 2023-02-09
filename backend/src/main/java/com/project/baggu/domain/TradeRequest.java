@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
+@AllArgsConstructor
 public class TradeRequest extends BaseTimeEntity {
 
   @Id
@@ -60,6 +63,7 @@ public class TradeRequest extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "tradeRequest")
+  @Builder.Default
   private List<TradeDetail> tradeDetails = new ArrayList<>();
 
 
