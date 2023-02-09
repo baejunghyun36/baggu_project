@@ -51,8 +51,6 @@ function MyProfile() {
       {showModal ? <Modal /> : ''}
       <TopBar2 title="내 프로필" />
       <UserInfo user={user} />
-      {/* 유저정보 컴포넌트 추가 */}
-      {/* 바꾸내역 컴포넌트 추가 */}
       <Container className="font-bold">
         <h4>나의바꾸</h4>
       </Container>
@@ -74,11 +72,11 @@ function MyProfile() {
       <Container className="font-bold">
         <h4>기타</h4>
       </Container>
-      <Container to={`/myprofile/${user.userIdx}/town`}>
-        <div>
+      <Link to={`/myprofile/${user.userIdx}/town`}>
+        <Container>
           <h4>내 동네설정</h4>
-        </div>
-      </Container>
+        </Container>
+      </Link>
       <Container onClick={logoutHandler}>
         <h4>로그아웃</h4>
       </Container>

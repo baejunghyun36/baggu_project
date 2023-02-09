@@ -20,7 +20,7 @@ function BagguList({ baggus }) {
     >
       {baggus
         ? baggus.map(baggu => (
-            <div key={baggu.itemIdx}>
+            <div key={baggu.tradeFinIdx}>
               <BagguListItem baggu={baggu} />
             </div>
           ))
