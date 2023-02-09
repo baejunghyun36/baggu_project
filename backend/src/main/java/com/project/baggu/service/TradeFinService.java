@@ -258,8 +258,8 @@ public class TradeFinService {
     tradeFin.setRequestNickname(tcd.getUserNickname()[1]);
     tradeFin.setReceiveUserIdx(tcd.getUserIdx()[0]);
     tradeFin.setRequestUserIdx(tcd.getUserIdx()[1]);
-    tradeFin.setReceiveProfileImgUrl(tcd.getImg()[0]);
-    tradeFin.setRequestProfileImgUrl(tcd.getImg()[1]);
+    tradeFin.setReceiveProfileImgUrl(tcd.getUserImg()[0]);
+    tradeFin.setRequestProfileImgUrl(tcd.getUserImg()[1]);
 
     tradeFinRepository.save(tradeFin);
   }
