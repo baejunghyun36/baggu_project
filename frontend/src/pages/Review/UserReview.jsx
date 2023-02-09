@@ -11,7 +11,16 @@ import requests from 'api/config';
 
 // React query
 import { useMutation } from '@tanstack/react-query';
+import { reviewStore } from 'store/reviewStore';
+import { post_user_review } from 'api/apis/review';
+import {
+  get_updated_chatroom,
+  put_review_status,
+  put_trade_status,
+} from 'api/apis/chat';
+import { chatStore } from 'store/chat';
 
+// Styled Component
 const Wrapper = tw.div`w-full h-full`;
 const Container = styled.div`
   ${tw`p-3`}
@@ -32,23 +41,11 @@ const ReviewBtn = styled.div`
 
 // Main Component
 function UserReview() {
-  // 테스트용 토큰
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const get_token = async () => {
-      try {
-        const { data } = await defaultInstance.post(requests.TEST_TOKEN, {
-          data: { userIdx: 1 },
-        });
-        setToken(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    get_token();
-  }, []);
+  // 리뷰 작성용 중앙 저장소
+  const { yourIdx, yourNickname, roomId } = reviewStore(state => state);
+  // 모든 채팅방 정보 중앙저장소
+  const { updateChatRoom } = chatStore(state => state);
+  const userIdx = localStorage.getItem('userIdx');
 
   // 유저가 클릭한 리뷰
   const [clickedReviews, setClickedReviews] = useState({
@@ -65,50 +62,43 @@ function UserReview() {
     '상품설명과 상품상태가 같아요.',
   ];
 
-  const you = '유저1';
+  // 제출 클릭시
   const navigate = useNavigate();
-  const submitHandler = () => {
+  const submitHandler = async () => {
     // 유저가 선택한 리뷰 태그 인덱스 필터링
     const clickedReviewsIndex = Object.keys(clickedReviews)
       .map(Number)
       .filter(x => clickedReviews[x] === true);
+    const reviewTagTypes = [];
+    clickedReviewsIndex.forEach(idx => reviewTagTypes.push(`TYPE${idx}`));
+    const data = { userIdx: yourIdx, reviewTagTypes: reviewTagTypes };
 
-    // 유저 후기 post 요청보내는 함수
-    // clickedReviewsIndex를 인자로 사용
-    const post_user_review = async clickedReviewsIndex => {
-      try {
-        const response = await authInstance.post(requests.POST_USER_REVIEW, {
-          data: {
-            userIdx: 1,
-            review_tag: clickedReviewsIndex,
-          },
-          headers: {
-            'access-token': `${token}`,
-          },
+    // 유저 리뷰 POST
+    await post_user_review(data)
+      .then(res => {
+        // 채팅 서버 PUT
+        const data1 = {
+          roomId: roomId,
+          userIdx: userIdx,
+          reviewNumber: 1,
+        };
+        put_review_status(userIdx, data1).then(res => {
+          const roomInfo = res.data;
+          updateChatRoom(roomId, roomInfo);
         });
-
-        return response.data;
-      } catch (error) {
-        throw error;
-      }
-    };
-
-    post_user_review(clickedReviewsIndex)
-      .then(() => {
         navigate('/bagguReview');
       })
-      .catch(error => {
-        console.log(error);
-        // 테스트용
-        navigate('/bagguReview');
+      .catch(err => {
+        console.log(err);
       });
   };
+
   return (
     <Wrapper>
       <TopBar2 title="유저 후기 남기기" useCheckBtn={false} />
       <Container>
         <p>
-          <span>{you}</span>님에 대한 후기를 남겨주세요.
+          <span>{yourNickname}</span>님에 대한 후기를 남겨주세요.
         </p>
         <div>
           {userReviews.map((review, idx) => (
