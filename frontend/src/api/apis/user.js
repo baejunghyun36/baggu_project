@@ -24,6 +24,26 @@ export const get_user_item = async userIdx => {
   }
 };
 
+// 유저의 모든 바꾸내역
+export const get_user_trade = async userIdx => {
+  try {
+    const { data } = await authInstance.get(requests.GET_USER_TRADE(userIdx));
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 유저의 모든 리뷰
+export const get_user_review = async userIdx => {
+  try {
+    const { data } = await authInstance.get(requests.GET_REVIEWS(userIdx));
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 유저 동네 설정
 export const put_user_dong = async ({ userIdx, data }) => {
   /*
