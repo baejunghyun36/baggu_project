@@ -13,11 +13,13 @@ const ListWrapper = styled.div`
 function ProductList({ items }) {
   return (
     <ListWrapper id="list-wrapper">
-      {items.map(item => (
-        <div key={item.itemIdx}>
-          <ProductListItem item={item} />
-        </div>
-      ))}
+      {items
+        ? items.map(item => (
+            <div key={item.itemIdx}>
+              <ProductListItem item={item} />
+            </div>
+          ))
+        : ''}
       <hr />
     </ListWrapper>
   );
