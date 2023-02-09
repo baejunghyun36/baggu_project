@@ -18,11 +18,13 @@ function BagguList({ baggus }) {
         location.startsWith('/myprofile') ? 'mt-[0px]' : 'mt-[60px]'
       }`}
     >
-      {baggus.map(baggu => (
-        <div key={baggu.itemIdx}>
-          <BagguListItem baggu={baggu} />
-        </div>
-      ))}
+      {baggus
+        ? baggus.map(baggu => (
+            <div key={baggu.itemIdx}>
+              <BagguListItem baggu={baggu} />
+            </div>
+          ))
+        : ''}
       <hr />
     </ListWrapper>
   );
