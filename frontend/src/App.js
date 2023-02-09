@@ -45,6 +45,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 // styled component
 import tw, { styled, css } from 'twin.macro';
 import { chatStore } from 'store/chat';
+import Search from 'pages/Search/Search';
 
 const queryClient = new QueryClient();
 
@@ -143,6 +144,8 @@ function App() {
           />
           {/* 알림 */}
           <Route path="/notification" element={<Notification />} />
+          {/* 검색 */}
+          <Route path="/search" element={<Search />} />
         </Routes>
         <BottomNav />
       </BrowserRouter>
