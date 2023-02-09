@@ -61,7 +61,7 @@ function ProductListItem({ item, onClick, selected }) {
       onClick={onClick ? onClick : moveToDetail}
       selected={selected}
     >
-      <ItemImg item={item}></ItemImg>
+      <ItemImg item={item} />
       <ItemInfo>
         <p>{item.title}</p>
         <span>

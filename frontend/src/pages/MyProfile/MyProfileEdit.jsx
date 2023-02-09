@@ -174,7 +174,7 @@ function MyProfileEdit() {
           <p>{introductionMessage}</p>
         </InputContainer>
       </form>
-      <FormSubmitBtn onClick={submitHandler} />
+      <FormSubmitBtn onClick={submitHandler} title="입력완료" />
     </div>
   );
 }
