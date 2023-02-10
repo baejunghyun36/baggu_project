@@ -28,6 +28,7 @@ public class TradeFin extends BaseTimeEntity {
   private Long tradeFinIdx;
 
   @Column(name = "heart_count")
+  @Builder.Default
   private int heartCount = 0;
 
   @Column(name = "receive_item_idx")
@@ -60,6 +61,7 @@ public class TradeFin extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "tradeFin")
+  @Builder.Default
   private List<Heart> hearts = new ArrayList<>();
 
 }
