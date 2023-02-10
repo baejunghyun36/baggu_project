@@ -28,7 +28,6 @@ public class BasicExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity handleServerException(Exception e) {
     log.error("Uncatched Error occurs {}", e.toString());
 
-
     HttpHeaders resHeaders = new HttpHeaders();
     resHeaders.add("Content-Type", "application/json;charset=UTF-8");
 
