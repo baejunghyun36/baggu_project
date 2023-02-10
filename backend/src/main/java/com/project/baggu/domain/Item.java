@@ -56,6 +56,7 @@ public class Item extends BaseTimeEntity {
   private int viewCount;
 
   @Column(name = "is_valid")
+  @Builder.Default
   private boolean isValid = true;
 
   @Column(name = "category")
@@ -99,6 +100,7 @@ public class Item extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "item")
+  @Builder.Default
   private List<ItemImage> itemImages = new ArrayList<>();
 
   @Column(name = "first_img")

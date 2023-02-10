@@ -16,7 +16,7 @@ function ProductList({ items }) {
       {items
         ? items.map(item => (
             <div key={item.itemIdx}>
-              <ProductListItem item={item} />
+              <ProductListItem item={item} checkShow={false} />
             </div>
           ))
         : ''}

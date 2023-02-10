@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +24,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "trade_detail")
 @Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TradeDetail extends BaseTimeEntity {
 
   @Id
@@ -33,6 +37,7 @@ public class TradeDetail extends BaseTimeEntity {
   private int tradeState;
 
   @Column(name = "is_valid")
+  @Builder.Default
   private boolean isValid = true;
 
   @Column(name = "request_item_idx")

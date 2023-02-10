@@ -47,6 +47,7 @@ function TopBar1() {
     location.startsWith('/makeRequest') ||
     location.startsWith('/myprofile') ||
     location.startsWith('/notification') ||
+    location.startsWith('/search') ||
     location.startsWith('/userReview')
   ) {
     return null;
