@@ -81,7 +81,7 @@ public class Item extends BaseTimeEntity {
   private LocalDateTime modifiedAt;
 
   @JsonIgnore
-  @OneToOne(mappedBy = "item")
+  @OneToOne(mappedBy = "item", fetch = LAZY)
   private ReviewText reviewText;
 
   @JsonIgnore
