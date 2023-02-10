@@ -2,6 +2,8 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { setCookie } from 'utils/cookie';
+
 // API
 import { defaultInstance, authInstance } from 'api/axios';
 import requests from 'api/config';
@@ -54,6 +56,13 @@ function KakaoLogin() {
             response.headers['authorization']
           );
           window.localStorage.setItem('dong', response.data.user.dong);
+          // 쿠키에 저장
+          setCookie('userIdx', response.data.user.userIdx);
+          setCookie('dong', response.data.user.dong);
+          setCookie('token', response.headers['authorization'], {
+            httpOnly: true,
+            secure: true,
+          });
           navigate('/');
         } else {
           // 가입되지 않은 사용자

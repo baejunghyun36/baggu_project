@@ -32,12 +32,11 @@ const Message = tw.span`text-sub`;
 function UserInfo({ user }) {
   const location = useLocation().pathname;
 
-  // const navigate = useNavigate();
-  // const MoveToUserDetail = () => {
-  //   if (location !== 'myprofile') {
+  // 이 컴포넌트에 표시된 사용자의 userIdx
+  const id = user.userIdx;
+  // 현재 로그인한 사용자의 userIdx
+  const userIdx = localStorage.getItem('userIdx');
 
-  //   }
-  // }
   return (
     <Container>
       <Wrapper className="border-b">
@@ -52,12 +51,16 @@ function UserInfo({ user }) {
             </Info>
           </Wrapper>
         </Link>
-        <Link
-          to="/myprofile/edit"
-          className={`${location === '/myprofile' ? '' : 'hidden'}`}
-        >
-          <img src={edit} alt="profile_edit" />
-        </Link>
+        {userIdx === id ? (
+          <Link
+            to="/myprofile/edit"
+            className={`${location === '/myprofile' ? '' : 'hidden'}`}
+          >
+            <img src={edit} alt="profile_edit" />
+          </Link>
+        ) : (
+          ''
+        )}
       </Wrapper>
     </Container>
   );

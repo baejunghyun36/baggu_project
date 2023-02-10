@@ -27,6 +27,10 @@ const TextContainer = styled.div`
   }
 `;
 
+const InputStyles = {
+  0: tw``,
+  1: tw``,
+};
 const InputContainer = styled.div`
   ${tw`flex-col pt-2 pb-2 px-4`}
 
@@ -92,7 +96,9 @@ function StartNickname() {
   };
 
   const isValid = isTouched && isNicknameValid;
-
+  /*
+  
+  */
   return (
     <Wrapper id="startNickname">
       <TopBar2 pageTitle="" />

@@ -10,7 +10,7 @@ import UserInfo from 'components/common/UserInfo';
 import BagguOfferList from './BagguOfferList';
 
 function Item() {
-  const itemIdx = useParams();
+  const { id } = useParams();
   // const { data: movie, status } = useQuery('getMovie', async () => {
   //   const response = await axios.get(
   //     `https://yts.mx/api/v2/movie_details.json?movie_id=${id}`
@@ -19,16 +19,16 @@ function Item() {
   // });
   const [item, setItem] = useState([]);
   useEffect(() => {
-    const get_item = async itemIdx => {
+    const get_item = async id => {
       try {
-        const { data } = await authInstance.get(requests.ITEM(itemIdx.id));
+        const { data } = await authInstance.get(requests.ITEM(id));
         console.log(data);
         return setItem(data);
       } catch (error) {
         console.log(error);
       }
     };
-    get_item(itemIdx);
+    get_item(id);
   }, []);
   return (
     <div>
