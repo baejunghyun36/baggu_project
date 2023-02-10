@@ -9,10 +9,11 @@ import requests from 'api/config';
 
 // twin.macro
 import { logout } from 'api/apis/user';
+import Modal from 'components/common/Modal';
 
 // Styled Component
 const Container = styled.div`
-  ${tw`flex flex-col`}
+  ${tw`flex flex-col p-2 border-b`}
 `;
 
 // 유저 정보 props 받아오기
@@ -26,6 +27,9 @@ const logoutHandler = async () => {
 const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
 
 function MyProfile() {
+  // 모달 상태
+  const [showModal, setShowModal] = useState(false);
+
   const [user, setUser] = useState([]);
   useEffect(() => {
     const get_user = async () => {
@@ -44,11 +48,10 @@ function MyProfile() {
 
   return (
     <div>
+      {showModal ? <Modal /> : ''}
       <TopBar2 title="내 프로필" />
       <UserInfo user={user} />
-      {/* 유저정보 컴포넌트 추가 */}
-      {/* 바꾸내역 컴포넌트 추가 */}
-      <Container>
+      <Container className="font-bold">
         <h4>나의바꾸</h4>
       </Container>
       <Link to={`/myprofile/${user.userIdx}/baggu`}>
@@ -66,14 +69,14 @@ function MyProfile() {
           <h4>관심목록</h4>
         </Container>
       </Link>
-      <Container>
+      <Container className="font-bold">
         <h4>기타</h4>
       </Container>
-      <Container to={`/myprofile/${user.userIdx}/town`}>
-        <div>
+      <Link to={`/myprofile/${user.userIdx}/town`}>
+        <Container>
           <h4>내 동네설정</h4>
-        </div>
-      </Container>
+        </Container>
+      </Link>
       <Container onClick={logoutHandler}>
         <h4>로그아웃</h4>
       </Container>
@@ -82,4 +85,3 @@ function MyProfile() {
 }
 
 export default MyProfile;
-

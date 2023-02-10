@@ -29,3 +29,5 @@ export const post_request = async (itemIdx, data) => {
     throw error;
   }
 };
+
+// 거래 상태 변경

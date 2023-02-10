@@ -29,6 +29,7 @@ public class ReviewText extends BaseTimeEntity {
   private String comment;
 
   @Column(name = "is_valid")
+  @Builder.Default
   private boolean isValid = true;
 
   @Column(name = "receive_user_idx")

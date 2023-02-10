@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "chatList")
+@Document(collection = "chatRoom")
 @NoArgsConstructor
 @Setter
 public class ChatRoom {
@@ -26,5 +26,9 @@ public class ChatRoom {
   private Long[] itemIdx = new Long[2];
   private String lastContent;
   private LocalDateTime createdAt;
+
+  private Integer[] reviewState = new Integer[2];
+  private Boolean tradeCompleteStatus = false;
+  private Long tradeDetailIdx;
 
 }

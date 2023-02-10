@@ -17,7 +17,7 @@ const Container = styled.div`
 
 // useCheckBtn (boolean) : 체크 버튼 사용 가능 여부
 // BackStep (integar) : 뒤로가기 스텝 수
-function TopBar2({ title, useCheckBtn, BackStep = 1 }) {
+function TopBar2({ title, useCheckBtn, onClickTitle, BackStep = 1 }) {
   const navigate = useNavigate();
   const handleGoBack = () => {
     navigate(-1 * BackStep);
@@ -35,7 +35,9 @@ function TopBar2({ title, useCheckBtn, BackStep = 1 }) {
   return (
     <Container id="top-bar-2">
       <img src={arrow_back} alt="button to go back" onClick={handleGoBack} />
-      <h3 className="text-h3">{title}</h3>
+      <h3 className="text-h3" onClick={onClickTitle}>
+        {title}
+      </h3>
 
       <img
         disabled={!useCheckBtn}

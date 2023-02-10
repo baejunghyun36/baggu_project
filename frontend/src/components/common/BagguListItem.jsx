@@ -106,8 +106,12 @@ function BagguListItem({ baggu }) {
           <Product img={baggu.receiveItemImgUrl} />
         </Link>
       </div>
-      <div className="flex flex-wrap justify-between gap-2 bg-white border-t w-full h-[60px] px-4 py-2">
-        <div className={`${location.startsWith('/myprofile') ? 'hidden' : ''}`}>
+      <div
+        className={`${
+          location.startsWith('/myprofile') ? 'hidden' : ''
+        } flex flex-wrap justify-between gap-2 bg-white border-t w-full h-[60px] px-4 py-2`}
+      >
+        <div>
           <img
             onClick={feed_like}
             src={heart_unliked}

@@ -1,5 +1,6 @@
 package com.project.baggu.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -32,6 +33,7 @@ public class TradeFinDto {
   @JsonSerialize(
       using = LocalDateTimeSerializer.class
   )
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
   private boolean isUserHeart;
 }

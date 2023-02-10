@@ -244,6 +244,7 @@ public class ItemService {
       itemListDto.setState(i.getState());
       itemListDto.setCreatedAt(i.getCreatedAt());
       itemListDto.setTitle(i.getTitle());
+      itemListDto.setItemImgUrl(i.getFirstImg());
       list.add(itemListDto);
     }
     return list;
