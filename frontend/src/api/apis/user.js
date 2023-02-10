@@ -1,6 +1,17 @@
 import requests from 'api/config';
 import { authInstance, defaultInstance } from '../axios';
 
+// 유저 정보 가져오기
+export const get_user = async userIdx => {
+  try {
+    const { data } = await authInstance.get(requests.GET_USER(userIdx));
+    console.log('get user', data);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 유저 로그아웃
 export const logout = async userIdx => {
   try {

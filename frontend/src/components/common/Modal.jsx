@@ -7,7 +7,7 @@ import icon_close from 'assets/icons/close.svg';
 
 // Styled Component
 const ModalContainer = styled.div`
-  ${tw`fixed top-[10vh] inset-0 h-fit z-50 overflow-hidden bg-white rounded p-3`}
+  ${tw`fixed inset-4 m-auto h-fit z-50 overflow-hidden bg-white rounded p-3 w-fit`}
 `;
 
 const Head = tw.div`flex-col gap-1 pb-3`;
@@ -78,12 +78,21 @@ function Modal({
   content,
   cancelText,
   confirmText,
-  showModal,
 }) {
+  /*
+  < props >
+  1. onConfirm : 확인버튼을 누르면 실행될 함수
+  2. onCancel : 취소버튼을 누르면 실행될 함수
+  3. title : 모달의 상단에 표시될 제목
+  4. content : 제목 하단에 표시될 모달 내용
+  5. cancelText : 취소 버튼에 표시될 텍스트
+  6. confirmText : 확인 버튼에 표시될 텍스트
+  */
+
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
-        <Backdrop onConfirm={onConfirm} showModal={showModal} />,
+        <Backdrop onConfirm={onConfirm} />,
         document.getElementById('backdrop-root')
       )}
       {ReactDOM.createPortal(
@@ -94,7 +103,6 @@ function Modal({
           confirmText={confirmText}
           onCancel={onCancel}
           onConfirm={onConfirm}
-          showModal={showModal}
         />,
         document.getElementById('overlay-root')
       )}
