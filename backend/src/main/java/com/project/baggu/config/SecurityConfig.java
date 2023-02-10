@@ -105,8 +105,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //custom header 설정
     configuration.addAllowedHeader("Authorization");
     configuration.addAllowedHeader("Content-Type");
+    configuration.addAllowedHeader("refresh-token");
     configuration.addExposedHeader("Authorization");
     configuration.addExposedHeader("Content-Type");
+    configuration.addExposedHeader("refresh-token");
 
     configuration.addAllowedMethod("*");
     configuration.setAllowCredentials(true);
