@@ -35,10 +35,10 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-    //만약 기존에 쿠키에 저장된 refresh token이 존재할 경우 강제 삭제
-//    if(CookieUtils.getCookie(request,"refresh-token")!=null){
-//      CookieUtils.deleteCookie(request, response, "refresh-token");
-//    }
+//    만약 기존에 쿠키에 저장된 refresh token이 존재할 경우 강제 삭제
+    if(CookieUtils.getCookie(request,"refresh-token")!=null){
+      CookieUtils.deleteCookie(request, response, "refresh-token");
+    }
 
     //user attributes 추출
     OAuth2KakaoUser kakaoUser = OAuth2KakaoUser.mapToObj(((DefaultOAuth2User)authentication.getPrincipal()).getAttributes());
@@ -51,7 +51,8 @@ public class OAuth2UserSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
     //token 설정
     response.setHeader("Authorization",tokenInfo.getAccessToken());
-    CookieUtils.addCookie(response,"refresh-token",tokenInfo.getRefreshToken(), REFRESH_PERIOD);
+    response.setHeader("refresh-token", tokenInfo.getRefreshToken());
+//    CookieUtils.addCookie(response,"refresh-token",tokenInfo.getRefreshToken(), REFRESH_PERIOD);
 
     writeJsonResponse(response,kakaoUser,curUser);
   }
