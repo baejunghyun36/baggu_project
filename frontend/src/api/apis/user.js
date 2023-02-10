@@ -1,6 +1,17 @@
 import requests from 'api/config';
 import { authInstance, defaultInstance } from '../axios';
 
+// 유저 정보 가져오기
+export const get_user = async userIdx => {
+  try {
+    const { data } = await authInstance.get(requests.GET_USER(userIdx));
+    console.log('get user', data);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 유저 로그아웃
 export const logout = async userIdx => {
   try {
@@ -18,6 +29,26 @@ export const logout = async userIdx => {
 export const get_user_item = async userIdx => {
   try {
     const { data } = await authInstance.get(requests.GET_USER_ITEM(userIdx));
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 유저의 모든 바꾸내역
+export const get_user_trade = async userIdx => {
+  try {
+    const { data } = await authInstance.get(requests.GET_USER_TRADE(userIdx));
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 유저의 모든 리뷰
+export const get_user_review = async userIdx => {
+  try {
+    const { data } = await authInstance.get(requests.GET_REVIEWS(userIdx));
     return data;
   } catch (error) {
     throw error;

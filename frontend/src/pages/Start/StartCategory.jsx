@@ -146,10 +146,10 @@ function StartCategory() {
             response.headers['authorization']
           );
           window.localStorage.setItem('dong', dong);
-          navigate('/start/ready');
+          navigate('/');
         })
         .catch(error => {
-          navigate('/start/ready');
+          navigate('/start');
           console.log(error);
         });
     }
