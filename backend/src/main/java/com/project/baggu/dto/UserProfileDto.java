@@ -18,4 +18,5 @@ public class UserProfileDto {
   private String dong;
   private Role role;
   private String profileImgUrl;
+
 }
