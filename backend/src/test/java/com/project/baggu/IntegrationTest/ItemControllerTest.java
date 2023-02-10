@@ -19,8 +19,13 @@ import com.project.baggu.dto.UpdateItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
 import com.project.baggu.repository.ItemRepository;
 import com.project.baggu.repository.UserRepository;
+import com.project.baggu.service.ItemService;
+import com.project.baggu.service.UserService;
+import com.zaxxer.hikari.HikariDataSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import lombok.With;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +56,9 @@ import org.springframework.web.multipart.MultipartFile;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ItemControllerTest {
 
+  @Autowired
+  private UserRepository userRepository;
+
   @Mock
   private Item item;
   @Mock
@@ -71,7 +79,14 @@ public class ItemControllerTest {
   @Autowired
   ItemRepository itemRepository;
 
+  @Autowired
+  UserService userService;
+
   int initSize = 0;
+
+
+
+
 
   @Test
   @DisplayName("현재 아이템 리스트 목록과 데이터 수를 체크한다 (dong)")
@@ -187,6 +202,26 @@ public class ItemControllerTest {
         .uploadImgUrls(list2)
         .build();
 
+  }
+
+  @Test
+  public void timeByIndex(){
+
+    /* 시간 측정 시작 */
+    long startTime = System.nanoTime();
+    Optional<User> user = userRepository.findUserByKakaoId("kakaoId33319");
+    long endTime = System.nanoTime();
+    /* 시간 측정 종료 */
+
+    if(user.isPresent()){
+      // 두 나노 시간 값의 차이를 얻습니다.
+      long timeElapsed = endTime - startTime;
+      System.out.println("수행시간 : " + timeElapsed / 1000000 + "ms");
+
+    }
+    else{
+      System.out.println("검색한 카카오 ID는 존재하지 않습니다.");
+    }
   }
 
   @AfterEach
