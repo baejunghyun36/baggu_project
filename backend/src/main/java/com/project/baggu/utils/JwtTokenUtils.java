@@ -37,7 +37,7 @@ public class JwtTokenUtils {
       Date now = new Date();
       return new TokenInfo(
           jwtBuilder.setIssuedAt(now)
-              .setExpiration(new Date(now.getTime() + ACCESS_PERIOD))
+              .setExpiration(new Date(now.getTime() + DEV_ACCESS_PERIOD))
               .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
               .compact(),
           jwtBuilder.setIssuedAt(now)
