@@ -43,7 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Authentication authentication = jwtTokenProvider.getAuthentication(jwt); // 정상 토큰이면 SecurityContext 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else{ //만료된 경우
-                throw new BaseException(BaseResponseStatus.TOKEN_EXPIRED);
+                throw new BaseException(BaseResponseStatus.ACCESS_TOKEN_EXPIRED);
             }
         } catch (BaseException e){
             request.setAttribute("exception", e.getStatus().name());

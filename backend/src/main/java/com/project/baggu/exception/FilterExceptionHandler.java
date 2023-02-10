@@ -28,7 +28,7 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
     }catch (ExpiredJwtException e){
       //토큰의 유효기간 만료
-      setErrorResponse(response, BaseResponseStatus.TOKEN_EXPIRED);
+      setErrorResponse(response, BaseResponseStatus.ACCESS_TOKEN_EXPIRED);
     }catch (JwtException | IllegalArgumentException e){
       //유효하지 않은 토큰
       setErrorResponse(response, BaseResponseStatus.UNVALID_TOKEN);
