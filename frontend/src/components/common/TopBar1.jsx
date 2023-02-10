@@ -48,6 +48,7 @@ function TopBar1() {
     location.startsWith('/myprofile') ||
     location.startsWith('/notification') ||
     location.startsWith('/search') ||
+    location.startsWith('/kakaoLogin') ||
     location.startsWith('/userReview')
   ) {
     return null;

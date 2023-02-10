@@ -48,7 +48,10 @@ const axiosChatApi = (url, options) => {
 
 // 리프레시 토큰
 const axiosRefreshApi = (url, options) => {
-  const instance = axios.create({ baseURL: url });
+  const instance = axios.create({
+    baseURL: url,
+    headers: { 'refresh-token': getCookie('refresh-token') },
+  });
   return instance;
 };
 
@@ -58,6 +61,7 @@ export const notifyAuthApi = axiosNotifyApi(BASE_URL);
 export const chatAuthApi = axiosChatApi(BASE_URL);
 export const refreshTokenInstance = axiosRefreshApi(BASE_URL);
 
+// 토큰 만료시 리프레시 토큰으로 재발급 요청
 authInstance.interceptors.response.use(
   response => response,
   error => {
@@ -69,18 +73,16 @@ authInstance.interceptors.response.use(
     // 401 : unauthorized 에러
     if (status === 401) {
       // access-token 재발급 요청
-      return refreshTokenInstance
-        .get('/baggu/auth/token', {
-          'refresh-token': getCookie('refresh-token'),
-        })
-        .then(({ data }) => {
-          console.log('get refresh response data :', data);
-          localStorage.setItem('token', data);
-          config.headers.Authorization = `${token}`;
+      return refreshTokenInstance.get('/baggu/auth/token').then(({ data }) => {
+        console.log('get refresh response data :', data);
+        localStorage.setItem('token', data);
+        config.headers.Authorization = `${token}`;
 
-          // 재요청
-          return authInstance(config);
-        });
+        // 재요청
+        return authInstance(config);
+      });
+    } else if (status === 409) {
+      // 로그아웃 로직 추가하기
     }
   }
 );
