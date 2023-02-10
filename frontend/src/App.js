@@ -49,7 +49,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import tw, { styled, css } from 'twin.macro';
 import { chatStore } from 'store/chat';
 import Search from 'pages/Search/Search';
-import { getCookie } from 'utils/cookie';
 
 const queryClient = new QueryClient();
 
@@ -62,7 +61,6 @@ const Wrapper = styled.div`
 
 // Main Component
 function App() {
-  const { saveToken, saveUserIdx, saveDong } = userStore(state => state);
   const userIdx = window.localStorage.getItem('userIdx');
   const isLoggedIn = localStorage.getItem('isLoggedIn');
 
@@ -108,7 +106,6 @@ function App() {
     };
   }, []);
 
-  console.log('cookie', document.cookie);
   return (
     <CookiesProvider>
       <QueryClientProvider client={queryClient} contextSharing={true}>

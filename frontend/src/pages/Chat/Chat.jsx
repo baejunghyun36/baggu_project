@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 `;
 
 const ChatList = styled.div`
-  ${tw`relative top-[60px] overflow-scroll overflow-x-hidden`}
+  ${tw`relative overflow-scroll overflow-x-hidden`}
   ${css`
     height: calc(100vh - 158px);
   `}

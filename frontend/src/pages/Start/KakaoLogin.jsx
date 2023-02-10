@@ -2,7 +2,9 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { setCookie } from 'utils/cookie';
+// Cookie
+import { getCookie, setCookie } from 'utils/cookie';
+import { useCookies } from 'react-cookie';
 
 // API
 import { defaultInstance, authInstance } from 'api/axios';
@@ -41,28 +43,23 @@ function KakaoLogin() {
     // 3. 가입된 사용자인지 확인
     check_is_signed(AUTHORIZE_CODE)
       .then(response => {
-        console.log('check is signed okay');
-        console.log(response);
         // 가입된 사용자와 가입되지 않은 사용자 모두 userIdx는 넘어옴
-        window.localStorage.setItem('userIdx', response.data.user.userIdx);
+        localStorage.setItem('userIdx', response.data.user.userIdx);
 
         // 가입 여부에 따라 리다이렉트
         if (response.data.signed) {
           // 가입된 사용자
           // token, userIdx, dong 모두 로컬스토리지에 저장
-          window.localStorage.setItem('isLoggedIn', true);
-          window.localStorage.setItem(
-            'token',
-            response.headers['authorization']
-          );
-          window.localStorage.setItem('dong', response.data.user.dong);
+          localStorage.setItem('isLoggedIn', true);
+          localStorage.setItem('token', response.headers['authorization']);
+          localStorage.setItem('dong', response.data.user.dong);
           // 쿠키에 저장
           setCookie('userIdx', response.data.user.userIdx);
-          setCookie('dong', response.data.user.dong);
-          setCookie('token', response.headers['authorization'], {
-            httpOnly: true,
-            secure: true,
+          setCookie('token', response.headers['authorization']);
+          setCookie('refresh-token', response.headers['refresh-token'], {
+            httponly: true,
           });
+          setCookie('isLoggedIn', true);
           navigate('/');
         } else {
           // 가입되지 않은 사용자
@@ -77,7 +74,7 @@ function KakaoLogin() {
         throw error;
       });
   }, []);
-  return <div>KakaoLogin</div>;
+  return <div></div>;
 }
 
 export default KakaoLogin;
