@@ -1,7 +1,7 @@
 import React from 'react';
 import tw, { styled, css } from 'twin.macro';
 
-const Container = tw.div`w-full h-[60px] p-2 text-h3 border-b fixed bg-white`;
+const Container = tw.div`w-full h-[60px] p-2 text-h3 border-b bg-white`;
 
 function HeadingBar({ title }) {
   return (
