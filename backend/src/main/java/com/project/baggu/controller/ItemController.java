@@ -151,10 +151,10 @@ public class ItemController {
   }
 
   @PostMapping("/images")
-  public UploadImagesDto uploadImages(@RequestParam("itemImges") List<MultipartFile> itemImages)
+  public UploadImagesDto uploadImages(@RequestParam("itemImgs") List<MultipartFile> itemImgs)
       throws Exception {
 
-    return new UploadImagesDto(s3UploadService.upload(itemImages, IMAGE_DIR_USER));
+    return new UploadImagesDto(s3UploadService.upload(itemImgs, IMAGE_DIR_USER));
   }
 
 //
