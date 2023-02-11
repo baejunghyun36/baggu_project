@@ -30,7 +30,7 @@ public class ItemDetailDto {
   private LocalDateTime modifiedAt;
   private String content;
   private int tradeState;
-  private String itemImgUrl;
+  private ArrayList<String> itemImgUrls;
   private ArrayList<UserDto> requestUserList = new ArrayList<>();
 
 }
