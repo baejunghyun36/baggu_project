@@ -49,6 +49,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import tw, { styled, css } from 'twin.macro';
 import { chatStore } from 'store/chat';
 import Search from 'pages/Search/Search';
+import ItemEdit from 'pages/Item/ItemEdit';
 
 const queryClient = new QueryClient();
 
@@ -123,10 +124,14 @@ function App() {
             </Route>
             <Route path="/kakaoLogin" element={<KakaoLogin />} />
             <Route path="/" element={<Home />} />
+            {/* 후기 */}
             <Route path="/userReview" element={<UserReview />} />
             <Route path="/bagguReview" element={<BagguReview />} />
+            {/* 게시글 */}
             <Route path="/item/:id" element={<Item />} />
+            <Route path="/item/:id/edit" element={<ItemEdit />} />
             <Route path="/item/create" element={<ItemCreate />} />
+            {/* 내 바꾸관리 */}
             <Route path="/mybaggu" element={<MyBaggu />} />
             {/* 채팅 */}
             <Route path="/chat" element={<Chat />} />
