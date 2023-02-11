@@ -8,6 +8,45 @@ import Preview from './Preview';
 import ImageAddButton from './ImageAddButton';
 import ItemCategory from './ItemCategory';
 
+// twin.macro
+import tw, { styled, css } from 'twin.macro';
+import FormSubmitBtn from 'components/common/FormSubmitBtn';
+import { post_item } from 'api/apis/item';
+import { useNavigate } from 'react-router-dom';
+
+// Styled Component
+const FormContainer = styled.div`
+  ${tw`flex flex-col p-2`}
+`;
+const PreviewContainer = styled.div`
+  ${tw`flex gap-1`}
+`;
+
+const PreviewImg = styled.img`
+  ${tw`rounded-lg w-7 h-7`}
+`;
+
+const DeleteBtn = styled.div`
+  ${tw`fill-primary absolute w-2 h-2 right-[4px] top-[4px]`}
+`;
+
+const InputContainer = styled.input`
+  ${tw`h-[60px] bg-white outline-none p-1 border-b border-t`}
+`;
+
+const TextareaContainer = styled.textarea`
+  ${css`
+    resize: none;
+    height: calc(100vh - 366px);
+  `}
+  ${tw`bg-white p-1 outline-none`}
+`;
+
+const CategoryContainer = styled.div`
+  ${tw`h-[60px] flex items-center px-1 text-primary hover:bg-primary-hover`}
+`;
+
+// Main Component
 function ItemCreate() {
   const [itemTitle, setItemtitle] = useState('');
   const [itemTitleError, setItemTitleError] = useState('');
@@ -21,19 +60,9 @@ function ItemCreate() {
   const [page, setPage] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('카테고리 선택');
 
-  useEffect(() => {
-    const get_token = async () => {
-      try {
-        const { data } = await defaultInstance.post(requests.TEST_TOKEN, {
-          userIdx: 1,
-        });
-        setToken(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    get_token();
-  }, []);
+  // navigate
+  const navigate = useNavigate();
+  useEffect(() => {}, []);
   // --------------------------------------------------------
   const handleItemImage = event => {
     const files = Array.from(event.target.files);
@@ -61,7 +90,9 @@ function ItemCreate() {
   const handleSelectedCategory = name => {
     setSelectedCategory(name);
   };
-  const handleSubmit = event => {
+
+  // 제출시 실행될 함수
+  const handleSubmit = async event => {
     event.preventDefault();
     let hasError = false;
     if (!itemTitle) {
@@ -90,7 +121,7 @@ function ItemCreate() {
     }
     if (!hasError) {
       const data = new FormData();
-      data.append('userIdx', '1');
+      data.append('userIdx', localStorage.getItem('userIdx'));
       data.append('title', itemTitle);
       data.append('content', itemContent);
       data.append('category', itemCategories);
@@ -103,11 +134,15 @@ function ItemCreate() {
       for (let value of data.values()) {
         console.log(value);
       }
+
+      // await post_item(data).then(data => {
+      //   console.log(data);
+      // });
       const post_item_create = async () => {
         try {
           const response = await authInstance.post(requests.POST_ITEM, data, {
             headers: {
-              Authorization: token,
+              Authorization: localStorage.getItem('token'),
               'Content-Type': 'multipart/form-data',
             },
           });
@@ -117,7 +152,10 @@ function ItemCreate() {
           throw error;
         }
       };
-      post_item_create();
+
+      post_item_create().then(data => {
+        navigate(`/item/${data.id}`);
+      });
     }
   };
   return (
@@ -126,12 +164,26 @@ function ItemCreate() {
         <TopBar2 title="게시글 작성" />
       </div>
       <div className={`${page === 1 ? '' : 'hidden'}`}>
-        <TopBar2 title="카테고리 선택" />
+        <TopBar2 title="카테고리 선택" BackHandler={() => setPage(0)} />
       </div>
       <div className={`${page === 0 ? '' : 'hidden'}`}>
-        <form onSubmit={handleSubmit}>
-          <Preview itemImages={itemImage} onDelete={handleDeleteItemImage} />
-          <ImageAddButton clickFunction={handleClickAddImage} />
+        <FormContainer>
+          <div id="image-area" className="flex gap-1">
+            <ImageAddButton clickFunction={handleClickAddImage} />
+            {itemImage.map((itemImage, index) => (
+              <div key={index} className="relative">
+                <DeleteBtn onClick={() => handleDeleteItemImage(index)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
+                  </svg>
+                </DeleteBtn>
+                <PreviewImg
+                  src={URL.createObjectURL(itemImage)}
+                  alt={itemImage.name}
+                />
+              </div>
+            ))}
+          </div>
           <input
             id="imageInput"
             type="file"
@@ -143,7 +195,7 @@ function ItemCreate() {
           {itemImageError && (
             <div style={{ color: 'red' }}>{itemImageError}</div>
           )}
-          <input
+          <InputContainer
             type="text"
             placeholder="제목"
             value={itemTitle}
@@ -152,16 +204,15 @@ function ItemCreate() {
           {itemTitleError && (
             <div style={{ color: 'red' }}>{itemTitleError}</div>
           )}
-          <br />
-          <div>
-            <span onClick={moveToCategoryPage}>{selectedCategory}</span>
-          </div>
+
+          <CategoryContainer onClick={moveToCategoryPage}>
+            <span>{selectedCategory}</span>
+          </CategoryContainer>
           {itemCategoriesError && (
             <div style={{ color: 'red' }}>{itemCategoriesError}</div>
           )}
-          <br />
-          <input
-            type="text"
+
+          <TextareaContainer
             placeholder="내용"
             value={itemContent}
             onChange={handleItemContentChange}
@@ -169,8 +220,13 @@ function ItemCreate() {
           {itemContentError && (
             <div style={{ color: 'red' }}>{itemContentError}</div>
           )}
-          <button type="submit">Submit</button>
-        </form>
+          {/* <button type="submit">Submit</button> */}
+        </FormContainer>
+        <FormSubmitBtn
+          title="작성 완료"
+          disabled={!itemContent || !itemImage || !itemCategories}
+          onClick={handleSubmit}
+        />
       </div>
       <div className={`${page === 1 ? '' : 'hidden'}`}>
         <ItemCategory
