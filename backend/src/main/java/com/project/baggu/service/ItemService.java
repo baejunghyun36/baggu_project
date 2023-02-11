@@ -215,7 +215,13 @@ public class ItemService {
     idd.setModifiedAt(item.getModifiedAt());
     idd.setContent(item.getContent());
     idd.setTradeState(item.getState());
-    idd.setItemImgUrl(item.getFirstImg());
+    idd.setItemImgUrls(new ArrayList<>());
+    idd.getItemImgUrls().add(item.getFirstImg());
+
+    //이미지 추가
+    for(ItemImage ii : item.getItemImages()){
+      idd.getItemImgUrls().add(ii.getItemImg());
+    }
 
     List<TradeRequest> trList = tradeRequestRepository.findByItemIdx(itemIdx);
 
