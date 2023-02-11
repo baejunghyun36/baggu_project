@@ -110,6 +110,13 @@ function BottomNav() {
           updateChatRoom(roomId, data);
         });
       };
+
+      chatRoomUpdateEvent.onerror = event => {
+        console.log('closed : 채팅방 변경사항');
+        chatRoomUpdateEvent.close();
+      };
+
+      setIsListeningToRoomUpdate(true);
     }
     // clean up function!
     return () => {

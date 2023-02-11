@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { getCookie } from 'utils/cookie';
+import { logout } from './apis/user';
 import requests from './config';
 
 const BASE_URL = requests.base_url;
@@ -82,7 +84,11 @@ authInstance.interceptors.response.use(
         return authInstance(config);
       });
     } else if (status === 409) {
-      // 로그아웃 로직 추가하기
+      // 로그아웃
+      const navigate = useNavigate();
+      return logout(localStorage.getItem('userIdx')).then(() =>
+        navigate('/start')
+      );
     }
   }
 );
