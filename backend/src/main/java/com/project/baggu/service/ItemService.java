@@ -159,6 +159,7 @@ public class ItemService {
   public Long registItem(UserRegistItemDto u) throws Exception {
 
     User user = userRepository.findById(u.getUserIdx()).get();
+    Long generatedIdx;
 
     //아이템 생성
     Item item = new Item();
@@ -169,7 +170,6 @@ public class ItemService {
     item.setContent(u.getContent());
     item.setCategory(u.getCategory());
     item.setUser(user);
-    itemRepository.save(item);
 
     //이미지 존재시 이미지 저장 -> 순서대로
     if(u.getItemImgs()!=null&&u.getItemImgs().size()>0){
@@ -194,9 +194,9 @@ public class ItemService {
       }
     }
 
-    itemRepository.save(item);
+    generatedIdx = itemRepository.save(item).getItemIdx();
 
-    return item.getItemIdx();
+    return generatedIdx;
   }
 
   public ItemDetailDto itemDetail(Long itemIdx) {
