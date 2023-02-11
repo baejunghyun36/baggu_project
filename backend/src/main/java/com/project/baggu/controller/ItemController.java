@@ -1,13 +1,6 @@
 package com.project.baggu.controller;
 
-import com.project.baggu.dto.BaseIsSuccessDto;
-import com.project.baggu.dto.ItemDetailDto;
-import com.project.baggu.dto.TradeRequestDto;
-import com.project.baggu.dto.TradeRequestNotifyDto;
-import com.project.baggu.dto.UpdateItemDto;
-import com.project.baggu.dto.UpdateItemResponseDto;
-import com.project.baggu.dto.UploadImagesDto;
-import com.project.baggu.dto.UserRegistItemDto;
+import com.project.baggu.dto.*;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.raceCondition.Message;
@@ -60,17 +53,26 @@ public class ItemController {
   //POST baggu/item
   //새로운 아이템을 작성한다.
   @PostMapping
-  public BaseIsSuccessDto registItem(@ModelAttribute UserRegistItemDto u) throws Exception {
+  public ItemRegistDto registItem(@ModelAttribute UserRegistItemDto u) throws Exception {
 
     Long authUserIdx = Long.parseLong(
         SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
     if (authUserIdx != u.getUserIdx()) {
       throw new BaseException(BaseResponseStatus.UNVALID_USER);
     }
+    ItemRegistDto result = new ItemRegistDto();
 
-    itemService.registItem(u);
+    try{
 
-    return new BaseIsSuccessDto(true);
+      result.setItemIdx(itemService.registItem(u));
+      result.setSuccess(true);
+
+      return result;
+    } catch(Exception e){
+      result.setSuccess(false);
+      return result;
+    }
+
   }
 
   //PUT /baggu/item/{itemIdx}

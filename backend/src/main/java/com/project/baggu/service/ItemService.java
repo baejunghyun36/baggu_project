@@ -156,7 +156,7 @@ public class ItemService {
   }
 
   @Transactional
-  public void registItem(UserRegistItemDto u) throws Exception {
+  public Long registItem(UserRegistItemDto u) throws Exception {
 
     User user = userRepository.findById(u.getUserIdx()).get();
 
@@ -195,6 +195,8 @@ public class ItemService {
     }
 
     itemRepository.save(item);
+
+    return item.getItemIdx();
   }
 
   public ItemDetailDto itemDetail(Long itemIdx) {
