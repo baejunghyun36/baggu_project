@@ -99,11 +99,15 @@ function MyProfileEdit() {
       });
       const put_user_detail = async () => {
         try {
-          const response = await authInstance.put(requests.PUT_USER_DETAIL, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+          const response = await authInstance.put(
+            requests.PUT_USER_DETAIL,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
 
           return response.data;
         } catch (error) {
@@ -118,11 +122,11 @@ function MyProfileEdit() {
 
   const isValidName = isNicknameTouched && isNicknameValid;
   const isValidIntroduction = isIntroductionTouched && isIntroductionValid;
-  // const [user, setUser] = useState([]);
+  const userIdx = Number(localStorage.getItem('userIdx'));
   useEffect(() => {
     const get_user = async () => {
       try {
-        const { data } = await authInstance.get(requests.GET_USER(1));
+        const { data } = await authInstance.get(requests.GET_USER(userIdx));
 
         console.log(data);
         setNickname(data.nickname);

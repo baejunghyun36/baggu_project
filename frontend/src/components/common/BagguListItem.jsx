@@ -98,11 +98,11 @@ function BagguListItem({ baggu }) {
         </Info>
       </Wrapper>
       <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
-        <Link to={`/item/${baggu.requestItemImgUrl}`}>
+        <Link to={`/item/${baggu.requestItemIdx}`}>
           <Product img={baggu.requestItemImgUrl} />
         </Link>
         <img src={icon_exchange} alt="" />
-        <Link to={`/item/${baggu.receiveItemImgUrl}`}>
+        <Link to={`/item/${baggu.receiveItemIdx}`}>
           <Product img={baggu.receiveItemImgUrl} />
         </Link>
       </div>

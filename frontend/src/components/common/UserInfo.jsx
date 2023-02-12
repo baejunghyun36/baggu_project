@@ -8,7 +8,7 @@ import tw, { styled, css } from 'twin.macro';
 const Container = styled.div`
   ${tw`w-full`}
 `;
-const Wrapper = tw.div`flex items-center p-2 justify-between hover:bg-primary-hover`;
+const Wrapper = tw.div`flex h-8 items-center p-2 justify-between hover:bg-primary-hover`;
 
 const Avatar = styled.div`
   ${tw`bg-primary rounded-full w-6 h-6 bg-cover bg-center mr-2`}
@@ -31,16 +31,24 @@ const Nickname = tw.p`text-main-bold `;
 const Message = tw.span`text-sub`;
 function UserInfo({ user }) {
   const location = useLocation().pathname;
-
-  // 이 컴포넌트에 표시된 사용자의 userIdx
-  const id = user.userIdx;
-  // 현재 로그인한 사용자의 userIdx
   const userIdx = localStorage.getItem('userIdx');
 
+  // const navigate = useNavigate();
+  // const MoveToUserDetail = () => {
+  //   if (location !== 'myprofile') {
+
+  //   }
+  // }
   return (
     <Container>
       <Wrapper className="border-b">
-        <Link to={`${location !== '/myprofile' ? '/user/:id' : ''}`}>
+        <Link
+          to={`${
+            location !== '/myprofile' && userIdx !== user.userIdx
+              ? `/user/${user.userIdx}`
+              : ''
+          }`}
+        >
           <Wrapper>
             <Avatar img={user.profileImgUrl} />
             <Info>
@@ -51,16 +59,12 @@ function UserInfo({ user }) {
             </Info>
           </Wrapper>
         </Link>
-        {userIdx === id ? (
-          <Link
-            to="/myprofile/edit"
-            className={`${location === '/myprofile' ? '' : 'hidden'}`}
-          >
-            <img src={edit} alt="profile_edit" />
-          </Link>
-        ) : (
-          ''
-        )}
+        <Link
+          to="/myprofile/edit"
+          className={`${location === '/myprofile' ? '' : 'hidden'}`}
+        >
+          <img src={edit} alt="profile_edit" />
+        </Link>
       </Wrapper>
     </Container>
   );
