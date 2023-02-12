@@ -23,11 +23,6 @@ function Chip({ tradeState }) {
   }, []);
   return (
     <>
-      {/* <div className={`${state === 0 ? '' : 'hidden'}`}>
-        <ChipContainer tradeState={state}>
-          <span>놉</span>
-        </ChipContainer>
-      </div> */}
       <div className={`${state === 1 ? '' : 'hidden'}`}>
         <ChipContainer tradeState={state}>
           <span>예약중</span>
