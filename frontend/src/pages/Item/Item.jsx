@@ -151,7 +151,7 @@ function Item() {
             <div
               id="here"
               className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
-            >
+            ></div>
               {/* <Chip tradeState={item.tradeState} /> */}
 
             <BagguOfferList requestUserList={item.requestUserList} />
