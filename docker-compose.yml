@@ -12,6 +12,14 @@ services:
     ports:
       - "9999:9999"
     restart: always
+  baggu-redis-deploy:
+    container_name: baggu-redis-deploy
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    ports:
+      - "6382:6379"
+    restart: always
   baggu-chat:
     container_name: baggu-chat
     build:
