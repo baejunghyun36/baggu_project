@@ -1,10 +1,17 @@
 import React from 'react';
-
-function BagguOfferListItem({ offer }) {
+import OfferUserInfo from './OfferUserInfo';
+import OfferImgList from './OfferImgList';
+function BagguOfferListItem({ requestUser }) {
+  // console.log(requestUser);
   return (
     <div>
-      <img src={offer.medium_cover_image} alt="user1_profile_image" />
-      <span>{offer.summary}</span>
+      <OfferUserInfo
+        nickname={requestUser.nickname}
+        comment={requestUser.comment}
+        profileImgUrl={requestUser.profileImgUrl}
+        userIdx={requestUser.userIdx}
+      />
+      <OfferImgList requestItemList={requestUser.requestItemList} />
     </div>
   );
 }
