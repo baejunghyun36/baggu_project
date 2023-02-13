@@ -7,6 +7,7 @@ import { authInstance } from 'api/axios';
 import requests from 'api/config';
 
 function MyBaggu() {
+  const userIdx = Number(localStorage.getItem('userIdx'));
   const [page, setPage] = useState(0);
   const [myItems, setMyItems] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -17,7 +18,9 @@ function MyBaggu() {
   useEffect(() => {
     const get_user_items = async () => {
       try {
-        const { data } = await authInstance.get(requests.GET_USER_ITEM(0));
+        const { data } = await authInstance.get(
+          requests.GET_USER_ITEM(userIdx)
+        );
         console.log(data);
         return setMyItems(data);
       } catch (error) {
@@ -26,7 +29,9 @@ function MyBaggu() {
     };
     const get_my_request = async () => {
       try {
-        const { data } = await authInstance.get(requests.GET_MY_REQUEST(0));
+        const { data } = await authInstance.get(
+          requests.GET_MY_REQUEST(userIdx)
+        );
 
         console.log(data);
         return setOffers(data);

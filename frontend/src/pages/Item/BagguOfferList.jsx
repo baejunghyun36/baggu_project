@@ -1,14 +1,16 @@
 import React from 'react';
 import BagguOfferListItem from './BagguOfferListItem';
-function BagguOfferList({ offers }) {
+function BagguOfferList({ requestUserList }) {
+  const numOfferUser = requestUserList.length;
   return (
     <div>
       <div>
         <span>바꾸신청한 사람들</span>
+        <span>{numOfferUser}</span>
       </div>
-      {offers.map(offer => (
-        <div key={offer.id}>
-          <BagguOfferListItem offer={offer} />
+      {requestUserList.map(requestUser => (
+        <div key={requestUser.userIdx}>
+          <BagguOfferListItem requestUser={requestUser} />
         </div>
       ))}
     </div>

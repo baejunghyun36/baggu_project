@@ -14,7 +14,7 @@ const requests = {
   // base_url: 'http://70.12.247.158:9999',
 
   // 안채님 IP
-  // base_url: 'http://70.12.247.174:8080',
+  // base_url: 'http://70.12.247.174:9999',
 
   // 개발 테스트용 토큰 발급
   TEST_TOKEN: '/baggu/auth/token/dev',

@@ -30,7 +30,7 @@ public class AuthController {
   @GetMapping("/token")
   public BaseIsSuccessDto tokenRefresh(HttpServletRequest request, HttpServletResponse response){
     try{
-      String refreshToken = request.getHeader("refresh-token");
+      String refreshToken = CookieUtils.getCookie(request,"refresh-token").getValue();
       if(refreshToken==null){
         throw new NullPointerException();
       }

@@ -36,7 +36,7 @@ function Backdrop() {
   return <BackdropWrapper />;
 }
 
-function ModalOverlay({ onCancel, onDelete, onEdit }) {
+function ModalOverlay({ onCancel, onRemove, onEdit }) {
   /*
   < props >
   1. title : 모달 상단에 표시될 제목입니다. (없어도 됩니다.)
@@ -55,7 +55,7 @@ function ModalOverlay({ onCancel, onDelete, onEdit }) {
         <Btn type="edit" onClick={onEdit}>
           <span className="text-main-bold text-primary">게시글 수정</span>
         </Btn>
-        <Btn type="delete" onClick={onDelete}>
+        <Btn type="delete" onClick={onRemove}>
           <span className="text-main-bold text-white">게시글 삭제</span>
         </Btn>
         <Btn type="cancle" onClick={onCancel}>
@@ -66,7 +66,7 @@ function ModalOverlay({ onCancel, onDelete, onEdit }) {
   );
 }
 
-function ItemModal({ onEdit, onDelete, onCancel }) {
+function ItemModal({ onEdit, onRemove, onCancel }) {
   /*
   < props >
   1. onConfirm : 확인버튼을 누르면 실행될 함수
@@ -80,14 +80,14 @@ function ItemModal({ onEdit, onDelete, onCancel }) {
   return (
     <React.Fragment>
       {ReactDOM.createPortal(
-        <Backdrop onDelete={onDelete} />,
+        <Backdrop onRemove={onRemove} />,
         document.getElementById('backdrop-root')
       )}
       {ReactDOM.createPortal(
         <ModalOverlay
           onCancel={onCancel}
           onEdit={onEdit}
-          onDelete={onDelete}
+          onRemove={onRemove}
         />,
         document.getElementById('overlay-root')
       )}
