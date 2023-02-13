@@ -80,7 +80,8 @@ function Item() {
     { onSuccess: data => setUser(data) }
   );
 
-  const deleteHandler = async id => {
+  const deleteHandler = async () => {
+
     try {
       const { data } = await authInstance.delete(requests.ITEM(id));
       navigate('/');
@@ -114,7 +115,7 @@ function Item() {
       }
     };
     get_item(id);
-  }, []);
+  }, [id]);
 
   return (
     <div>
@@ -124,7 +125,7 @@ function Item() {
         <div>
           {showModal ? (
             <ItemModal
-              onDelete={deleteHandler}
+              onRemove={deleteHandler}
               onCancel={() => setShowModal(false)}
               onEdit={editHandler}
             />
@@ -137,6 +138,7 @@ function Item() {
       /> */}
           <Container>
             <UserInfo user={user} />
+
             <Carousel3
               id="carousel3"
               imgUrls={[
@@ -151,6 +153,14 @@ function Item() {
               className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
             >
               {/* <Chip tradeState={item.tradeState} /> */}
+
+            <BagguOfferList requestUserList={item.requestUserList} />
+            <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
+              <Product img={item.itemImgUrls} />
+              {/* <Carousel images={item.itemImgUrls} /> */}
+              <Chip tradeState={item.tradeState} />
+              {/* {item.itemImgUrls && <Carousel images={item.itemImgUrls} />} */}
+
             </div>
           </Container>
           <Wrapper>
@@ -162,13 +172,13 @@ function Item() {
                   {GetRelativeTime(year, month, day, hour, minute)}
                 </Message>
               </section>
+              <img
+                className={`${userIdx === item.userIdx ? '' : 'hidden'}`}
+                onClick={() => setShowModal(true)}
+                src={option_button}
+                alt="profile_edit"
+              />
             </Info>
-            <img
-              className={`${userIdx === item.userIdx ? '' : 'hidden'}`}
-              onClick={() => setShowModal(true)}
-              src={option_button}
-              alt="profile_edit"
-            />
           </Wrapper>
           <BottomBar
             showHeart={`${userIdx === item.userIdx ? false : true}`}
