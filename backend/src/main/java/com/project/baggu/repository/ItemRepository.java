@@ -15,23 +15,22 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-  @Query(value = "select i from Item i where i.dong = ?1 and i.isValid = true")
+  @Query(value = "select i from Item i join fetch i.reviewText where i.dong = ?1 and i.isValid = true")
   List<Item> itemListOrderByNeighbor(String dong, Pageable pageable);
 
-  @Query(value = "select i from Item i where i.user.userIdx = ?1 ")
+  @Query(value = "select i from Item i join fetch i.reviewText where i.user.userIdx = ?1 ")
   List<Item> getUserItemList(Long userIdx, Pageable pageable);
 
   @Modifying
   @Query("update Item i set i.isValid = false where i.itemIdx = :itemIdx")
   void deleteItem(@Param("itemIdx") Long itemIdx);
 
-
-  @Query("select i from Item i where i.title like %:itemName% order by i.createdAt desc")
+  //fetch join
+  @Query("select i from Item i join fetch i.reviewText where i.title like %:itemName% order by i.createdAt desc")
   List<Item> itemListByItemName(@Param("itemName") String itemName);
 
   @Query("select i from Item i, ItemKeep ik where ik.user.userIdx = :userIdx and ik.item = i")
   List<Item> userKeepItemList(@Param("userIdx") Long userIdx);
-
 
   @Modifying
   @Query("update Item i set i.userRequestCount = :cnt where i.itemIdx = :itemIdx" )
@@ -40,4 +39,14 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
   @Lock(LockModeType.OPTIMISTIC)
   @Query("select i from Item i where i.itemIdx = :itemIdx" )
   Item findByIdLock(@Param("itemIdx") Long itemIdx);
+
+
+  @Query("SELECT i FROM Item i JOIN FETCH i.reviewText where i.itemIdx = :idx")
+  Item findByIdFetch(@Param("idx") Long idx);
+
+  @Query("SELECT i FROM Item i JOIN FETCH i.reviewText")
+  List<Item> findAllFetch();
+
+//  @Query("SELECT i FROM Item i JOIN FETCH i.reviewText")
+//  List<Item> findAllItemsWithReviewText();
 }
