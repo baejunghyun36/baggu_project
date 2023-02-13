@@ -55,9 +55,9 @@ public class TradeFinService {
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
       tradeFinDto.setReceiveUserImgUrl(tf.getReceiveProfileImgUrl());
-      tradeFinDto.setReceiveUserImgUrl(tf.getRequestProfileImgUrl());
-      tradeFinDto.setRequestUserIdx(tf.getRequestUserIdx());
+      tradeFinDto.setRequestUserImgUrl(tf.getRequestProfileImgUrl());
       tradeFinDto.setReceiveUserIdx(tf.getReceiveUserIdx());
+      tradeFinDto.setRequestUserIdx(tf.getRequestUserIdx());
 
       Item item1 = itemRepository.findById(tf.getReceiveItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
       Item item2 = itemRepository.findById(tf.getRequestItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
@@ -92,9 +92,9 @@ public class TradeFinService {
       tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
       tradeFinDto.setRequestNickname(tf.getRequestNickname());
       tradeFinDto.setReceiveUserImgUrl(tf.getReceiveProfileImgUrl());
-      tradeFinDto.setReceiveUserImgUrl(tf.getRequestProfileImgUrl());
-      tradeFinDto.setRequestUserIdx(tf.getRequestUserIdx());
+      tradeFinDto.setRequestUserImgUrl(tf.getRequestProfileImgUrl());
       tradeFinDto.setReceiveUserIdx(tf.getReceiveUserIdx());
+      tradeFinDto.setRequestUserIdx(tf.getRequestUserIdx());
 
       Item item1 = itemRepository.findById(tf.getReceiveItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
       Item item2 = itemRepository.findById(tf.getRequestItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
