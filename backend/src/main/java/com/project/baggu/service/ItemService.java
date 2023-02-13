@@ -237,7 +237,7 @@ public class ItemService {
 
     for(TradeRequest tr : trList){
 
-      List<TradeDetail> tradeDetailList = tradeDetailRepository.findByTradeRequestIdx(tr.getTradeRequestIdx());
+      List<TradeDetail> tradeDetailList = tr.getTradeDetails();
       UserDto userDto = new UserDto();
       userDto.setUserIdx(tr.getRequestUser().getUserIdx());
       userDto.setNickname(tr.getRequestUser().getNickname());
@@ -248,6 +248,7 @@ public class ItemService {
         rid.setTradeDetailIdx(td.getTradeDetailIdx());
         rid.setRequestItemIdx(td.getRequestItemIdx());
         rid.setRequestItemFirstImg(itemRepository.findById(td.getRequestItemIdx()).get().getFirstImg());
+        userDto.getRequestItemList().add(rid);
       }
       idd.getRequestUserList().add(userDto);
     }
