@@ -1,4 +1,4 @@
-# redis 7.0.8 사용
+# redis 7.0.7 사용
 
 FROM redis:7.0.7
 

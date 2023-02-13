@@ -3,6 +3,7 @@ package com.project.baggu.config;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 //@EnableCaching
-//@Configuration
+@Configuration
 public class RedisConfig {
 
   /*
@@ -33,11 +34,28 @@ public class RedisConfig {
 
       기본이 Lecttuce host,와 port는 yaml파일에 설정
    */
-//  @Bean
-//  public LettuceConnectionFactory redisConnectionFactory() {
-//    //레디스 아이피, 포트번호 설정
-//    return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
-//  }
+  @Value("${redis.host}")
+  private String redisHost;
+
+  @Value("${redis.port}")
+  private int redisPort;
+
+  @Value("${redis.password}")
+  private String redisPassword;
+
+
+  @Bean
+  public LettuceConnectionFactory redisConnectionFactory() {
+    //레디스 아이피, 포트번호 설정
+
+    RedisStandaloneConfiguration standaloneConfig = new RedisStandaloneConfiguration(redisHost, redisPort);
+    standaloneConfig.setPassword(redisPassword);
+
+    return new LettuceConnectionFactory(standaloneConfig);
+
+//    return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, redisPort));
+
+  }
 
   /*
     RedisTemplate: Redis data access code를 간소화 하기 위해 제공되는 클래스이다.
