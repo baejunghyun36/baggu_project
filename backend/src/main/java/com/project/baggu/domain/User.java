@@ -1,5 +1,6 @@
 package com.project.baggu.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class User extends BaseTimeEntity {
   private String nickname;
 
   @Column(name = "is_valid")
+  @Builder.Default
   private boolean isValid = true;
 
   @Column(name = "trade_count")
@@ -84,34 +86,42 @@ public class User extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "user" )
+  @Builder.Default
   private List<Category> categories = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user" )
+  @Builder.Default
   private List<ReviewTag> reviewTags = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
+  @Builder.Default
   private List<Notify> notifies = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
+  @Builder.Default
   private List<ReviewText> reviewUsers = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
+  @Builder.Default
   private List<ItemKeep> itemKeeps = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
+  @Builder.Default
   private List<Heart> hearts = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "requestUser")
+  @Builder.Default
   private List<TradeRequest> tradeRequests = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
+  @Builder.Default
   private List<Item> items = new ArrayList<>();
 
 }

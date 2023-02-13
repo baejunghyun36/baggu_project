@@ -1,33 +1,39 @@
 import React from 'react';
+import { useState } from 'react';
+import { useEffect } from 'react';
+// twin.macro
+import tw, { styled } from 'twin.macro';
 
-function Chip({ title }) {
-  let bgColor = '';
-  let textColor = '';
-  let border = '';
-  title = '바꾸완료';
-  switch (title) {
-    case '바꾸중':
-      bgColor = 'bg-success';
-      textColor = 'text-black';
-      border = 'border border-black';
-      break;
-    case '바꾸완료':
-      bgColor = 'bg-grey1';
-      textColor = 'text-grey2';
-      border = '';
-      break;
+const ChipContainer = styled.div`
+  ${props =>
+    props.tradeState === 1
+      ? tw`bg-success text-black border border-black`
+      : tw`bg-grey1 text-grey2`}
+  ${tw`w-fit h-[24px] p-1 text-black rounded-full flex justify-center items-center`}
+`;
 
-    default:
-      break;
-  }
+function Chip({ tradeState }) {
+  /*
+  < prop >
+  1. tradeState : 부모 컴포넌트에서 해당 아이템의 거래상태(tradeState)
+  */
+  const [state, setState] = useState(0);
+  useEffect(() => {
+    setState(tradeState);
+  }, []);
   return (
-    <div
-      className={`${
-        bgColor + border
-      } w-fit h-[24px] p-1 text-black rounded-full flex justify-center items-center `}
-    >
-      <span className={`${textColor} text-tiny-bold`}>{title}</span>
-    </div>
+    <>
+      <div className={`${state === 1 ? '' : 'hidden'}`}>
+        <ChipContainer tradeState={state}>
+          <span>예약중</span>
+        </ChipContainer>
+      </div>
+      <div className={`${state === 2 ? '' : 'hidden'}`}>
+        <ChipContainer tradeState={state}>
+          <span>거래완료</span>
+        </ChipContainer>
+      </div>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import tw, { styled, css } from 'twin.macro';
 
@@ -9,6 +9,11 @@ import HeadingBar from 'components/common/HeadingBar';
 // react-query
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import { chatStore } from 'store/chat';
+
+// API
+import requests from 'api/config';
+import { get_chatrooms } from 'api/apis/chat';
 
 // styled components
 const Wrapper = styled.div`
@@ -19,45 +24,39 @@ const Wrapper = styled.div`
 `;
 
 const ChatList = styled.div`
-  ${tw`relative top-[60px] overflow-scroll overflow-x-hidden`}
+  ${tw`relative overflow-scroll overflow-x-hidden`}
   ${css`
-    height: calc(100vh - 98px - 60px);
+    height: calc(100vh - 158px);
   `}
 `;
 
+// Main Component
 function Chat() {
-  const API_URL = `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`;
-  const getChat = () => {
-    return axios.get(API_URL);
-  };
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const userIdx = localStorage.getItem('userIdx');
 
-  const { isLoading, isError, data, error } = useQuery('getChat', getChat, {
-    staleTime: 10000,
-  });
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
-  if (isError) {
-    return <span>Error : {error.message}</span>;
-  }
-  const movies = data.data.data.movies;
+  // 채팅방리스트 전역 저장소
+  const { chatRoomList, addChatRoom, clearChatRoom } = chatStore(
+    state => state
+  );
+  // 채팅방리스트 state
+  const [chatList, setChatList] = useState([]);
+
+  useEffect(() => {
+    setChatList(chatRoomList);
+  }, [chatRoomList]);
 
   return (
     <Wrapper id="chat-wrapper">
       <HeadingBar title="채팅" />
       <ChatList>
-        {movies.map(chat => (
-          <ChatListItem
-            key={chat.id}
-            userProfile={chat.background_image}
-            nickname={chat.title}
-            recentMessage={chat.title}
-            isAlert={true}
-            itemImg={chat.background_image}
-            bagguStatus="바꾸중"
-            id={chat.id}
-          />
-        ))}
+        {chatList ? (
+          chatList.map(chatRoom => (
+            <ChatListItem key={chatRoom.roomId} info={chatRoom} />
+          ))
+        ) : (
+          <span>채팅기록이 없습니다.</span>
+        )}
       </ChatList>
     </Wrapper>
   );

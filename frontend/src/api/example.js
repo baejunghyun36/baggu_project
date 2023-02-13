@@ -23,15 +23,19 @@ useEffect(() => {
 // post 예시
 const post_user_review = async clickedReviewsIndex => {
   try {
-    const response = await authInstance.post(requests.POST_USER_REVIEW, {
-      data: {
+    const response = await authInstance.post(
+      requests.POST_USER_REVIEW,
+      {
         userIdx: 1,
         review_tag: clickedReviewsIndex,
       },
-      headers: {
-        'access-token': `${token}`,
-      },
-    });
+
+      {
+        headers: {
+          'access-token': `${token}`,
+        },
+      }
+    );
 
     return response.data;
   } catch (error) {

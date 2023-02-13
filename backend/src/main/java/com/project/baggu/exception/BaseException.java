@@ -1,6 +1,6 @@
 package com.project.baggu.exception;
 
-import com.project.baggu.dto.BaseResponseStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,6 +9,7 @@ import lombok.Getter;
 public class BaseException extends RuntimeException {
   private BaseResponseStatus status;
   private String message;
+
   public BaseException(BaseResponseStatus status){
     this.status=status;
     this.message=null;
@@ -22,6 +23,10 @@ public class BaseException extends RuntimeException {
       }else{
         return String.format("%s. %s ", status.getMessage(),message);
       }
+    }
+
+    public BaseResponseStatus getBaseResponseStatus(){
+    return this.status;
     }
 }
 

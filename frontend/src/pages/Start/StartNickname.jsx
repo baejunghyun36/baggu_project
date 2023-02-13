@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // store
-import signUpstore from 'store/store';
+import { signUpStore, userStore } from '../../store/store.js';
 
 // components
 import TopBar2 from 'components/common/TopBar2';
@@ -27,6 +27,10 @@ const TextContainer = styled.div`
   }
 `;
 
+const InputStyles = {
+  0: tw``,
+  1: tw``,
+};
 const InputContainer = styled.div`
   ${tw`flex-col pt-2 pb-2 px-4`}
 
@@ -56,7 +60,7 @@ function StartNickname() {
   const [isNicknameValid, setIsNicknameValid] = useState(false);
 
   // store
-  const { saveNickname } = signUpstore(state => state);
+  const { saveNickname } = signUpStore(state => state);
 
   // input이 입력될 때마다 유효성 검사를 진행
   // 입력 중간에 유효성이 통과되면 제출버튼 활성화
@@ -74,7 +78,7 @@ function StartNickname() {
       e.target.value.trim().length > 10
     ) {
       setIsNicknameValid(false);
-      setNicknameMessage('2글자 이상 5글자 미만으로 입력해주세요.');
+      setNicknameMessage('2글자 이상 10글자 미만으로 입력해주세요.');
       return;
     } else {
       setNicknameMessage('');
@@ -92,7 +96,9 @@ function StartNickname() {
   };
 
   const isValid = isTouched && isNicknameValid;
-
+  /*
+  
+  */
   return (
     <Wrapper id="startNickname">
       <TopBar2 pageTitle="" />

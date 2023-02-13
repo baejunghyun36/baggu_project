@@ -1,13 +1,13 @@
 package com.project.baggu.service;
 
 import com.project.baggu.domain.enumType.Role;
-import com.project.baggu.dto.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.domain.Category;
 import com.project.baggu.domain.Item;
 import com.project.baggu.domain.Notify;
 import com.project.baggu.domain.User;
 import com.project.baggu.dto.*;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.repository.CategoryRepository;
 import com.project.baggu.repository.ItemRepository;
 import com.project.baggu.repository.NotifyRepository;
@@ -19,6 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,29 +42,32 @@ public class UserService {
   private final ReviewTagRepository reviewTagRepository;
   private final S3UploadService s3UploadService;
 
-  private final String IMAGE_DIR_USER = "user";
-
   @Transactional
   public UserProfileDto userSignUp(UserSignUpDto userSignUpDto) throws BaseException {
 
     User user = userRepository.findUserByKakaoId(userSignUpDto.getKakaoId())
         .orElseThrow(() -> new BaseException(BaseResponseStatus.OAUTH_REQUIRE));
 
-    user.setEmail(userSignUpDto.getEmail());
-    user.setNickname(userSignUpDto.getNickname());
-    user.setCategories(new ArrayList<>());
-    user.setSi(userSignUpDto.getSi());
-    user.setGu(userSignUpDto.getGu());
-    user.setDong(userSignUpDto.getDong());
-    user.setLng(userSignUpDto.getLng());
-    user.setLat(userSignUpDto.getLat());
-    user.setRole(Role.afterSignUp(user.getRole()));
+    try{
 
-    userRepository.save(user);
+      user.setEmail(userSignUpDto.getEmail());
+      user.setNickname(userSignUpDto.getNickname());
+      user.setCategories(new ArrayList<>());
+      user.setSi(userSignUpDto.getSi());
+      user.setGu(userSignUpDto.getGu());
+      user.setDong(userSignUpDto.getDong());
+      user.setLng(userSignUpDto.getLng());
+      user.setLat(userSignUpDto.getLat());
+      user.setRole(Role.afterSignUp(user.getRole()));
 
-    userSignUpDto.getCategory()
-        .stream()
-        .forEach((c) -> categoryRepository.save(Category.builder().user(user).type(c).build()));
+      userSignUpDto.getCategory()
+          .forEach((c) -> categoryRepository.save(Category.builder().user(user).type(c).build()));
+
+      userRepository.save(user);
+
+    } catch(Exception e){
+      throw new BaseException(BaseResponseStatus.SERVICE_SERVLET_ERROR, e.toString());
+    }
 
     return UserProfileDto.builder()
         .userIdx(user.getUserIdx())
@@ -74,7 +82,7 @@ public class UserService {
     User user = userRepository.findById(userIdx)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
-    UserProfileDto userProfileDto =  UserProfileDto.builder()
+    return UserProfileDto.builder()
         .userIdx(user.getUserIdx())
         .nickname(user.getNickname())
         .info(user.getInfo())
@@ -82,8 +90,6 @@ public class UserService {
         .role(user.getRole())
         .profileImgUrl(user.getProfileImg())
         .build();
-
-    return userProfileDto;
   }
 
   @Transactional
@@ -92,16 +98,23 @@ public class UserService {
     User user = userRepository.findById(userIdx)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
-    user.setSi(userUpdateLocationDto.getSi());
-    user.setGu(userUpdateLocationDto.getGu());
-    user.setDong(userUpdateLocationDto.getDong());
-    user.setLat(userUpdateLocationDto.getLat());
-    user.setLng(userUpdateLocationDto.getLng());
+    try{
 
-    userRepository.save(user);
+      user.setSi(userUpdateLocationDto.getSi());
+      user.setGu(userUpdateLocationDto.getGu());
+      user.setDong(userUpdateLocationDto.getDong());
+      user.setLat(userUpdateLocationDto.getLat());
+      user.setLng(userUpdateLocationDto.getLng());
+
+      userRepository.save(user);
+
+    } catch(Exception e){
+      throw new BaseException(BaseResponseStatus.SERVICE_SERVLET_ERROR, e.toString());
+    }
+
   }
 
-  public UserDetailDto getUserDetail(Long userIdx) throws BaseException {
+  public UserDetailDto getUserDetail(Long userIdx, int page) throws BaseException {
 
     User user = userRepository.findById(userIdx)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
@@ -112,7 +125,7 @@ public class UserService {
         .profileImg(user.getProfileImg())
         .build();
 
-    itemRepository.getUserItemList(userIdx).stream().forEach(
+    itemRepository.getUserItemList(userIdx, PageRequest.of(page, 20, Sort.by(Direction.DESC, "createdAt"))).forEach(
         (item) ->
             userDetailDto.getItemList().add(
                 ItemListDto.builder()
@@ -134,20 +147,20 @@ public class UserService {
     ReviewDto reviewDto = new ReviewDto();
 
     //받은 태그 리뷰
-    reviewTagRepository.findReviewTagByUserIdx(userIdx).stream().forEach(
+    reviewTagRepository.findReviewTagByUserIdx(userIdx).forEach(
         (rt)->
             reviewDto.getReviewTag().put(rt.getType().ordinal(),
                 reviewDto.getReviewTag().getOrDefault(rt.getType().ordinal(), 0) + 1)
     );
 
     //보낸 텍스트 리뷰
-    reviewTextRepository.findReviewReceiveTextListByUserIdx(userIdx).stream().forEach(
+    reviewTextRepository.findReviewReceiveTextListByUserIdx(userIdx).forEach(
         (c) ->
             reviewDto.getReceiveReviewText().add(c)
     );
 
     //받은 텍스트 리뷰(정보)
-    reviewTextRepository.findReviewRequestTextListByUserIdx(userIdx).stream().forEach(
+    reviewTextRepository.findReviewRequestTextListByUserIdx(userIdx).forEach(
         (rt) ->
             reviewDto.getRequestReviewText().add(
                 ReviewTextDto.builder()
@@ -164,28 +177,34 @@ public class UserService {
 
   @Transactional
   public void updateUserProfile(Long userIdx, UserUpdateProfileDto userUpdateProfileDto)
-      throws Exception {
+  {
 
     User user = userRepository.findById(userIdx).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
     //만약 이미지가 존재하고, 파일 형식이라면 이미지 업로드 처리
     if(userUpdateProfileDto.getProfileImg()!=null && userUpdateProfileDto.getProfileImgs() instanceof MultipartFile){
-      String uploadUrl = s3UploadService.upload(userUpdateProfileDto.getProfileImg(), IMAGE_DIR_USER);
+      String IMAGE_DIR_USER = "user";
+      String uploadUrl = s3UploadService.upload(userUpdateProfileDto.getProfileImg(),
+          IMAGE_DIR_USER);
       user.setProfileImg(uploadUrl);
     }
 
-    //그 외 정보 처리
-    user.setInfo(userUpdateProfileDto.getInfo());
-    user.setNickname(userUpdateProfileDto.getNickname());
+    try{
+      //그 외 정보 처리
+      user.setInfo(userUpdateProfileDto.getInfo());
+      user.setNickname(userUpdateProfileDto.getNickname());
 
-    userRepository.save(user);
+      userRepository.save(user);
+    } catch(Exception e){
+      throw new BaseException(BaseResponseStatus.SERVICE_SERVLET_ERROR, e.toString());
+    }
+
   }
 
 
-  //============================
+  //========================================================
   //이하 2순위 이하 API (미완성)
-  //============================
-
+  //========================================================
 
   @Transactional
 
@@ -276,5 +295,13 @@ public class UserService {
 
   public Optional<User> findUserByKakaoId(String kakaoId) {
     return userRepository.findUserByKakaoId(kakaoId);
+  }
+
+  //page test
+  public Page<User> getUserPage(int page){
+//    return userRepository.findAll(new Pa)
+//    PageRequest pr = new PageRequest(0,20, Sort.by(Direction.DESC));
+    PageRequest pageRequest = PageRequest.of(page,20, Sort.by(Sort.Direction.DESC, "createdAt"));
+  return userRepository.findAll(pageRequest);
   }
 }

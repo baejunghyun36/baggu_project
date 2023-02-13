@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import Home from 'pages/Home/Home';
 import Start from 'pages/Start/Start';
@@ -26,6 +27,19 @@ import ChatDetail from 'pages/Chat/ChatDetail';
 import UserReview from 'pages/Review/UserReview';
 import BagguReview from 'pages/Review/BagguReview';
 import KakaoLogin from 'pages/Start/KakaoLogin';
+import MakeRequest from 'pages/MakeRequest/MakeRequest';
+import MakeRequestMessage from 'pages/MakeRequest/MakeRequestMessage';
+import Notification from 'pages/Notification/Notification';
+
+// react-cookie
+import { CookiesProvider } from 'react-cookie';
+
+// Store
+import { signUpStore, userStore } from 'store/store';
+import { notificationStore } from 'store/notication';
+
+// API
+import requests from 'api/config';
 
 // react-query
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -33,6 +47,9 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // styled component
 import tw, { styled, css } from 'twin.macro';
+import { chatStore } from 'store/chat';
+import Search from 'pages/Search/Search';
+import ItemEdit from 'pages/Item/ItemEdit';
 
 const queryClient = new QueryClient();
 
@@ -42,41 +59,106 @@ const Wrapper = styled.div`
     height: calc(100% - 60px - 98px);
   `}
 `;
+
+// Main Component
 function App() {
+  const userIdx = window.localStorage.getItem('userIdx');
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+  // 알림서버 SSE 구독 상태
+  const [listeningToNotify, setListeningToNotify] = useState(false);
+  // 알림 리스트 전역 저장소
+  const { addNotify } = notificationStore(state => state);
+
+  useEffect(() => {
+    let notifyEvent = undefined;
+
+    // 1. 알림 SSE 연결
+    if (isLoggedIn && !listeningToNotify) {
+      notifyEvent = new EventSource(
+        `${requests.notify_base_url + requests.GET_NOTIFY(userIdx)}`
+      );
+
+      // 최초 연결 확인
+      notifyEvent.onopen = event => {
+        console.log('open : notify', event);
+      };
+
+      // 새로운 알림 도착
+      notifyEvent.onmessage = event => {
+        const parsedData = JSON.parse(event.data);
+        // console.log('new received data', event);
+        console.log('new received notify', parsedData);
+        addNotify(parsedData);
+      };
+
+      // 에러 발생
+      notifyEvent.onerror = event => {
+        console.log('closed : notify');
+        notifyEvent.close();
+      };
+
+      setListeningToNotify(true);
+    }
+
+    return () => {
+      notifyEvent.close();
+      // console.log('useEffect ended & notify closed');
+    };
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient} contextSharing={true}>
-      <BrowserRouter className="App">
-        <TopBar1 />
-        <Routes>
-          <Route path="/start" element={<Start />}>
-            <Route path="" element={<StartLogin />} />
-            <Route path="nickname" element={<StartNickname />} />
-            <Route path="town" element={<StartTown />} />
-            <Route path="category" element={<StartCategory />} />
-            <Route path="ready" element={<StartReady />} />
-            <Route path="introduce" element={<StartIntroduce />} />
-          </Route>
-          <Route path="/auth/callback/kakao" element={<KakaoLogin />} />
-          <Route path="/userReview" element={<UserReview />} />
-          <Route path="/bagguReview" element={<BagguReview />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/example" element={<Example />} />
-          <Route path="/item/:id" element={<Item />} />
-          <Route path="/item/create" element={<ItemCreate />} />
-          <Route path="/mybaggu" element={<MyBaggu />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/chat/:id" element={<ChatDetail />} />
-          <Route path="/myprofile" element={<MyProfile />} />
-          <Route path="/myprofile/edit" element={<MyProfileEdit />} />
-          <Route path="/myprofile/:id/baggu" element={<Baggu />} />
-          <Route path="/myprofile/:id/myreview" element={<Myreview />} />
-          <Route path="/myprofile/:id/favorite" element={<Favorite />} />
-          <Route path="/myprofile/:id/town" element={<ProfileTown />} />
-          <Route path="/user/:id" element={<UserDetail />} />
-        </Routes>
-        <BottomNav />
-      </BrowserRouter>
-    </QueryClientProvider>
+    <CookiesProvider>
+      <QueryClientProvider client={queryClient} contextSharing={true}>
+        <BrowserRouter className="App">
+          <TopBar1 />
+          <Routes>
+            <Route path="/example" element={<Example />} />
+            <Route path="/start" element={<Start />}>
+              <Route path="" element={<StartLogin />} />
+              <Route path="nickname" element={<StartNickname />} />
+              <Route path="town" element={<StartTown />} />
+              <Route path="category" element={<StartCategory />} />
+              <Route path="ready" element={<StartReady />} />
+              <Route path="introduce" element={<StartIntroduce />} />
+            </Route>
+            <Route path="/kakaoLogin" element={<KakaoLogin />} />
+            <Route path="/" element={<Home />} />
+            {/* 후기 */}
+            <Route path="/userReview" element={<UserReview />} />
+            <Route path="/bagguReview" element={<BagguReview />} />
+            {/* 게시글 */}
+            <Route path="/item/:id" element={<Item />} />
+            <Route path="/item/:id/edit" element={<ItemEdit />} />
+            <Route path="/item/create" element={<ItemCreate />} />
+            {/* 내 바꾸관리 */}
+            <Route path="/mybaggu" element={<MyBaggu />} />
+            {/* 채팅 */}
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat/:roomId" element={<ChatDetail />} />
+            {/* 내 프로필 */}
+            <Route path="/myprofile" element={<MyProfile />} />
+            <Route path="/myprofile/edit" element={<MyProfileEdit />} />
+            <Route path="/myprofile/:id/baggu" element={<Baggu />} />
+            <Route path="/myprofile/:id/myreview" element={<Myreview />} />
+            <Route path="/myprofile/:id/favorite" element={<Favorite />} />
+            <Route path="/myprofile/:id/town" element={<ProfileTown />} />
+            <Route path="/user/:id" element={<UserDetail />} />
+            {/* 바꾸신청 */}
+            <Route path="/makeRequest/:itemIdx" element={<MakeRequest />} />
+            <Route
+              path="/makeRequest/message/:itemIdx"
+              element={<MakeRequestMessage />}
+            />
+            {/* 알림 */}
+            <Route path="/notification" element={<Notification />} />
+            {/* 검색 */}
+            <Route path="/search" element={<Search />} />
+          </Routes>
+          <BottomNav />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </CookiesProvider>
   );
 }
 

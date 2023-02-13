@@ -22,7 +22,6 @@ public class UserSignUpDto{
   private String dong;
   private String lng;
   private String lat;
-  private Role role;
   private String kakaoId;
 
 }

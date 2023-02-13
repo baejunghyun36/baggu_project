@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // store
-import signUpstore from 'store/store';
+import { signUpStore } from 'store/store';
 
 // API
 import { defaultInstance, authInstance } from 'api/axios';
@@ -86,9 +86,8 @@ function StartCategory() {
   ];
 
   // store
-  const saveCategory = signUpstore(state => state.saveCategory);
-  const { email, nickname, category, si, gu, dong, lng, lat, kakaoId } =
-    signUpstore(state => state);
+  const { email, userIdx, kakaoId, nickname, si, gu, dong, lng, lat } =
+    signUpStore(state => state);
 
   // 클릭된 카테고리 수,
   const clickedCount = Object.values(clickedCategories).filter(
@@ -98,20 +97,30 @@ function StartCategory() {
   // signup API 요청 함수
   const sign_up = async category_types => {
     try {
+      console.log(
+        'data from store',
+        email,
+        userIdx,
+        nickname,
+        si,
+        gu,
+        dong,
+        lng,
+        lat,
+        kakaoId
+      );
       const response = await defaultInstance.post(requests.SIGNUP, {
-        data: {
-          email: email,
-          nickname: nickname,
-          category: category_types,
-          si: si,
-          gu: gu,
-          dong: dong,
-          lng: lng,
-          lat: lat,
-          kakaoId: kakaoId,
-        },
+        email: email,
+        nickname: nickname,
+        category: category_types,
+        si: si,
+        gu: gu,
+        dong: dong,
+        lng: lng,
+        lat: lat,
+        kakaoId: kakaoId,
       });
-      return response.data;
+      return response;
     } catch (error) {
       throw error;
     }
@@ -129,11 +138,18 @@ function StartCategory() {
       console.log(nickname, si, gu, dong, lat, lng, category_types);
       // API 요청
       sign_up(category_types)
-        .then(res => {
-          navigate('/start/ready');
+        .then(response => {
+          console.log('sign up success');
+          window.localStorage.setItem('isLoggedIn', true);
+          window.localStorage.setItem(
+            'token',
+            response.headers['authorization']
+          );
+          window.localStorage.setItem('dong', dong);
+          navigate('/');
         })
         .catch(error => {
-          navigate('/start/ready');
+          navigate('/start');
           console.log(error);
         });
     }

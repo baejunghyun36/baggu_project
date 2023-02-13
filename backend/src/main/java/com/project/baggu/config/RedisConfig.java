@@ -3,6 +3,7 @@ package com.project.baggu.config;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +18,9 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+//@EnableCaching
 @Configuration
-@EnableCaching
 public class RedisConfig {
-  private static final String CONNECTION_IP = "localhost";
-  private static final int CONNECTION_PORT = 6379;
 
   /*
       Lettuce: Multi-Thread 에서 Thread-Safe한 Redis 클라이언트로 netty에 의해 관리된다.
@@ -32,11 +31,30 @@ public class RedisConfig {
       Jedis  : Multi-Thread 에서 Thread-unsafe 하며 Connection pool을 이용해 멀티쓰레드 환경을 구성한다.
                Jedis 인스턴스와 연결할 때마다 Connection pool을 불러오고 스레드 갯수가
                늘어난다면 시간이 상당히 소요될 수 있다.
+
+      기본이 Lecttuce host,와 port는 yaml파일에 설정
    */
+  @Value("${redis.host}")
+  private String redisHost;
+
+  @Value("${redis.port}")
+  private int redisPort;
+
+  @Value("${redis.password}")
+  private String redisPassword;
+
+
   @Bean
   public LettuceConnectionFactory redisConnectionFactory() {
     //레디스 아이피, 포트번호 설정
-    return new LettuceConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
+
+    RedisStandaloneConfiguration standaloneConfig = new RedisStandaloneConfiguration(redisHost, redisPort);
+    standaloneConfig.setPassword(redisPassword);
+
+    return new LettuceConnectionFactory(standaloneConfig);
+
+//    return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, redisPort));
+
   }
 
   /*
@@ -48,41 +66,41 @@ public class RedisConfig {
 
     GenericJackson2JsonRedisSerializer: 객체를 json타입으로 직렬화/역직렬화를 수행한다.
  */
-  @Bean
-  public RedisTemplate<String, Object> redisTemplate() {
-    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-    redisTemplate.setConnectionFactory(redisConnectionFactory());
-    redisTemplate.setKeySerializer(new StringRedisSerializer());
-    redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-
-    return redisTemplate;
-  }
-
-  @Bean
-  public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-    RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-        .serializeKeysWith(RedisSerializationContext
-            .SerializationPair
-            .fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(RedisSerializationContext
-            .SerializationPair
-            .fromSerializer(new GenericJackson2JsonRedisSerializer()));
-
-    Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
-    cacheConfiguration.put(RedisCacheKey.TRADE_FIN_LIST, redisCacheConfiguration.entryTtl(Duration.ofSeconds(180L)));
-
-
-    return RedisCacheManager
-        .RedisCacheManagerBuilder
-        .fromConnectionFactory(redisConnectionFactory)
-        .cacheDefaults(redisCacheConfiguration)
-        .build();
-  }
-
-  public class RedisCacheKey {
-
-    public static final String TRADE_FIN_LIST = "tradeFinList";
-  }
+//  @Bean
+//  public RedisTemplate<String, Object> redisTemplate() {
+//    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//    redisTemplate.setConnectionFactory(redisConnectionFactory());
+//    redisTemplate.setKeySerializer(new StringRedisSerializer());
+//    redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+//
+//    return redisTemplate;
+//  }
+//
+//  @Bean
+//  public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+//    RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+//        .serializeKeysWith(RedisSerializationContext
+//            .SerializationPair
+//            .fromSerializer(new StringRedisSerializer()))
+//        .serializeValuesWith(RedisSerializationContext
+//            .SerializationPair
+//            .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+//
+//    Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
+//    cacheConfiguration.put(RedisCacheKey.TRADE_FIN_LIST, redisCacheConfiguration.entryTtl(Duration.ofSeconds(180L)));
+//
+//
+//    return RedisCacheManager
+//        .RedisCacheManagerBuilder
+//        .fromConnectionFactory(redisConnectionFactory)
+//        .cacheDefaults(redisCacheConfiguration)
+//        .build();
+//  }
+//
+//  public class RedisCacheKey {
+//
+//    public static final String TRADE_FIN_LIST = "tradeFinList";
+//  }
 
 
 

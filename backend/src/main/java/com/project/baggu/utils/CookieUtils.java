@@ -24,6 +24,7 @@ public class CookieUtils {
     Cookie cookie = new Cookie(name, value);
     cookie.setPath("/");
     cookie.setHttpOnly(true);
+//    local test를 위해 false
     cookie.setSecure(true);
     cookie.setMaxAge(maxAge);
     response.addCookie(cookie);

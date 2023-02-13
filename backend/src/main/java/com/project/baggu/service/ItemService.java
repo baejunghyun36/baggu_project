@@ -7,11 +7,13 @@ import com.project.baggu.domain.TradeDetail;
 import com.project.baggu.domain.TradeRequest;
 import com.project.baggu.domain.User;
 import com.project.baggu.domain.enumType.TradeState;
-import com.project.baggu.dto.BaseResponseStatus;
+import com.project.baggu.dto.RequestItemDto;
+import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
 import com.project.baggu.dto.ItemListDto;
 import com.project.baggu.dto.TradeRequestDto;
+import com.project.baggu.dto.TradeRequestNotifyDto;
 import com.project.baggu.dto.UpdateItemDto;
 import com.project.baggu.dto.UpdateItemResponseDto;
 import com.project.baggu.dto.UserDto;
@@ -26,13 +28,20 @@ import com.project.baggu.repository.TradeDetailRepository;
 import com.project.baggu.repository.TradeFinRepository;
 import com.project.baggu.repository.TradeRequestRepository;
 import com.project.baggu.repository.UserRepository;
+import javax.persistence.EntityManager;
+import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +52,7 @@ public class ItemService {
   private final ReviewTextRepository reviewTextRepository;
 
   private final ItemRepository itemRepository;
+  private final EntityManager em;
   private final UserRepository userRepository;
   private final TradeRequestRepository tradeRequestRepository;
   private final TradeDetailRepository tradeDetailRepository;
@@ -55,9 +65,10 @@ public class ItemService {
 
   private final String IMAGE_DIR_ITEM = "item";
 
-  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(String dong) {
+  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(String dong, int page) {
 
-    List <Item> itemList = itemRepository.itemListOrderByNeighbor(dong);
+    List <Item> itemList = itemRepository.itemListOrderByNeighbor(dong, PageRequest.of(page,20,
+        Sort.by(Direction.DESC, "createdAt")));
     List<ItemOrderByNeighborDto> ItemDtoList = new ArrayList<>();
     for(Item i : itemList){
       ItemOrderByNeighborDto itemDto = new ItemOrderByNeighborDto();
@@ -66,14 +77,16 @@ public class ItemService {
       itemDto.setCreatedAt(i.getCreatedAt());
       itemDto.setState(i.getState());
       itemDto.setItemImgUrl(i.getFirstImg());
+      itemDto.setDong(i.getDong());
       ItemDtoList.add(itemDto);
     }
     return ItemDtoList;
   }
 
-  public List<UserItemDto> getUserItemList(Long userIdx) {
+  public List<UserItemDto> getUserItemList(Long userIdx, int page) {
 
-    List <Item> itemList = itemRepository.getUserItemList(userIdx);
+    List <Item> itemList = itemRepository.getUserItemList(userIdx, PageRequest.of(page, 20, Sort.by(
+        Direction.DESC, "createdAt")));
     List<UserItemDto> userItemDtoList = new ArrayList<>();
     for(Item i : itemList){
       UserItemDto itemDto = new UserItemDto();
@@ -132,10 +145,10 @@ public class ItemService {
 
       //해당 이미지가 대표 이미지가 아니라면 순서에 맞게 저장해준다.
       ItemImage itemImage = ItemImage.builder()
-              .itemImg(uploadImageUrls.get(i))
-              .imgOrder(tempImageOrder++)
-              .item(item)
-              .build();
+          .itemImg(uploadImageUrls.get(i))
+          .imgOrder(tempImageOrder++)
+          .item(item)
+          .build();
 
       item.getItemImages().add(itemImage);
       itemImageRepository.save(itemImage);
@@ -147,7 +160,8 @@ public class ItemService {
   }
 
   @Transactional
-  public void registItem(UserRegistItemDto u) throws Exception {
+  public Long registItem(UserRegistItemDto u) throws Exception {
+
 
     User user = userRepository.findById(u.getUserIdx()).get();
 
@@ -160,32 +174,39 @@ public class ItemService {
     item.setContent(u.getContent());
     item.setCategory(u.getCategory());
     item.setUser(user);
-    itemRepository.save(item);
+
+
+    Long generatedIdx = itemRepository.save(item).getItemIdx();
+    Item registeredItem = itemRepository.findById(generatedIdx).get();
+
+    List<ItemImage> imageList = new ArrayList<>();
 
     //이미지 존재시 이미지 저장 -> 순서대로
-    if(u.getItemImges().size()>0){
-      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImges(), IMAGE_DIR_ITEM);
+    if(u.getItemImgs()!=null&&u.getItemImgs().size()>0){
+      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImgs(), IMAGE_DIR_ITEM);
 
       int tempImageOrder = 0;
       for(int i=0; i<uploadUrls.size(); i++){
         if(i==u.getItemFirstImgIdx()){
-          item.setFirstImg(uploadUrls.get(i));
+          registeredItem.setFirstImg(uploadUrls.get(i));
           continue;
         }
 
         ItemImage itemImage = ItemImage.builder()
-                .imgOrder(tempImageOrder++)
-                .itemImg(uploadUrls.get(i))
-                .item(item)
-                .build();
+            .imgOrder(tempImageOrder++)
+            .itemImg(uploadUrls.get(i))
+            .item(item)
+            .build();
 
-        itemImage.setItem(item);
-
+        itemImage.setItem(registeredItem);
         itemImageRepository.save(itemImage);
+        imageList.add(itemImage);
+
       }
+      registeredItem.setItemImages(imageList);
     }
 
-    itemRepository.save(item);
+    return registeredItem.getItemIdx();
   }
 
   public ItemDetailDto itemDetail(Long itemIdx) {
@@ -204,21 +225,30 @@ public class ItemService {
     idd.setModifiedAt(item.getModifiedAt());
     idd.setContent(item.getContent());
     idd.setTradeState(item.getState());
-    idd.setItemImgUrl(item.getFirstImg());
+    idd.setItemImgUrls(new ArrayList<>());
+    idd.getItemImgUrls().add(item.getFirstImg());
+
+    //이미지 추가
+    for(ItemImage ii : item.getItemImages()){
+      idd.getItemImgUrls().add(ii.getItemImg());
+    }
 
     List<TradeRequest> trList = tradeRequestRepository.findByItemIdx(itemIdx);
 
     for(TradeRequest tr : trList){
 
-      List<TradeDetail> tradeDetailList = tradeDetailRepository.findByTradeRequestIdx(tr.getTradeRequestIdx());
+      List<TradeDetail> tradeDetailList = tr.getTradeDetails();
       UserDto userDto = new UserDto();
       userDto.setUserIdx(tr.getRequestUser().getUserIdx());
       userDto.setNickname(tr.getRequestUser().getNickname());
       userDto.setComment(tr.getComment());
       userDto.setProfileImgUrl(tr.getRequestUser().getProfileImg());
       for (TradeDetail td : tradeDetailList) {
-        userDto.getRequestItemIdxList().add(td.getRequestItemIdx());
-        userDto.getTradeDetailIdxList().add(td.getTradeDetailIdx());
+        RequestItemDto rid = new RequestItemDto();
+        rid.setTradeDetailIdx(td.getTradeDetailIdx());
+        rid.setRequestItemIdx(td.getRequestItemIdx());
+        rid.setRequestItemFirstImg(itemRepository.findById(td.getRequestItemIdx()).get().getFirstImg());
+        userDto.getRequestItemList().add(rid);
       }
       idd.getRequestUserList().add(userDto);
     }
@@ -235,13 +265,21 @@ public class ItemService {
       itemListDto.setState(i.getState());
       itemListDto.setCreatedAt(i.getCreatedAt());
       itemListDto.setTitle(i.getTitle());
+      itemListDto.setItemImgUrl(i.getFirstImg());
       list.add(itemListDto);
     }
     return list;
   }
 
+
   @Transactional
-  public void tradeRequest(Long itemIdx, TradeRequestDto tradeRequestDto) {
+  public TradeRequestNotifyDto tradeRequest(Long itemIdx, TradeRequestDto tradeRequestDto){
+
+    Item item = itemRepository.findByIdLock(itemIdx);
+    String nickname = item.getUser().getNickname();
+    if (item.getUserRequestCount() >= 10) return null;
+    item.setUserRequestCount(item.getUserRequestCount()+1);
+    itemRepository.save(item);
 
     TradeRequest tradeRequest = new TradeRequest();
     tradeRequest.setRequestUser(userRepository.findById(tradeRequestDto.getRequestUserIdx()).get());
@@ -255,13 +293,17 @@ public class ItemService {
       tradeDetailRepository.save(tradeDetail);
     }
     User user = userRepository.findById(tradeRequestDto.getRequestUserIdx()).get();
-    Item item = itemRepository.findById(itemIdx).get();
     user.setTradeCount(user.getTradeCount()+1);
-    item.setUserRequestCount(item.getUserRequestCount()+1);
+    TradeRequestNotifyDto tn = new TradeRequestNotifyDto();
+    tn.setReceiveUserIdx(item.getUser().getUserIdx());
+    tn.setType(0);
+    tn.setTypeIdx(itemIdx);
+    tn.setRequestUserNickName(user.getNickname());
+    return tn;
   }
 
   public Long getUserIdxByItemIdx(Long itemIdx){
     return itemRepository.findById(itemIdx).orElseThrow(()-> new BaseException(
-            BaseResponseStatus.DATABASE_GET_ERROR)).getUser().getUserIdx();
+        BaseResponseStatus.DATABASE_GET_ERROR)).getUser().getUserIdx();
   }
 }

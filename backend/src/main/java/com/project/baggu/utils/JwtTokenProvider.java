@@ -22,7 +22,8 @@ public class JwtTokenProvider implements AuthenticationProvider {
     Collection<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(role));
     String userIdx = JwtTokenUtils.getClaimAttribute(token, "userIdx");
 
-    return new JwtTokenAuthenticationToken(authorities, userIdx, true);
+    JwtTokenAuthenticationToken tk = new JwtTokenAuthenticationToken(authorities, userIdx, true);
+    return tk;
   }
 
   @Override

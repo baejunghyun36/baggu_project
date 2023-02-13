@@ -28,6 +28,7 @@ public class TradeFin extends BaseTimeEntity {
   private Long tradeFinIdx;
 
   @Column(name = "heart_count")
+  @Builder.Default
   private int heartCount = 0;
 
   @Column(name = "receive_item_idx")
@@ -42,6 +43,12 @@ public class TradeFin extends BaseTimeEntity {
   @Column(name = "request_nickname")
   private String requestNickname;
 
+  @Column(name = "request_profile_img_url")
+  private String requestProfileImgUrl;
+
+  @Column(name = "receive_profile_img_url")
+  private String receiveProfileImgUrl;
+
   @Column(name = "is_valid")
   @Builder.Default
   private boolean isValid = true;
@@ -54,6 +61,7 @@ public class TradeFin extends BaseTimeEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "tradeFin")
+  @Builder.Default
   private List<Heart> hearts = new ArrayList<>();
 
 }

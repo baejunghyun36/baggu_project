@@ -1,53 +1,116 @@
 import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { useMutation } from 'react-query';
-import axios from 'axios';
 import TopBar2 from '../../components/common/TopBar2';
 import { defaultInstance, authInstance } from 'api/axios';
 import requests from 'api/config';
+import Preview from './Preview';
+import ImageAddButton from './ImageAddButton';
+import ItemCategory from './ItemCategory';
 
+// twin.macro
+import tw, { styled, css } from 'twin.macro';
+import FormSubmitBtn from 'components/common/FormSubmitBtn';
+import { post_item } from 'api/apis/item';
+import { useNavigate } from 'react-router-dom';
+
+// Styled Component
+const FormContainer = styled.div`
+  ${tw`flex flex-col p-2`}
+`;
+const PreviewContainer = styled.div`
+  ${tw`flex gap-1`}
+`;
+
+const PreviewImg = styled.img`
+  ${tw`rounded-lg w-7 h-7`}
+  ${props => (props.isFirstImg ? tw`outline-1 outline-primary` : tw``)}
+`;
+
+const DeleteBtn = styled.div`
+  ${tw`fill-primary absolute w-2 h-2 right-[4px] top-[4px]`}
+`;
+
+const InputContainer = styled.input`
+  ${tw`h-[60px] bg-white outline-none p-1 border-b border-t`}
+`;
+
+const TextareaContainer = styled.textarea`
+  ${css`
+    resize: none;
+    height: calc(100vh - 366px);
+  `}
+  ${tw`bg-white p-1 outline-none`}
+`;
+
+const CategoryContainer = styled.div`
+  ${tw`h-[60px] flex items-center px-1 text-primary hover:bg-primary-hover`}
+`;
+
+// Main Component
 function ItemCreate() {
+  // 제목
   const [itemTitle, setItemtitle] = useState('');
   const [itemTitleError, setItemTitleError] = useState('');
+  // 내용
   const [itemContent, setItemcontent] = useState('');
   const [itemContentError, setItemContentError] = useState('');
-  const [itemImage, setItemImage] = useState('');
+  const [itemFirstImg, setItemFirstImg] = useState('');
+  // 모든 이미지
+  const [itemImage, setItemImage] = useState([]);
   const [itemImageError, setItemImageError] = useState('');
+  // 카테고리
   const [itemCategories, setItemCategories] = useState('');
   const [itemCategoriesError, setItemCategoriesError] = useState('');
-  const [token, setToken] = useState(null);
+  // 선택된 카테고리
+  const [selectedCategory, setSelectedCategory] = useState('카테고리 선택');
+  // 페이지
+  const [page, setPage] = useState(0);
+
+  // navigate
+  const navigate = useNavigate();
   useEffect(() => {
-    const get_token = async () => {
-      try {
-        const { data } = await defaultInstance.post(requests.TEST_TOKEN, {
-          data: { userIdx: 1 },
-        });
-        setToken(data);
-        console.log(token);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    get_token();
-  }, []);
+    if (itemImage) {
+      setItemFirstImg(0);
+    }
+  }, [itemImage]);
+  // --------------------------------------------------------
   const handleItemImage = event => {
-    setItemImage(event.target.files);
+    const files = Array.from(event.target.files);
+    setItemImage(prevItemImage => [...prevItemImage, ...files]);
   };
+  const moveToCategoryPage = () => {
+    setPage(1);
+  };
+  const handleClickAddImage = () => {
+    document.getElementById('imageInput').click();
+  };
+  const handleDeleteItemImage = index => {
+    setItemImage(prevItemImage => prevItemImage.filter((_, i) => i !== index));
+  };
+
   const handleItemTitleChange = event => {
     setItemtitle(event.target.value);
   };
   const handleItemContentChange = event => {
     setItemcontent(event.target.value);
   };
-  const handleItemCategoriesChange = event => {
-    setItemCategories(event.target.value);
+  const handleItemCategoriesChange = value => {
+    setItemCategories(value);
   };
-  const handleSubmit = event => {
+  const handleSelectedCategory = name => {
+    setSelectedCategory(name);
+  };
+
+  // 대표 이미지 선택
+  const selectFirstImg = index => {
+    setItemFirstImg(index);
+  };
+
+  // 제출시 실행될 함수
+  const handleSubmit = async event => {
     event.preventDefault();
-
     let hasError = false;
-
     if (!itemTitle) {
       setItemTitleError('제목을 입력해주세요');
       hasError = true;
@@ -73,20 +136,33 @@ function ItemCreate() {
       setItemCategoriesError('');
     }
     if (!hasError) {
+      const data = new FormData();
+      data.append('userIdx', localStorage.getItem('userIdx'));
+      data.append('title', itemTitle);
+      data.append('content', itemContent);
+      data.append('category', itemCategories);
+      data.append('itemImgs', []);
+      itemImage.forEach((image, index) => {
+        data.append('itemImgs', image);
+      });
+
+      for (let key of data.keys()) {
+        console.log(key);
+      }
+      for (let value of data.values()) {
+        console.log(value);
+      }
+
+      // await post_item(data).then(data => {
+      //   console.log(data);
+      // });
       const post_item_create = async () => {
         try {
-          console.log(token);
-          const response = await authInstance.post(requests.POST_ITEM, {
-            data: {
-              userIdx: 1,
-              category: 'TYPE0',
-              title: itemTitle,
-              content: itemContent,
-              itemImges: itemImage, //file 배열,
-              itemFirstImgIdx: 0, //file 배열에서 대표 이미지의 인덱스
-            },
+          console.log('form data :', data);
+          const response = await authInstance.post(requests.POST_ITEM, data, {
             headers: {
-              'access-token': token,
+              Authorization: localStorage.getItem('token'),
+              'Content-Type': 'multipart/form-data',
             },
           });
 
@@ -95,54 +171,99 @@ function ItemCreate() {
           throw error;
         }
       };
-      post_item_create();
+
+      post_item_create().then(data => {
+        navigate(`/item/${data.itemIdx}`);
+      });
     }
   };
+
+  console.log(itemImage);
   return (
     <div>
-      <TopBar2 pageTitle="게시글 작성" />
-      <form onSubmit={handleSubmit}>
-        <input type="file" accept="img/*" onChange={handleItemImage} />
-        {itemImageError && <div style={{ color: 'red' }}>{itemImageError}</div>}
-        <input
-          type="text"
-          placeholder="제목"
-          value={itemTitle}
-          onChange={handleItemTitleChange}
+      <div className={`${page === 0 ? '' : 'hidden'}`}>
+        <TopBar2 title="게시글 작성" />
+      </div>
+      <div className={`${page === 1 ? '' : 'hidden'}`}>
+        <TopBar2 title="카테고리 선택" BackHandler={() => setPage(0)} />
+      </div>
+      <div className={`${page === 0 ? '' : 'hidden'}`}>
+        <FormContainer>
+          <div id="image-area" className="flex gap-1 pb-2 flex-wrap">
+            <ImageAddButton clickFunction={handleClickAddImage} />
+            {itemImage.map((itemImage, index) => (
+              <div
+                key={index}
+                className="relative"
+                onClick={() => selectFirstImg(index)}
+              >
+                <DeleteBtn onClick={() => handleDeleteItemImage(index)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
+                  </svg>
+                </DeleteBtn>
+                <span className={itemFirstImg === index ? '' : 'hidden'}>
+                  대표 이미지
+                </span>
+                <PreviewImg
+                  isFirstImg={itemFirstImg === index}
+                  src={URL.createObjectURL(itemImage)}
+                  alt={itemImage.name}
+                />
+              </div>
+            ))}
+          </div>
+          <input
+            id="imageInput"
+            type="file"
+            multiple
+            accept="img/*"
+            onChange={handleItemImage}
+            className="display: hidden"
+          />
+          {itemImageError && (
+            <div style={{ color: 'red' }}>{itemImageError}</div>
+          )}
+          <InputContainer
+            type="text"
+            placeholder="제목"
+            value={itemTitle}
+            onChange={handleItemTitleChange}
+          />
+          {itemTitleError && (
+            <div style={{ color: 'red' }}>{itemTitleError}</div>
+          )}
+
+          <CategoryContainer onClick={moveToCategoryPage}>
+            <span>{selectedCategory}</span>
+          </CategoryContainer>
+          {itemCategoriesError && (
+            <div style={{ color: 'red' }}>{itemCategoriesError}</div>
+          )}
+
+          <TextareaContainer
+            placeholder="내용"
+            value={itemContent}
+            onChange={handleItemContentChange}
+          />
+          {itemContentError && (
+            <div style={{ color: 'red' }}>{itemContentError}</div>
+          )}
+          {/* <button type="submit">Submit</button> */}
+        </FormContainer>
+        <FormSubmitBtn
+          title="작성 완료"
+          disabled={!itemContent || !itemImage || !itemCategories}
+          onClick={handleSubmit}
         />
-        {itemTitleError && <div style={{ color: 'red' }}>{itemTitleError}</div>}
-        <br />
-        <select
-          defaultValue="placeholder"
-          onChange={handleItemCategoriesChange}
-        >
-          <option value="placeholder" disabled style={{ display: 'none' }}>
-            카테고리 선택
-          </option>
-          <option value="디지털기기">디지털기기</option>
-          <option value="생활가전">생활가전</option>
-          <option value="가구/인테리어">가구/인테리어</option>
-          <option value="생활/주방">생활/주방</option>
-          <option value="유아동">유아동</option>
-          <option value="유아도서">유아도서</option>
-          <option value="여성의류">여성의류</option>
-          <option value="여성잡화">여성잡화</option>
-        </select>
-        {itemCategoriesError && (
-          <div style={{ color: 'red' }}>{itemCategoriesError}</div>
-        )}
-        <br />
-        <input
-          type="text"
-          placeholder="내용"
-          value={itemContent}
-          onChange={handleItemContentChange}
+      </div>
+      <div className={`${page === 1 ? '' : 'hidden'}`}>
+        <ItemCategory
+          setPage={setPage}
+          handleItemCategoriesChange={handleItemCategoriesChange}
+          handleSelectedCategory={handleSelectedCategory}
         />
-        {itemContentError && (
-          <div style={{ color: 'red' }}>{itemContentError}</div>
-        )}
-        <button type="submit">Submit</button>
-      </form>
+      </div>
     </div>
   );
 }

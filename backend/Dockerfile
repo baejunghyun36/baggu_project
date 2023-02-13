@@ -9,11 +9,17 @@ COPY . .
 
 # gradlew을 사용하여 build한다.
 RUN sed -i 's/mariadb:\/\/localhost/mariadb:\/\/baggu-database-deploy/g' /app/src/main/resources/application.yml
+RUN sed -i 's/host: 127.0.0.1/host: baggu-redis-deploy/g' /app/src/main/resources/application-SECRET.yml
 RUN chmod +x gradlew
 RUN ./gradlew -x compileTestJava build
 
 # 빌드가 완료된 jar파일을 작업 디렉토리의 root로 가져온다.
 FROM openjdk:11-jdk-slim
+
+WORKDIR /app
+
+RUN mkdir /app/s3
+RUN mkdir /app/s3/temp
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 
