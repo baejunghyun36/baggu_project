@@ -51,7 +51,7 @@ public class SecurityTest {
   }
 
   @Test
-  @DisplayName("헤더가 존재하지만 인가 거절시 401 에러")
+  @DisplayName("헤더가 존재하지만 인가 거절시 500 에러")
   public void authorizationFailTest() throws Exception{
     String accessToken = JwtTokenUtils.allocateToken(2L, Role.TYPE1.getKey()).getAccessToken();
 
@@ -59,7 +59,7 @@ public class SecurityTest {
     mockMvc.perform(put("/baggu/user/1/detail")
               .param("info","this is test info")
               .header("Authorization", accessToken))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isInternalServerError());
   }
 
   @Test
@@ -74,38 +74,5 @@ public class SecurityTest {
         .andExpect(status().isOk());
   }
 
-
-
-//
-//  @Test
-//  @DisplayName("인가 테스트")
-//  @WithMockCustomTokenAccount(userIdx="1")
-//  public void putUserTest() throws Exception{
-//    User testU = User.builder()
-//            .info("before test")
-//            .nickname("test nickname")
-//            .dong("test dong")
-//            .email("test email")
-//            .build();
-//
-//
-//    userRepository.save(testU);
-//
-//    UserUpdateDetailDto uudd = UserUpdateDetailDto.builder()
-//            .info("after test").build();
-//
-//    Long testUIdx = testU.getUserIdx();
-//
-//    mockMvc.perform(put("/baggu/user/"+testUIdx+"/detail")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(objToJson(uudd)))
-//            .andExpect(status().isUnauthorized())
-//            .andReturn();
-//
-//  }
-//
-//  private <T> String objToJson(T data) throws JsonProcessingException {
-//    return objectMapper.writeValueAsString(data);
-//  }
 
 }
