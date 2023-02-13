@@ -19,7 +19,7 @@ const ItemImg = styled.div`
     css`
       background-image: url(${props.item.itemImgUrl});
     `}
-  ${tw`w-[100px] h-[100px] rounded border bg-cover bg-center`}
+  ${tw`w-[100px] min-w-[100px] h-[100px] rounded border bg-cover bg-center`}
 `;
 const ItemInfo = styled.div`
   p {
