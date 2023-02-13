@@ -81,7 +81,6 @@ function Item() {
   );
 
   const deleteHandler = async () => {
-
     try {
       const { data } = await authInstance.delete(requests.ITEM(id));
       navigate('/');
@@ -152,7 +151,7 @@ function Item() {
               id="here"
               className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
             ></div>
-              {/* <Chip tradeState={item.tradeState} /> */}
+            {/* <Chip tradeState={item.tradeState} /> */}
 
             <BagguOfferList requestUserList={item.requestUserList} />
             <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
@@ -160,7 +159,6 @@ function Item() {
               {/* <Carousel images={item.itemImgUrls} /> */}
               <Chip tradeState={item.tradeState} />
               {/* {item.itemImgUrls && <Carousel images={item.itemImgUrls} />} */}
-
             </div>
           </Container>
           <Wrapper>
