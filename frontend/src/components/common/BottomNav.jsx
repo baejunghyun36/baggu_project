@@ -87,7 +87,7 @@ function BottomNav() {
 
       // 최초 연결
       chatRoomUpdateEvent.onopen = event => {
-        console.log('open : chatroom update');
+        console.log('open : 채팅방 변경사항');
       };
 
       // 변경사항 수신
@@ -110,6 +110,13 @@ function BottomNav() {
           updateChatRoom(roomId, data);
         });
       };
+
+      chatRoomUpdateEvent.onerror = event => {
+        console.log('closed : 채팅방 변경사항');
+        chatRoomUpdateEvent.close();
+      };
+
+      setIsListeningToRoomUpdate(true);
     }
     // clean up function!
     return () => {
@@ -140,6 +147,7 @@ function BottomNav() {
     location.startsWith('/bagguReview') ||
     location.startsWith('/makeRequest') ||
     location.startsWith('/myprofile') ||
+    location.startsWith('/kakaoLogin') ||
     location.startsWith('/chat/')
   ) {
     return null;

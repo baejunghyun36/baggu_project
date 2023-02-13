@@ -22,7 +22,7 @@ public class JwtTokenUtils {
   public static final long REFRESH_PERIOD = 1000L * 60L * 60L * 24L;
 
   //개발용 access 토큰 30일
-  private static final long DEV_ACCESS_PERIOD = 1000L * 60L * 60L * 24L * 30L;
+  public static final long DEV_ACCESS_PERIOD = 1000L * 60L * 60L * 24L * 30L;
 
   //userIdx와 role로 토큰 발급
   public static TokenInfo allocateToken(Long userIdx, String role) throws BaseException {
@@ -37,7 +37,7 @@ public class JwtTokenUtils {
       Date now = new Date();
       return new TokenInfo(
           jwtBuilder.setIssuedAt(now)
-              .setExpiration(new Date(now.getTime() + ACCESS_PERIOD))
+              .setExpiration(new Date(now.getTime() + DEV_ACCESS_PERIOD))
               .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
               .compact(),
           jwtBuilder.setIssuedAt(now)

@@ -7,7 +7,7 @@ function ImageAddButton({ clickFunction }) {
       <img
         src={upload_icon}
         alt="upload_image_button"
-        className="w-[40px] h-[40px]"
+        className="w-7 h-7"
         onClick={clickFunction}
       />
     </div>

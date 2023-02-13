@@ -42,7 +42,7 @@ public class JwtTokenService {
     recentAccessProvideTime = rf.getAccessProvideTime();
     if (LocalDateTime.now()
         .isBefore(
-            recentAccessProvideTime.plusMinutes((int) (JwtTokenUtils.ACCESS_PERIOD / 1000 * 60)))
+            recentAccessProvideTime.plusMinutes((int) (JwtTokenUtils.DEV_ACCESS_PERIOD / 1000 * 60)))
     ) {
       deleteRefreshToken(String.valueOf(userIdx));
       throw new BaseException(BaseResponseStatus.DUPLICATE_LOGIN);

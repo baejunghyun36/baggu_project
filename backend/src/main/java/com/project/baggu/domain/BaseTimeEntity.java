@@ -21,8 +21,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 public abstract class BaseTimeEntity {
 
   @CreatedDate
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
   @Column(name = "created_at")
   @JsonDeserialize(
       using = LocalDateTimeDeserializer.class

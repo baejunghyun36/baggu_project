@@ -58,8 +58,9 @@ public class UserController {
         userProfileDto.getRole().toString());
     jwtTokenService.saveRefreshToken(userProfileDto.getUserIdx(), tokenInfo.getRefreshToken());
     response.addHeader("Authorization", tokenInfo.getAccessToken());
-    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
-        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
+//    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
+//        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
+    response.addHeader("refresh-token", tokenInfo.getRefreshToken());
 
     return userProfileDto;
   }

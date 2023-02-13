@@ -30,7 +30,11 @@ public class AuthController {
   @GetMapping("/token")
   public BaseIsSuccessDto tokenRefresh(HttpServletRequest request, HttpServletResponse response){
     try{
-      String refreshToken = CookieUtils.getCookie(request,"refresh-token").getValue();
+      String refreshToken = request.getHeader("refresh-token");
+      if(refreshToken==null){
+        throw new NullPointerException();
+      }
+//      String refreshToken = CookieUtils.getCookie(request,"refresh-token").getValue();
       response.setHeader("Authorization",jwtTokenService.renewAccessToken(refreshToken));
     } catch (NullPointerException npe){
       throw new BaseException(BaseResponseStatus.REFRESH_TOKEN_NOT_FOUND);
@@ -44,8 +48,9 @@ public class AuthController {
 
     TokenInfo tokenInfo = JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx());
     response.addHeader("Authorization", tokenInfo.getAccessToken());
-    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
-        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
+    response.addHeader("refresh-token", tokenInfo.getRefreshToken());
+//    CookieUtils.addCookie(response, "refresh-token", tokenInfo.getRefreshToken(),
+//        (int)(JwtTokenUtils.REFRESH_PERIOD/1000));
 
     return tokenInfo.getAccessToken();
 //      return JwtTokenUtils.allocateDevToken(authDevTokenDto.getUserIdx()).getAccessToken();
