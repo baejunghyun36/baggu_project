@@ -139,69 +139,69 @@ public class TradeFinService {
                     .build()
     );
 
-    createTradeFin(writeUser, targetItem);
+//    createTradeFin(writeUser, targetItem);
   }
 
-  public void createTradeFin(User writeUser, Item targetItem) throws BaseException {
-
-    //이미 상대방이 먼저 후기를 등록해서 trade fin 된 상태인지 확인
-    if(tradeFinRepository.findTradeFinByItemIdx(targetItem.getItemIdx())>0) return;
-
-    //해당 후기를 작성하려는 writer가 requestUser인지 receiveUser인지 확인한다.
-    //trade request에 item(신청받는 아이템)이 targetItem이고 user(신청자)가 writer고, state가 1인 레코드가 존재한다면
-    //writer가 requestUser
-    Optional<TradeRequest> opt = tradeRequestRepository.findByUserIdxAndItemIdx(writeUser.getUserIdx(), targetItem.getItemIdx());
-
-    User requestUser;
-    User receiveUser;
-    Item requestItem;
-    Item receiveItem;
-    TradeFin tradeFin;
-
-    if(opt.isPresent() && opt.get().getTradeRequestState()==1){
-      TradeRequest tradeRequest = opt.get();
-
-      requestUser = tradeRequest.getRequestUser();
-      receiveItem = tradeRequest.getReceiveItemIdx();
-      receiveUser = receiveItem.getUser();
-
-      TradeDetail tradeDetail = tradeDetailRepository.findFinItemByTradeRequestIdx(tradeRequest.getTradeRequestIdx()).orElseThrow();
-
-      tradeFin = TradeFin.builder()
-              .receiveItemIdx(receiveItem.getItemIdx())
-              .receiveNickname(receiveUser.getNickname())
-              .receiveUserIdx(receiveUser.getUserIdx())
-          .receiveProfileImgUrl(receiveUser.getProfileImg())
-              .requestItemIdx(tradeDetail.getRequestItemIdx())
-              .requestNickname(requestUser.getNickname())
-              .requestUserIdx(requestUser.getUserIdx())
-          .requestProfileImgUrl(requestUser.getProfileImg())
-          .build();
-
-    } else{
-      receiveUser = writeUser;
-      requestItem = targetItem;
-
-      TradeDetail tradeDetail = tradeDetailRepository.findFinItemByRequestItemIdx(requestItem.getItemIdx()).orElseThrow();
-      TradeRequest tradeRequest = tradeDetail.getTradeRequest();
-
-      requestUser = tradeRequest.getRequestUser();
-      receiveItem = tradeRequest.getReceiveItemIdx();
-
-      tradeFin = TradeFin.builder()
-              .receiveItemIdx(receiveItem.getItemIdx())
-              .receiveNickname(receiveUser.getNickname())
-              .receiveUserIdx(receiveUser.getUserIdx())
-          .receiveProfileImgUrl(receiveUser.getProfileImg())
-              .requestItemIdx(requestItem.getItemIdx())
-              .requestNickname(requestUser.getNickname())
-              .requestUserIdx(requestUser.getUserIdx())
-          .requestProfileImgUrl(requestUser.getProfileImg())
-              .build();
-    }
-
-    tradeFinRepository.save(tradeFin);
-  }
+//  public void createTradeFin(User writeUser, Item targetItem) throws BaseException {
+//
+//    //이미 상대방이 먼저 후기를 등록해서 trade fin 된 상태인지 확인
+//    if(tradeFinRepository.findTradeFinByItemIdx(targetItem.getItemIdx())>0) return;
+//
+//    //해당 후기를 작성하려는 writer가 requestUser인지 receiveUser인지 확인한다.
+//    //trade request에 item(신청받는 아이템)이 targetItem이고 user(신청자)가 writer고, state가 1인 레코드가 존재한다면
+//    //writer가 requestUser
+//    Optional<TradeRequest> opt = tradeRequestRepository.findByUserIdxAndItemIdx(writeUser.getUserIdx(), targetItem.getItemIdx());
+//
+//    User requestUser;
+//    User receiveUser;
+//    Item requestItem;
+//    Item receiveItem;
+//    TradeFin tradeFin;
+//
+//    if(opt.isPresent() && opt.get().getTradeRequestState()==1){
+//      TradeRequest tradeRequest = opt.get();
+//
+//      requestUser = tradeRequest.getRequestUser();
+//      receiveItem = tradeRequest.getReceiveItemIdx();
+//      receiveUser = receiveItem.getUser();
+//
+//      TradeDetail tradeDetail = tradeDetailRepository.findFinItemByTradeRequestIdx(tradeRequest.getTradeRequestIdx()).orElseThrow();
+//
+//      tradeFin = TradeFin.builder()
+//              .receiveItemIdx(receiveItem.getItemIdx())
+//              .receiveNickname(receiveUser.getNickname())
+//              .receiveUserIdx(receiveUser.getUserIdx())
+//          .receiveProfileImgUrl(receiveUser.getProfileImg())
+//              .requestItemIdx(tradeDetail.getRequestItemIdx())
+//              .requestNickname(requestUser.getNickname())
+//              .requestUserIdx(requestUser.getUserIdx())
+//          .requestProfileImgUrl(requestUser.getProfileImg())
+//          .build();
+//
+//    } else{
+//      receiveUser = writeUser;
+//      requestItem = targetItem;
+//
+//      TradeDetail tradeDetail = tradeDetailRepository.findFinItemByRequestItemIdx(requestItem.getItemIdx()).orElseThrow();
+//      TradeRequest tradeRequest = tradeDetail.getTradeRequest();
+//
+//      requestUser = tradeRequest.getRequestUser();
+//      receiveItem = tradeRequest.getReceiveItemIdx();
+//
+//      tradeFin = TradeFin.builder()
+//              .receiveItemIdx(receiveItem.getItemIdx())
+//              .receiveNickname(receiveUser.getNickname())
+//              .receiveUserIdx(receiveUser.getUserIdx())
+//          .receiveProfileImgUrl(receiveUser.getProfileImg())
+//              .requestItemIdx(requestItem.getItemIdx())
+//              .requestNickname(requestUser.getNickname())
+//              .requestUserIdx(requestUser.getUserIdx())
+//          .requestProfileImgUrl(requestUser.getProfileImg())
+//              .build();
+//    }
+//
+//    tradeFinRepository.save(tradeFin);
+//  }
 
   @Transactional
   public void createHeart(Long tradeFinIdx, Long userIdx) throws BaseException {

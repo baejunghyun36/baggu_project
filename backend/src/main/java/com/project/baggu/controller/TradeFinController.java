@@ -4,6 +4,7 @@ import com.project.baggu.dto.*;
 import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.service.TradeFinService;
+import com.project.baggu.utils.JwtTokenUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,11 @@ public class TradeFinController {
   @PostMapping
   public  ResponseEntity<BaseIsSuccessDto> tradeComplete(@RequestBody TradeCompleteDto tradeCompleteDto){
 
+    Long authUserIdx = Long.parseLong(
+        SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+    if ((authUserIdx != tradeCompleteDto.getUserIdx()[0]) && (authUserIdx !=tradeCompleteDto.getUserIdx()[1])) {
+      throw new BaseException(BaseResponseStatus.UNVALID_USER);
+    }
     tradeFinService.tradeComplete(tradeCompleteDto);
     return new ResponseEntity(new BaseIsSuccessDto(true), HttpStatus.OK);
   }

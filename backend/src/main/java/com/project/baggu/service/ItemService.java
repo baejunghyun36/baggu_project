@@ -285,7 +285,7 @@ public class ItemService {
     tn.setReceiveUserIdx(item.getUser().getUserIdx());
     tn.setType(0);
     tn.setTypeIdx(itemIdx);
-    tn.setRequestUserNickName(nickname);
+    tn.setRequestUserNickName(user.getNickname());
     return tn;
   }
 
