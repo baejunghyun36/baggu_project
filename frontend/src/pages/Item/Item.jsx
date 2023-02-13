@@ -16,10 +16,12 @@ import Carousel from './Carousel';
 import Chip from 'components/common/Chip';
 import ItemModal from './ItemModal';
 import BottomBar from 'components/common/BottomBar';
+import Carousel2 from './Carousel2';
+import Carousel3 from './Carousel3';
 const Container = styled.div`
   ${tw`w-full`}
 `;
-const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
+const Wrapper = tw.div`flex p-2 border-b justify-between`;
 const Info = styled.div`
   ${tw`relative flex mr-2 overflow-hidden box-content whitespace-nowrap text-ellipsis`}
   ${css`
@@ -54,11 +56,30 @@ function Item() {
   const { year, month, day, hour, minute } = FormatDate(item.createdAt);
   const date = GetRelativeTime(year, month, day);
   const navigate = useNavigate();
+
+  const CategoryTypes = [
+    '디지털기기',
+    '생활가전',
+    '가구/인테리어',
+    '생활/주방',
+    '여성의류',
+    '여성잡화',
+    '남성패션/잡화',
+    '뷰티/미용',
+    '스포츠/레저',
+    '취미/게임/음반',
+    '도서',
+    '가공식품',
+    '반려동물용품',
+    '기타',
+  ];
+
   const { data, isLoading } = useQuery(
     ['getUser', { userIdx: item.userIdx }],
     async () => await get_user(item.userIdx),
     { onSuccess: data => setUser(data) }
   );
+
   const deleteHandler = async () => {
     try {
       const { data } = await authInstance.delete(requests.ITEM(id));
@@ -68,6 +89,7 @@ function Item() {
       console.log(error);
     }
   };
+
   const canOfferHandler = () => {
     if (userIdx === item.userIdx) {
       setCanOffer(0);
@@ -115,6 +137,22 @@ function Item() {
       /> */}
           <Container>
             <UserInfo user={user} />
+
+            <Carousel3
+              id="carousel3"
+              imgUrls={[
+                ...item.itemImgUrls,
+                ...item.itemImgUrls,
+                ...item.itemImgUrls,
+                ...item.itemImgUrls,
+              ]}
+            />
+            <div
+              id="here"
+              className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
+            ></div>
+            {/* <Chip tradeState={item.tradeState} /> */}
+
             <BagguOfferList requestUserList={item.requestUserList} />
             <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
               <Product img={item.itemImgUrls} />
@@ -128,9 +166,8 @@ function Item() {
               <section>
                 <Title>{item.title}</Title>
                 <Message>
-                  {item.category} | {item.dong} |{' '}
+                  {CategoryTypes[item.category]} | {item.dong} |{' '}
                   {GetRelativeTime(year, month, day, hour, minute)}
-                  console.log(userIdx)
                 </Message>
               </section>
               <img
