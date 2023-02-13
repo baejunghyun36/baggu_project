@@ -15,7 +15,7 @@ services:
   baggu-redis-deploy:
     container_name: baggu-redis-deploy
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-deploy
       context: ./redis
     ports:
       - "6382:6379"
