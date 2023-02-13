@@ -59,7 +59,7 @@ function Item() {
     async () => await get_user(item.userIdx),
     { onSuccess: data => setUser(data) }
   );
-  const deleteHandler = async id => {
+  const deleteHandler = async () => {
     try {
       const { data } = await authInstance.delete(requests.ITEM(id));
       navigate('/');
@@ -92,7 +92,7 @@ function Item() {
       }
     };
     get_item(id);
-  }, []);
+  }, [id]);
 
   return (
     <div>
@@ -102,7 +102,7 @@ function Item() {
         <div>
           {showModal ? (
             <ItemModal
-              onDelete={deleteHandler}
+              onRemove={deleteHandler}
               onCancel={() => setShowModal(false)}
               onEdit={editHandler}
             />
@@ -115,6 +115,7 @@ function Item() {
       /> */}
           <Container>
             <UserInfo user={user} />
+            <BagguOfferList requestUserList={item.requestUserList} />
             <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
               <Product img={item.itemImgUrls} />
               {/* <Carousel images={item.itemImgUrls} /> */}
@@ -132,13 +133,13 @@ function Item() {
                   console.log(userIdx)
                 </Message>
               </section>
+              <img
+                className={`${userIdx === item.userIdx ? '' : 'hidden'}`}
+                onClick={() => setShowModal(true)}
+                src={option_button}
+                alt="profile_edit"
+              />
             </Info>
-            <img
-              className={`${userIdx === item.userIdx ? '' : 'hidden'}`}
-              onClick={() => setShowModal(true)}
-              src={option_button}
-              alt="profile_edit"
-            />
           </Wrapper>
           <BottomBar
             showHeart={`${userIdx === item.userIdx ? false : true}`}
