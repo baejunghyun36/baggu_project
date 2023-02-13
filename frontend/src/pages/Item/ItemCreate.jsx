@@ -141,9 +141,11 @@ function ItemCreate() {
       data.append('title', itemTitle);
       data.append('content', itemContent);
       data.append('category', itemCategories);
+      data.append('itemImgs', []);
       itemImage.forEach((image, index) => {
         data.append('itemImgs', image);
       });
+
       for (let key of data.keys()) {
         console.log(key);
       }
@@ -156,6 +158,7 @@ function ItemCreate() {
       // });
       const post_item_create = async () => {
         try {
+          console.log('form data :', data);
           const response = await authInstance.post(requests.POST_ITEM, data, {
             headers: {
               Authorization: localStorage.getItem('token'),
@@ -174,6 +177,8 @@ function ItemCreate() {
       });
     }
   };
+
+  console.log(itemImage);
   return (
     <div>
       <div className={`${page === 0 ? '' : 'hidden'}`}>
