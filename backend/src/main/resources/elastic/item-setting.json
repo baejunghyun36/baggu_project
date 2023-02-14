@@ -1,0 +1,23 @@
+{
+    "analysis": {
+      "analyzer": {
+        "nori_discard": {
+          "tokenizer": "nori_t_discard",
+          "filter": "my_shingle"
+        }
+      },
+      "tokenizer": {
+        "nori_t_discard": {
+          "type": "nori_tokenizer",
+          "decompound_mode": "discard"
+        }
+      },
+      "filter": {
+        "my_shingle": {
+          "type": "shingle",
+          "token_separator": "",
+          "max_shingle_size": 3
+        }
+      }
+    }
+}

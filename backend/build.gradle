@@ -72,7 +72,8 @@ dependencies {
 	testImplementation("org.assertj:assertj-core:3.24.2")
 	//mokito
 	testImplementation 'org.mockito:mockito-core:3.11.2'
-
+	//elasticsearch
+	implementation 'org.springframework.data:spring-data-elasticsearch'
 }
 
 tasks.named('test') {

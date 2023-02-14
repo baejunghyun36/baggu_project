@@ -23,13 +23,28 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
   @Query(value = "select i from Item i left outer join fetch i.reviewText where i.user.userIdx = ?1 ")
   Slice<Item> getUserItemList(Long userIdx, Pageable pageable);
 
+
+  /**
+   * 리스트에 담긴 itemIdx를 이용해 Item 엔티티가 담긴 List를 반환
+   * @param itemIdxList
+   * @return List<Item>
+   * @author Jung Hyun Bae
+   * @author An Chae Lee (modifier)
+   */
+  @Query("SELECT i FROM Item i left outer join fetch i.reviewText WHERE i.itemIdx IN (?1) AND i.isValid = true AND i.createdAt IS NOT NULL ORDER BY i.createdAt DESC\n"
+      + "\n"
+      + "\n")
+  Slice<Item> findItemsByItemIdxList(@Param("itemIdxList") List<Long> itemIdxList, Pageable pageable);
+
+  //fetch join
+  @Query("select i from Item i left outer join i.reviewText where i.title like %:itemName% order by i.createdAt desc")
+  Slice<Item> getItemListByItemName(@Param("itemName") String itemName, Pageable pageable);
+
   @Modifying
   @Query("update Item i set i.isValid = false where i.itemIdx = :itemIdx")
   void deleteItem(@Param("itemIdx") Long itemIdx);
 
-  //fetch join
-  @Query("select i from Item i left outer join i.reviewText where i.title like %:itemName% order by i.createdAt desc")
-  Slice<Item> getItemListByItemName(@Param("itemName") String itemName);
+
 
   @Query("select i from Item i, ItemKeep ik where ik.user.userIdx = :userIdx and ik.item = i")
   List<Item> userKeepItemList(@Param("userIdx") Long userIdx);
@@ -51,4 +66,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 //  @Query("SELECT i FROM Item i JOIN FETCH i.reviewText")
 //  List<Item> findAllItemsWithReviewText();
+
+
 }
