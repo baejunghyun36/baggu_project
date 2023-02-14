@@ -12,17 +12,10 @@ const axiosApi = (url, options) => {
   return instance;
 };
 
-const token = localStorage.getItem('token');
-// const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWR4IjoyMSwicm9sZSI6IlJPTEVfUkVHVUxBUl9VU0VSIiwiaWF0IjoxNjc1OTkxNTY4LCJleHAiOjE2NzU5OTI0Njh9.9e0LszOrqv_7yo9KXKou1v6d24d0JLknTMyZmsaz7LQ`;
-// const token = getCookie('token');
-
 // 인증이 필요한 axios 인스턴스
 const axiosAuthApi = (url, options) => {
-  // 토큰 가져오는 코드 수정 필요
-  // const token = localStorage.getItem('token');
   const instance = axios.create({
     baseURL: url,
-    headers: { Authorization: token },
     ...options,
   });
   return instance;
@@ -32,7 +25,6 @@ const axiosAuthApi = (url, options) => {
 const axiosNotifyApi = (url, options) => {
   const instance = axios.create({
     baseURL: requests.notify_base_url,
-    headers: { Authorization: token },
     ...options,
   });
   return instance;
@@ -42,7 +34,6 @@ const axiosNotifyApi = (url, options) => {
 const axiosChatApi = (url, options) => {
   const instance = axios.create({
     baseURL: requests.chat_base_url,
-    headers: { Authorization: token },
     ...options,
   });
   return instance;
@@ -52,6 +43,7 @@ const axiosChatApi = (url, options) => {
 const axiosRefreshApi = (url, options) => {
   const instance = axios.create({
     baseURL: url,
+    // headers: { 'refresh-token': localStorage.getItem('refresh-token') },
   });
   return instance;
 };
@@ -62,6 +54,32 @@ export const notifyAuthApi = axiosNotifyApi(BASE_URL);
 export const chatAuthApi = axiosChatApi(BASE_URL);
 export const refreshTokenInstance = axiosRefreshApi(BASE_URL);
 
+// request 인터셉터
+authInstance.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `${localStorage.getItem('token')}`;
+  }
+  return config;
+});
+
+notifyAuthApi.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `${localStorage.getItem('token')}`;
+  }
+  return config;
+});
+
+chatAuthApi.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `${localStorage.getItem('token')}`;
+  }
+  return config;
+});
+
+// response 인터셉터
 // 토큰 만료시 리프레시 토큰으로 재발급 요청
 authInstance.interceptors.response.use(
   response => response,
@@ -73,9 +91,9 @@ authInstance.interceptors.response.use(
 
     // 401 : unauthorized 에러
     if (status === 401) {
+      const token = localStorage.getItem('token');
       // access-token 재발급 요청
       return refreshTokenInstance.get('/baggu/auth/token').then(({ data }) => {
-        console.log('get refresh response data :', data);
         localStorage.setItem('token', data);
         config.headers.Authorization = `${token}`;
 
