@@ -3,7 +3,7 @@ services:
   baggu-database-test:
     container_name: baggu-database-test
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-test
       context: ./database
     environment:
       - MARIADB_DATABASE=baggu
