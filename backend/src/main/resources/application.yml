@@ -49,7 +49,7 @@ spring:
             user_name_attribute: id
   sql:
     init:
-      node: always
+      mode: always
 
 #log설정
 logging:
