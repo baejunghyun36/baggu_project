@@ -38,7 +38,7 @@ function MyProfile() {
   const navigate = useNavigate();
   const logoutHandler = async () => {
     await logout(userIdx).then(() => {
-      navigate('/start');
+      navigate('/login');
     });
   };
 
