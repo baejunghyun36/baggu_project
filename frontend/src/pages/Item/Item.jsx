@@ -21,6 +21,12 @@ import Carousel3 from './Carousel3';
 const Container = styled.div`
   ${tw`w-full`}
 `;
+const ListWrapper = styled.div`
+  ${tw`border-t-4 mt-[60px] overflow-scroll`}
+  ${css`
+    height: calc(100vh - 218px);
+  `}
+`;
 const Wrapper = tw.div`flex p-2 border-b justify-between`;
 const Info = styled.div`
   ${tw`relative flex mr-2 overflow-hidden box-content whitespace-nowrap text-ellipsis`}
@@ -46,6 +52,12 @@ const Product = styled.div`
 `;
 
 function Item() {
+  // 사용자와 게시글 작성자가 동일인물인지 판별하는 props
+  const [isSameUser, setIsSameUser] = useState(false);
+  // 이미 교환신청을 넣은 사람인지 판별하는 props
+  const [isAlreadyOffer, setIsAlreadyOffer] = useState(false);
+  // 교환신청한 사람의 수가 가득 차있는지 확인하는 props
+  const [isFull, setIsFull] = useState(false);
   const userIdx = Number(localStorage.getItem('userIdx'));
   const [canOffer, setCanOffer] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -56,7 +68,6 @@ function Item() {
   const { year, month, day, hour, minute } = FormatDate(item.createdAt);
   const date = GetRelativeTime(year, month, day);
   const navigate = useNavigate();
-
   const CategoryTypes = [
     '디지털기기',
     '생활가전',
@@ -73,36 +84,6 @@ function Item() {
     '반려동물용품',
     '기타',
   ];
-
-  const { data, isLoading } = useQuery(
-    ['getUser', { userIdx: item.userIdx }],
-    async () => await get_user(item.userIdx),
-    { onSuccess: data => setUser(data) }
-  );
-
-  const deleteHandler = async () => {
-    try {
-      const { data } = await authInstance.delete(requests.ITEM(id));
-      navigate('/');
-      return;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const canOfferHandler = () => {
-    if (userIdx === item.userIdx) {
-      setCanOffer(0);
-    } else if (userIdx !== item.userIdx && item.requestUserList.length > 10) {
-      setCanOffer(1);
-    } else {
-      setCanOffer(2);
-    }
-  };
-  const editHandler = () => {
-    navigate(`/item/${id}/edit`);
-  };
-
   useEffect(() => {
     const get_item = async id => {
       try {
@@ -115,6 +96,44 @@ function Item() {
     };
     get_item(id);
   }, [id]);
+
+  const { data, isLoading } = useQuery(
+    ['getUser', { userIdx: item.userIdx }],
+    async () => await get_user(item.userIdx),
+    {
+      onSuccess: data => {
+        setUser(data);
+        if (userIdx === item.userIdx) {
+          setIsSameUser(true);
+        }
+        if (item.requestUserList.lenth > 10) {
+          setIsFull(true);
+        }
+        const requestUsersList = item.requestUserList;
+        const requestUsersIdx = [];
+        requestUsersList.forEach(requestUser =>
+          requestUsersIdx.push(requestUser.userIdx)
+        );
+        if (requestUsersIdx.includes(userIdx)) {
+          setIsAlreadyOffer(true);
+        }
+      },
+    }
+  );
+
+  const deleteHandler = async () => {
+    try {
+      const { data } = await authInstance.delete(requests.ITEM(id));
+      navigate('/');
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const editHandler = () => {
+    navigate(`/item/${id}/edit`);
+  };
 
   return (
     <div>
@@ -135,51 +154,53 @@ function Item() {
           {/* <TopBar2
         title={`${userIdx === item.userIdx ? '교환할 물건 선택' : ''}`}
       /> */}
-          <Container>
-            <UserInfo user={user} />
+          <ListWrapper>
+            <Container>
+              <UserInfo user={user} />
 
-            <Carousel3
-              id="carousel3"
-              imgUrls={[
-                ...item.itemImgUrls,
-                ...item.itemImgUrls,
-                ...item.itemImgUrls,
-                ...item.itemImgUrls,
-              ]}
-            />
-            <div
-              id="here"
-              className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
-            ></div>
-            {/* <Chip tradeState={item.tradeState} /> */}
-
-            <BagguOfferList requestUserList={item.requestUserList} />
-            <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
-              <Product img={item.itemImgUrls} />
-              {/* <Carousel images={item.itemImgUrls} /> */}
-              <Chip tradeState={item.tradeState} />
-              {/* {item.itemImgUrls && <Carousel images={item.itemImgUrls} />} */}
-            </div>
-          </Container>
-          <Wrapper>
-            <Info>
-              <section>
-                <Title>{item.title}</Title>
-                <Message>
-                  {CategoryTypes[item.category]} | {item.dong} |{' '}
-                  {GetRelativeTime(year, month, day, hour, minute)}
-                </Message>
-              </section>
-              <img
-                className={`${userIdx === item.userIdx ? '' : 'hidden'}`}
-                onClick={() => setShowModal(true)}
-                src={option_button}
-                alt="profile_edit"
+              <Carousel3
+                id="carousel3"
+                imgUrls={[
+                  ...item.itemImgUrls,
+                  ...item.itemImgUrls,
+                  ...item.itemImgUrls,
+                  ...item.itemImgUrls,
+                ]}
               />
-            </Info>
-          </Wrapper>
+              <div
+                id="here"
+                className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
+              ></div>
+              {/* <Chip tradeState={item.tradeState} /> */}
+
+              <BagguOfferList requestUserList={item.requestUserList} />
+              <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
+                <Product img={item.itemImgUrls} />
+                {/* <Carousel images={item.itemImgUrls} /> */}
+                <Chip tradeState={item.tradeState} />
+                {/* {item.itemImgUrls && <Carousel images={item.itemImgUrls} />} */}
+              </div>
+            </Container>
+            <Wrapper>
+              <Info>
+                <section>
+                  <Title>{item.title}</Title>
+                  <Message>
+                    {CategoryTypes[item.category]} | {item.dong} |{' '}
+                    {GetRelativeTime(year, month, day, hour, minute)}
+                  </Message>
+                </section>
+                <img
+                  className={`${isSameUser ? '' : 'hidden'}`}
+                  onClick={() => setShowModal(true)}
+                  src={option_button}
+                  alt="profile_edit"
+                />
+              </Info>
+            </Wrapper>
+          </ListWrapper>
           <BottomBar
-            showHeart={`${userIdx === item.userIdx ? false : true}`}
+            showHeart={`${isSameUser ? false : true}`}
             canOffer={canOffer}
             btnTitle={userIdx === item.userIdx ? '바꿀 물건 선택' : '교환 신청'}
           />
