@@ -10,6 +10,7 @@ COPY . .
 # gradlew을 사용하여 build한다.
 RUN sed -i 's/mariadb:\/\/localhost/mariadb:\/\/baggu-database-test/g' /app/src/main/resources/application.yml
 RUN sed -i 's/host: 127.0.0.1/host: baggu-redis-test/g' /app/src/main/resources/application-SECRET.yml
+RUN sed -i 's/http:\/\/localhost:3000/https:\/\/test.baggu.shop/g' /app/src/main/resources/application.yml
 RUN chmod +x gradlew
 RUN ./gradlew -x compileTestJava build
 

@@ -15,11 +15,17 @@ import option_button from 'assets/icons/option_button.svg';
 import Carousel from './Carousel';
 import Chip from 'components/common/Chip';
 import ItemModal from './ItemModal';
-import BottomBar from 'components/common/BottomBar';
+import ItemBottomBar from './ItemBottomBar';
 import Carousel2 from './Carousel2';
 import Carousel3 from './Carousel3';
 const Container = styled.div`
   ${tw`w-full`}
+`;
+const ListWrapper = styled.div`
+  ${tw`border-t-4 mt-[60px] overflow-scroll`}
+  ${css`
+    height: calc(100vh - 218px);
+  `}
 `;
 const Wrapper = tw.div`flex p-2 border-b justify-between`;
 const Info = styled.div`
@@ -47,16 +53,20 @@ const Product = styled.div`
 
 function Item() {
   const userIdx = Number(localStorage.getItem('userIdx'));
-  const [canOffer, setCanOffer] = useState(0);
+  const [isSameUser, setIsSameUser] = useState(false);
+  const [isAlreadyOffer, setIsAlreadyOffer] = useState(false);
+  const [isFull, setIsFull] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState();
   const [showModal, setShowModal] = useState(false);
-  const [requestUserList, setRequsetUserList] = useState([]);
+  const [checkShow, setCheckShow] = useState(false);
+  const [numOfferUser, setNumOfferUser] = useState();
   const { id } = useParams();
   const [item, setItem] = useState([]);
   const [user, setUser] = useState([]);
   const { year, month, day, hour, minute } = FormatDate(item.createdAt);
   const date = GetRelativeTime(year, month, day);
   const navigate = useNavigate();
-
   const CategoryTypes = [
     '디지털기기',
     '생활가전',
@@ -73,36 +83,6 @@ function Item() {
     '반려동물용품',
     '기타',
   ];
-
-  const { data, isLoading } = useQuery(
-    ['getUser', { userIdx: item.userIdx }],
-    async () => await get_user(item.userIdx),
-    { onSuccess: data => setUser(data) }
-  );
-
-  const deleteHandler = async () => {
-    try {
-      const { data } = await authInstance.delete(requests.ITEM(id));
-      navigate('/');
-      return;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const canOfferHandler = () => {
-    if (userIdx === item.userIdx) {
-      setCanOffer(0);
-    } else if (userIdx !== item.userIdx && item.requestUserList.length > 10) {
-      setCanOffer(1);
-    } else {
-      setCanOffer(2);
-    }
-  };
-  const editHandler = () => {
-    navigate(`/item/${id}/edit`);
-  };
-
   useEffect(() => {
     const get_item = async id => {
       try {
@@ -115,6 +95,48 @@ function Item() {
     };
     get_item(id);
   }, [id]);
+
+  const { data, isLoading } = useQuery(
+    ['getUser', { userIdx: item.userIdx }],
+    async () => await get_user(item.userIdx),
+    {
+      onSuccess: data => {
+        // console.log(isSameUser);
+        setUser(data);
+        if (userIdx === item.userIdx) {
+          setIsSameUser(true);
+        }
+        if (item.requestUserList.lenth > 10) {
+          setIsFull(true);
+        }
+        const requestUsersList = item.requestUserList;
+        const requestUsersIdx = [];
+        requestUsersList.forEach(requestUser =>
+          requestUsersIdx.push(requestUser.userIdx)
+        );
+        if (requestUsersIdx.includes(userIdx)) {
+          setIsAlreadyOffer(true);
+        }
+      },
+    }
+  );
+  const btnClickHandler = () => {
+    setCheckShow(!checkShow);
+    console.log(checkShow);
+  };
+  const deleteHandler = async () => {
+    try {
+      const { data } = await authInstance.delete(requests.ITEM(id));
+      navigate('/');
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const editHandler = () => {
+    navigate(`/item/${id}/edit`);
+  };
 
   return (
     <div>
@@ -135,52 +157,75 @@ function Item() {
           {/* <TopBar2
         title={`${userIdx === item.userIdx ? '교환할 물건 선택' : ''}`}
       /> */}
-          <Container>
-            <UserInfo user={user} />
+          <ListWrapper>
+            <Container>
+              <UserInfo user={user} />
 
-            <Carousel3
-              id="carousel3"
-              imgUrls={[
-                ...item.itemImgUrls,
-                ...item.itemImgUrls,
-                ...item.itemImgUrls,
-                ...item.itemImgUrls,
-              ]}
-            />
-            <div
-              id="here"
-              className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
-            ></div>
-            {/* <Chip tradeState={item.tradeState} /> */}
-
-            <BagguOfferList requestUserList={item.requestUserList} />
-            <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
-              <Product img={item.itemImgUrls} />
-              {/* <Carousel images={item.itemImgUrls} /> */}
-              <Chip tradeState={item.tradeState} />
-              {/* {item.itemImgUrls && <Carousel images={item.itemImgUrls} />} */}
-            </div>
-          </Container>
-          <Wrapper>
-            <Info>
-              <section>
-                <Title>{item.title}</Title>
-                <Message>
-                  {CategoryTypes[item.category]} | {item.dong} |{' '}
-                  {GetRelativeTime(year, month, day, hour, minute)}
-                </Message>
-              </section>
-              <img
-                className={`${userIdx === item.userIdx ? '' : 'hidden'}`}
-                onClick={() => setShowModal(true)}
-                src={option_button}
-                alt="profile_edit"
+              <Carousel3
+                id="carousel3"
+                imgUrls={[
+                  ...item.itemImgUrls,
+                  ...item.itemImgUrls,
+                  ...item.itemImgUrls,
+                  ...item.itemImgUrls,
+                ]}
               />
-            </Info>
-          </Wrapper>
-          <BottomBar
-            showHeart={`${userIdx === item.userIdx ? false : true}`}
-            canOffer={canOffer}
+              <div
+                id="here"
+                className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
+              />
+              {/* <Chip tradeState={item.tradeState} /> */}
+
+              <BagguOfferList
+                requestUserList={item.requestUserList}
+                numOfferUser={numOfferUser}
+                setNumOfferUser={setNumOfferUser}
+                selected={selected}
+                setSelected={setSelected}
+                selectedIdx={selectedIdx}
+                setSelectedIdx={setSelectedIdx}
+              />
+              <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
+                <Product img={item.itemImgUrls} />
+                {/* <Carousel images={item.itemImgUrls} /> */}
+                <Chip tradeState={item.tradeState} />
+                {/* {item.itemImgUrls && <Carousel images={item.itemImgUrls} />} */}
+              </div>
+            </Container>
+            <Wrapper>
+              <Info>
+                <section>
+                  <Title>{item.title}</Title>
+                  <Message>
+                    {CategoryTypes[item.category]} | {item.dong} |{' '}
+                    {GetRelativeTime(year, month, day, hour, minute)}
+                  </Message>
+                </section>
+                <img
+                  className={`${isSameUser ? '' : 'hidden'}`}
+                  onClick={() => setShowModal(true)}
+                  src={option_button}
+                  alt="profile_edit"
+                />
+              </Info>
+            </Wrapper>
+          </ListWrapper>
+          <ItemBottomBar
+            tradeState={item.tradeState}
+            isSameUser={isSameUser}
+            selected={selected}
+            isAlreadyOffer={isAlreadyOffer}
+            isFull={isFull}
+            btnClickHandler={btnClickHandler}
+            itemIdx={id}
+            checkShow={checkShow}
+            // 거래 상태에 따라서 거래중이면 버튼 비활성화 거래완료도 비활성화
+            // 거래중이 아니라면 바꿀 물건 선택
+            // 바꿀 물건 선택 버튼 누를시 선택완료 비활성화, selectedIdx가 null이 아닐경우 활성화
+            // 사용자와 작성자가 동일하다면 바꿀물건 선택 ,
+            // 사용자와 작성자가 동일하지 않다면, 이미 거래신청한 사람일 경우 바꾸 취소버튼, 거래신청하지는 않았지만 isFull이라면 신청불가
+            //사용자와 작성자가 동일하지 않으며 위의 조건에 속하지 않는다면 바꾸신청, 바꾸신청 페이지로 이동
+            // 비활성화 조건: 거래상대 (거래중, 거래완료)
           />
         </div>
       )}

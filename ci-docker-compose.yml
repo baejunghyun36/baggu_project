@@ -38,7 +38,7 @@ services:
   baggu-frontend-test:
     container_name: baggu-frontend-test
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-test
       context: ./frontend
     ports:
       - "3001:3000"

@@ -2,7 +2,7 @@
 // 각 key의 상단의 주석으로 API 명세 상 API 제목 명시함
 const requests = {
   // baggu 공식
-  base_url: 'https://test.baggu.shop/api',
+  // base_url: 'https://baggu.shop/api',
 
   // 알림 서버 URL
   notify_base_url: 'https://baggu.shop/notifyapi',
@@ -11,7 +11,7 @@ const requests = {
   chat_base_url: 'https://baggu.shop/chatapi',
 
   // 소정님 IP
-  // base_url: 'http://70.12.247.158:9999',
+  base_url: 'http://70.12.247.158:9999',
 
   // 안채님 IP
   // base_url: 'http://70.12.247.174:9999',
