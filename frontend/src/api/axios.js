@@ -52,7 +52,6 @@ const axiosChatApi = (url, options) => {
 const axiosRefreshApi = (url, options) => {
   const instance = axios.create({
     baseURL: url,
-    headers: { 'refresh-token': getCookie('refresh-token') },
   });
   return instance;
 };
