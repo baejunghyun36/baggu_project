@@ -1,6 +1,6 @@
 // import React from 'react';
 
-function GetRelativeTime(year, month, day, hour, minute) {
+function GetRelativeTime({ year, month, day, hour, minute }) {
   /*
   < hook 설명 >
   비교 대상인 날짜를 인자로 받아 현재 시간과 상대적인 시간을 계산하여 "문자열"로 반환합니다.
