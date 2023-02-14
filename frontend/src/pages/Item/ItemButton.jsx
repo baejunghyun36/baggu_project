@@ -29,42 +29,65 @@ function ItemButton({
   tradeState,
   apiState,
   setApiState,
+  title,
+  setTitle,
+  toggle,
+  setToggle,
 }) {
-  const [title, setTitle] = useState('');
   const [disabled, setDisabled] = useState('default');
+  const [onOff, setOnOff] = useState(true);
+  const onClickOnOff = onOff
+    ? {
+        onClick: e => {
+          e.preventDefault();
+          btnClickHandler();
+        },
+      }
+    : {
+        onClick: e => {
+          e.preventDefault();
+        },
+      };
   useEffect(() => {
     if (isSameUser) {
-      setTitle('바꿀물건선택');
+      setTitle('바꿀 물건 선택');
       setDisabled('default');
+      setOnOff(true);
       if (checkShow && selected) {
         setTitle('선택 완료');
         setDisabled('default');
         setApiState(title);
+        setOnOff(true);
       } else if (tradeState !== 0) {
-        setTitle('바꿀물건선택');
+        setTitle('바꿀 물건 선택');
         setDisabled('disabled');
+        setOnOff(false);
       } else if (checkShow && !selected) {
         setTitle('선택 완료');
         setDisabled('disabled');
+        setOnOff(true);
       }
     }
     if (!isSameUser) {
       setTitle('바꾸신청');
       setDisabled('default');
       setApiState(title);
+      setOnOff(true);
       if (isFull || tradeState !== 0) {
         setTitle('바꾸신청');
         setDisabled('disabled');
+        setOnOff(false);
       } else if (isAlreadyOffer) {
         setTitle('바꾸신청 취소');
         setDisabled('cancle');
         setApiState(title);
+        setOnOff(true);
       }
     }
-  }, [checkShow]);
+  }, [toggle]);
 
   return (
-    <Btn type={disabled} onClick={btnClickHandler}>
+    <Btn type={disabled} onClick={onClickOnOff.onClick}>
       <span>{title}</span>
     </Btn>
   );
