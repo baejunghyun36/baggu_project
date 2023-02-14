@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import heart_unliked from '../../assets/icons/heart_unliked.svg';
 import heart_liked from '../../assets/icons/heart_liked.svg';
 
-function BottomBar({ showHeart, btnTitle, btnClickHandler, canOffer }) {
+function BottomBar({ showHeart, btnTitle, btnClickHandler }) {
   const [liked, setLiked] = useState(false);
   // 좋아요 API 요청
   const likeHandler = () => {
