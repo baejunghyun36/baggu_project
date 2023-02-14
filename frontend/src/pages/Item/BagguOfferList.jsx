@@ -6,6 +6,7 @@ function BagguOfferList({
   numOfferUser,
   setNumOfferUser,
   selected,
+  checkShow,
   setSelected,
   selectedIdx,
   setSelectedIdx,
@@ -27,6 +28,7 @@ function BagguOfferList({
             setSelected={setSelected}
             selectedIdx={selectedIdx}
             setSelectedIdx={setSelectedIdx}
+            checkShow={checkShow}
           />
         </div>
       ))}

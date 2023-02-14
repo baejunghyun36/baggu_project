@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { authInstance } from 'api/axios';
 import requests from 'api/config';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import OfferImgListItem from './OfferImgListItem';
 
 function OfferImgList({
   requestItemList,
+  checkShow,
   selected,
   setSelected,
   selectedIdx,
@@ -21,7 +23,7 @@ function OfferImgList({
             <OfferImgListItem
               requestItemIdx={requestItem.requestItemIdx}
               requestItemFirstImg={requestItem.requestItemFirstImg}
-              checkShow={true}
+              checkShow={checkShow}
               selected={selected}
               setSelected={setSelected}
               selectedIdx={selectedIdx}

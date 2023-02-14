@@ -23,7 +23,6 @@ function OfferImgListItem({
   setSelectedIdx,
 }) {
   const navigate = useNavigate();
-
   const linkProps = checkShow
     ? {
         onClick: e => {

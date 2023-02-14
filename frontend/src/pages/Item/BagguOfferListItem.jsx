@@ -8,6 +8,7 @@ function BagguOfferListItem({
   setSelected,
   selectedIdx,
   setSelectedIdx,
+  checkShow,
 }) {
   // console.log(requestUser);
   // const [selected, setSelected] = useState(false);
@@ -25,6 +26,7 @@ function BagguOfferListItem({
         setSelected={setSelected}
         selectedIdx={selectedIdx}
         setSelectedIdx={setSelectedIdx}
+        checkShow={checkShow}
       />
     </div>
   );

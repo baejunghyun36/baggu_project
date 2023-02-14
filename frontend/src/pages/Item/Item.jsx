@@ -67,8 +67,9 @@ function Item() {
   const { id } = useParams();
   const [item, setItem] = useState([]);
   const [user, setUser] = useState([]);
-  const { year, month, day, hour, minute } = FormatDate(item.createdAt);
-  const date = GetRelativeTime(year, month, day);
+  const [tradeDetailIdx, setTradeDetailIdx] = useState();
+  // const { year, month, day, hour, minute } = FormatDate(item.createdAt);
+  // const date = GetRelativeTime(year, month, day);
   const navigate = useNavigate();
   const CategoryTypes = [
     '디지털기기',
@@ -86,6 +87,9 @@ function Item() {
     '반려동물용품',
     '기타',
   ];
+  // useEffect(() => {
+  //   console.log(selected);
+  // }, [selected]);
   useEffect(() => {
     const get_item = async id => {
       try {
@@ -98,7 +102,17 @@ function Item() {
     };
     get_item(id);
   }, [id]);
-
+  const choose_request = async selectedIdx => {
+    try {
+      const { data } = await authInstance.get(
+        requests.CHOOSE_REQUEST(selectedIdx)
+      );
+      console.log(data);
+      return setTradeDetailIdx(data.tradeDetailIdx);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const { data, isLoading } = useQuery(
     ['getUser', { userIdx: item.userIdx }],
     async () => await get_user(item.userIdx),
@@ -128,9 +142,10 @@ function Item() {
     if (isSameUser) {
       setCheckShow(!checkShow);
       if (apiState === '선택 완료') {
+        choose_request(selectedIdx);
       }
     } else if (!isSameUser && apiState === '바꾸신청') {
-      console.log(apiState);
+      navigate(`/makeRequest/${id}`);
     } else if (!isSameUser && apiState === '바꾸신청 취소') {
       console.log(apiState);
       setIsAlreadyOffer(!isAlreadyOffer);
@@ -193,6 +208,7 @@ function Item() {
                 numOfferUser={numOfferUser}
                 setNumOfferUser={setNumOfferUser}
                 selected={selected}
+                checkShow={checkShow}
                 setSelected={setSelected}
                 selectedIdx={selectedIdx}
                 setSelectedIdx={setSelectedIdx}
@@ -210,7 +226,7 @@ function Item() {
                   <Title>{item.title}</Title>
                   <Message>
                     {CategoryTypes[item.category]} | {item.dong} |{' '}
-                    {GetRelativeTime(year, month, day, hour, minute)}
+                    {/* {GetRelativeTime(year, month, day, hour, minute)} */}
                   </Message>
                 </section>
                 <img
