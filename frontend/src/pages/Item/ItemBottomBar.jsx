@@ -17,6 +17,10 @@ function ItemBottomBar({
   checkShow,
   apiState,
   setApiState,
+  title,
+  setTitle,
+  toggle,
+  setToggle,
 }) {
   const [liked, setLiked] = useState(false);
   // 좋아요 API 요청
@@ -73,6 +77,10 @@ function ItemBottomBar({
         tradeState={tradeState}
         apiState={apiState}
         setApiState={setApiState}
+        title={title}
+        setTitle={setTitle}
+        toggle={toggle}
+        setToggle={setToggle}
         // 거래 상태에 따라서 거래중이면 버튼 비활성화 거래완료도 비활성화
         // 거래중이 아니라면 바꿀 물건 선택
         // 바꿀 물건 선택 버튼 누를시 선택완료 비활성화, selectedIdx가 null이 아닐경우 활성화

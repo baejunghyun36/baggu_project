@@ -10,7 +10,7 @@ function BagguOfferList({
   selectedIdx,
   setSelectedIdx,
 }) {
-  setNumOfferUser(requestUserList.length);
+  // setNumOfferUser(requestUserList.length);
   // const [selected, setSelected] = useState(false);
   // const [selectedIdx, setSelectedIdx] = useState();
   return (

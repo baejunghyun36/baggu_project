@@ -53,6 +53,7 @@ const Product = styled.div`
 
 function Item() {
   const userIdx = Number(localStorage.getItem('userIdx'));
+  const [title, setTitle] = useState('');
   const [isSameUser, setIsSameUser] = useState(false);
   const [isAlreadyOffer, setIsAlreadyOffer] = useState(false);
   const [isFull, setIsFull] = useState(false);
@@ -62,6 +63,7 @@ function Item() {
   const [showModal, setShowModal] = useState(false);
   const [checkShow, setCheckShow] = useState(false);
   const [numOfferUser, setNumOfferUser] = useState();
+  const [toggle, setToggle] = useState(false);
   const { id } = useParams();
   const [item, setItem] = useState([]);
   const [user, setUser] = useState([]);
@@ -122,9 +124,11 @@ function Item() {
     }
   );
   const btnClickHandler = () => {
+    setToggle(!toggle);
     if (isSameUser) {
       setCheckShow(!checkShow);
-      console.log(apiState);
+      if (apiState === '선택 완료') {
+      }
     } else if (!isSameUser && apiState === '바꾸신청') {
       console.log(apiState);
     } else if (!isSameUser && apiState === '바꾸신청 취소') {
@@ -229,6 +233,10 @@ function Item() {
             checkShow={checkShow}
             apiState={apiState}
             setApiState={setApiState}
+            title={title}
+            setTitle={setTitle}
+            toggle={toggle}
+            setToggle={setToggle}
             // 거래 상태에 따라서 거래중이면 버튼 비활성화 거래완료도 비활성화
             // 거래중이 아니라면 바꿀 물건 선택
             // 바꿀 물건 선택 버튼 누를시 선택완료 비활성화, selectedIdx가 null이 아닐경우 활성화
