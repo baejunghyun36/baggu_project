@@ -126,7 +126,7 @@ function StartTown() {
     // {myTown : myTown}으로 중앙저장소에 저장
     const { si, gu, dong, lng, lat } = myTown;
     saveTown(si, gu, dong, lng, lat);
-    navigate('/start/category');
+    navigate('/login/category');
   };
 
   return (

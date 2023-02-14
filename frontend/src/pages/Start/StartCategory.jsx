@@ -149,7 +149,7 @@ function StartCategory() {
           navigate('/');
         })
         .catch(error => {
-          navigate('/start');
+          navigate('/login');
           console.log(error);
         });
     }

@@ -59,8 +59,11 @@ const queryClient = new QueryClient();
 
 // Main Component
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem('isLoggedIn')
+  );
   const userIdx = window.localStorage.getItem('userIdx');
-  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  // const isLoggedIn = localStorage.getItem('isLoggedIn');
 
   // 알림서버 SSE 구독 상태
   const [listeningToNotify, setListeningToNotify] = useState(false);
@@ -69,9 +72,9 @@ function App() {
 
   useEffect(() => {
     let notifyEvent = undefined;
-
+    // console.log('app useEffect', isLoggedIn);
     // 1. 알림 SSE 연결
-    if (isLoggedIn && !listeningToNotify) {
+    if (isLoggedIn !== null && !listeningToNotify) {
       notifyEvent = new EventSource(
         `${requests.notify_base_url + requests.GET_NOTIFY(userIdx)}`
       );
@@ -96,14 +99,20 @@ function App() {
       };
 
       setListeningToNotify(true);
+      return () => {
+        notifyEvent.close();
+        setListeningToNotify(false);
+        // console.log('useEffect ended & notify closed');
+      };
     }
+    return;
+  }, [isLoggedIn]);
 
-    return () => {
-      notifyEvent.close();
-      setListeningToNotify(false);
-      // console.log('useEffect ended & notify closed');
-    };
-  }, []);
+  // 하위 컴포넌트 KakaoLogin에서 로그인시 App.js로 데이터를 올려받는다.
+  const handleLogin = isLoggedIn => {
+    console.log('자식에서 부모로 로그인 올려받음');
+    setIsLoggedIn(isLoggedIn);
+  };
 
   return (
     <CookiesProvider>
@@ -122,7 +131,10 @@ function App() {
               <Route path="ready" element={<StartReady />} />
               <Route path="introduce" element={<StartIntroduce />} />
             </Route>
-            <Route path="/kakaoLogin" element={<KakaoLogin />} />
+            <Route
+              path="/kakaoLogin"
+              element={<KakaoLogin onLogin={handleLogin} />}
+            />
             <Route
               path="/"
               element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
