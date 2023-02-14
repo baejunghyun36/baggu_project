@@ -49,42 +49,54 @@ function ItemButton({
         },
       };
   useEffect(() => {
-    if (isSameUser) {
-      setTitle('바꿀 물건 선택');
-      setDisabled('default');
-      setOnOff(true);
-      if (checkShow && selected) {
-        setTitle('선택 완료');
+    console.log(isSameUser);
+    console.log(checkShow);
+    console.log(selected);
+    if (tradeState === 0) {
+      if (isSameUser) {
+        setTitle('바꿀 물건 선택');
+        setDisabled('default');
+        setOnOff(true);
+        if (!checkShow && selected) {
+          console.log(selected);
+          setTitle('선택 완료');
+          setDisabled('default');
+          setApiState(title);
+          setOnOff(true);
+        } else if (checkShow && !selected) {
+          setTitle('선택 완료');
+          setDisabled('disabled');
+          setOnOff(true);
+        }
+      }
+      if (!isSameUser) {
+        setTitle('바꾸신청');
         setDisabled('default');
         setApiState(title);
         setOnOff(true);
-      } else if (tradeState !== 0) {
-        setTitle('바꿀 물건 선택');
-        setDisabled('disabled');
-        setOnOff(false);
-      } else if (checkShow && !selected) {
-        setTitle('선택 완료');
-        setDisabled('disabled');
-        setOnOff(true);
+        if (isFull || tradeState !== 0) {
+          setTitle('바꾸신청');
+          setDisabled('disabled');
+          setOnOff(false);
+        } else if (isAlreadyOffer) {
+          setTitle('바꾸신청 취소');
+          setDisabled('cancle');
+          setApiState(title);
+          setOnOff(true);
+        }
+      } else {
+        if (isSameUser) {
+          setTitle('바꿀 물건 선택');
+          setDisabled('disabled');
+          setOnOff(false);
+        } else {
+          setTitle('바꾸신청');
+          setDisabled('disabled');
+          setOnOff(false);
+        }
       }
     }
-    if (!isSameUser) {
-      setTitle('바꾸신청');
-      setDisabled('default');
-      setApiState(title);
-      setOnOff(true);
-      if (isFull || tradeState !== 0) {
-        setTitle('바꾸신청');
-        setDisabled('disabled');
-        setOnOff(false);
-      } else if (isAlreadyOffer) {
-        setTitle('바꾸신청 취소');
-        setDisabled('cancle');
-        setApiState(title);
-        setOnOff(true);
-      }
-    }
-  }, [toggle]);
+  }, [toggle, selected]);
 
   return (
     <Btn type={disabled} onClick={onClickOnOff.onClick}>
