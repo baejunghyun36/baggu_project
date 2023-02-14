@@ -111,7 +111,10 @@ function App() {
         <BrowserRouter className="App">
           <TopBar1 />
           <Routes>
-            <Route path="/login" element={<Start />}>
+            <Route
+              path="/login"
+              element={!isLoggedIn ? <Start /> : <Navigate to="/" replace />}
+            >
               <Route path="" element={<StartLogin />} />
               <Route path="nickname" element={<StartNickname />} />
               <Route path="town" element={<StartTown />} />
