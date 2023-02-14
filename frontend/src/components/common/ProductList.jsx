@@ -11,7 +11,9 @@ const ListWrapper = styled.div`
 `;
 
 function ProductList({ items }) {
-  // console.log('items in ProductList :', items);
+  if (!Array.isArray(items) || items.length === 0) {
+    return null; // or return an empty component like <></>
+  }
   return (
     <ListWrapper id="list-wrapper">
       {items

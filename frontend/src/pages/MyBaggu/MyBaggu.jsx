@@ -48,12 +48,12 @@ function MyBaggu() {
       <div>
         <TabBar tabNames={tabNames} getIndex={getIndex} />
       </div>
-      <div className={`${page === 0 ? '' : 'hidden'}`}>
+      <div className={`${page !== 0 || myItems.length === 0 ? 'hidden' : ''}`}>
         {/* {status === 'loading' && <div>Loading...</div>}{' '} */}
         {/* {status === 'success' && <ProductList items={items} />} */}
         <ProductList items={myItems} />
       </div>
-      <div className={`${page === 1 ? '' : 'hidden'}`}>
+      <div className={`${page !== 1 || offers.length === 0 ? 'hidden' : ''}`}>
         {/* {status === 'loading' && <div>Loading...</div>}{' '}
         {status === 'success' && <FeedList feeds={items} />} */}
         <ProductList items={offers} />

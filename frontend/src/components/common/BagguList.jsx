@@ -11,6 +11,9 @@ const ListWrapper = styled.div`
 `;
 function BagguList({ baggus }) {
   const location = useLocation().pathname;
+  if (!Array.isArray(baggus) || baggus.length === 0) {
+    return null; // or return an empty component like <></>
+  }
   return (
     <ListWrapper
       id="list-wrapper"

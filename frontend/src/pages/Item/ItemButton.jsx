@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import tw, { styled } from 'twin.macro';
+
+const BtnStyles = {
+  default: tw`bg-secondary text-white`,
+  disabled: tw`bg-grey1 text-grey2`,
+  cancle: tw`bg-white text-negative border-1 border-negative`,
+};
 const Btn = styled.div`
   ${tw`w-fit rounded-full flex justify-center items-center h-5`}
-  ${props =>
-    props.disabled === true
-      ? tw`bg-grey1 text-grey2`
-      : tw`bg-secondary text-white`}
+  ${props => BtnStyles[props.type]}
 
   & {
     span {
@@ -24,26 +27,44 @@ function ItemButton({
   itemIdx,
   checkShow,
   tradeState,
+  apiState,
+  setApiState,
 }) {
-  let bgColor = ``;
-  let textColor = ``;
   const [title, setTitle] = useState('');
-  const [disabled, setDisabled] = useState(false);
-
+  const [disabled, setDisabled] = useState('default');
   useEffect(() => {
-    if (isSameUser && !checkShow) {
+    if (isSameUser) {
       setTitle('바꿀물건선택');
-      setDisabled('false');
-    } else if (isSameUser && checkShow) {
-      setTitle('선택 완료');
-      setDisabled('false');
-    } else if (isSameUser && tradeState !== 0) {
-      setTitle('바꿀물건선택');
-      setDisabled('true');
+      setDisabled('default');
+      if (checkShow && selected) {
+        setTitle('선택 완료');
+        setDisabled('default');
+        setApiState(title);
+      } else if (tradeState !== 0) {
+        setTitle('바꿀물건선택');
+        setDisabled('disabled');
+      } else if (checkShow && !selected) {
+        setTitle('선택 완료');
+        setDisabled('disabled');
+      }
+    }
+    if (!isSameUser) {
+      setTitle('바꾸신청');
+      setDisabled('default');
+      setApiState(title);
+      if (isFull || tradeState !== 0) {
+        setTitle('바꾸신청');
+        setDisabled('disabled');
+      } else if (isAlreadyOffer) {
+        setTitle('바꾸신청 취소');
+        setDisabled('cancle');
+        setApiState(title);
+      }
     }
   }, [checkShow]);
+
   return (
-    <Btn disabled={disabled} onClick={btnClickHandler}>
+    <Btn type={disabled} onClick={btnClickHandler}>
       <span>{title}</span>
     </Btn>
   );

@@ -9,6 +9,9 @@ const ListWrapper = styled.div`
   `}
 `;
 function FavoriteList({ items }) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return null; // or return an empty component like <></>
+  }
   return (
     <ListWrapper id="list-wrapper">
       {items.map(item => (

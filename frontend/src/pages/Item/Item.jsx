@@ -58,6 +58,7 @@ function Item() {
   const [isFull, setIsFull] = useState(false);
   const [selected, setSelected] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState();
+  const [apiState, setApiState] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [checkShow, setCheckShow] = useState(false);
   const [numOfferUser, setNumOfferUser] = useState();
@@ -106,7 +107,7 @@ function Item() {
         if (userIdx === item.userIdx) {
           setIsSameUser(true);
         }
-        if (item.requestUserList.lenth > 10) {
+        if (item.requestUserList.length > 10) {
           setIsFull(true);
         }
         const requestUsersList = item.requestUserList;
@@ -121,8 +122,15 @@ function Item() {
     }
   );
   const btnClickHandler = () => {
-    setCheckShow(!checkShow);
-    console.log(checkShow);
+    if (isSameUser) {
+      setCheckShow(!checkShow);
+      console.log(apiState);
+    } else if (!isSameUser && apiState === '바꾸신청') {
+      console.log(apiState);
+    } else if (!isSameUser && apiState === '바꾸신청 취소') {
+      console.log(apiState);
+      setIsAlreadyOffer(!isAlreadyOffer);
+    }
   };
   const deleteHandler = async () => {
     try {
@@ -219,6 +227,8 @@ function Item() {
             btnClickHandler={btnClickHandler}
             itemIdx={id}
             checkShow={checkShow}
+            apiState={apiState}
+            setApiState={setApiState}
             // 거래 상태에 따라서 거래중이면 버튼 비활성화 거래완료도 비활성화
             // 거래중이 아니라면 바꿀 물건 선택
             // 바꿀 물건 선택 버튼 누를시 선택완료 비활성화, selectedIdx가 null이 아닐경우 활성화
