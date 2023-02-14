@@ -53,9 +53,6 @@ function ProductListItem({ item, onClick, selected, checkShow }) {
   // raw 날짜 데이터 포맷
   const { year, month, day, hour, minute } = FormatDate(item.createdAt);
 
-  // 상대적인 날짜 계산
-  const date = GetRelativeTime(year, month, day);
-
   return (
     <ItemContainer
       onClick={onClick ? onClick : moveToDetail}
@@ -65,8 +62,7 @@ function ProductListItem({ item, onClick, selected, checkShow }) {
       <ItemInfo>
         <p>{item.title}</p>
         <span>
-          {item.dong}
-          {GetRelativeTime(year, month, day, hour, minute)}
+          {item.dong} | {GetRelativeTime(year, month, day, hour, minute)}
         </span>
       </ItemInfo>
       <SubInfo>
