@@ -85,11 +85,15 @@ function BagguListItem({ baggu }) {
         <Info>
           <section>
             <Link to={`/user/${baggu.requestUserIdx}`}>
-              <span className=" text-primary">{baggu.requestNickname}</span>
+              <span className=" text-primary text-main-bold">
+                {baggu.requestNickname}
+              </span>
             </Link>
-            님과
+            <span>님과 </span>
             <Link to={`/user/${baggu.receiveUserIdx}`}>
-              <span className=" text-primary">{baggu.receiveNickname}</span>
+              <span className=" text-primary text-main-bold">
+                {baggu.receiveNickname}
+              </span>
             </Link>
             님의 바꾸
             <br />
