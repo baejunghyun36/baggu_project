@@ -12,7 +12,7 @@ spring:
 #      create-drop : 매번 테이블 생성 후 작업 종류 직전 생성 테이블 삭제
 #      validate : 테이블에 대한 유효성 검사
 #      create로 바꾸지 마라 진짜.
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
 #        show_sql: true
@@ -47,9 +47,9 @@ spring:
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
-  # sql:
-    # init:
-      # node: always
+  sql:
+    init:
+      node: always
 
 #log설정
 logging:
