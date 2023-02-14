@@ -15,7 +15,7 @@ import option_button from 'assets/icons/option_button.svg';
 import Carousel from './Carousel';
 import Chip from 'components/common/Chip';
 import ItemModal from './ItemModal';
-import BottomBar from 'components/common/BottomBar';
+import ItemBottomBar from './ItemBottomBar';
 import Carousel2 from './Carousel2';
 import Carousel3 from './Carousel3';
 const Container = styled.div`
@@ -52,16 +52,15 @@ const Product = styled.div`
 `;
 
 function Item() {
-  // 사용자와 게시글 작성자가 동일인물인지 판별하는 props
-  const [isSameUser, setIsSameUser] = useState(false);
-  // 이미 교환신청을 넣은 사람인지 판별하는 props
-  const [isAlreadyOffer, setIsAlreadyOffer] = useState(false);
-  // 교환신청한 사람의 수가 가득 차있는지 확인하는 props
-  const [isFull, setIsFull] = useState(false);
   const userIdx = Number(localStorage.getItem('userIdx'));
-  const [canOffer, setCanOffer] = useState(0);
+  const [isSameUser, setIsSameUser] = useState(false);
+  const [isAlreadyOffer, setIsAlreadyOffer] = useState(false);
+  const [isFull, setIsFull] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState();
   const [showModal, setShowModal] = useState(false);
-  const [requestUserList, setRequsetUserList] = useState([]);
+  const [checkShow, setCheckShow] = useState(false);
+  const [numOfferUser, setNumOfferUser] = useState();
   const { id } = useParams();
   const [item, setItem] = useState([]);
   const [user, setUser] = useState([]);
@@ -102,6 +101,7 @@ function Item() {
     async () => await get_user(item.userIdx),
     {
       onSuccess: data => {
+        // console.log(isSameUser);
         setUser(data);
         if (userIdx === item.userIdx) {
           setIsSameUser(true);
@@ -120,7 +120,10 @@ function Item() {
       },
     }
   );
-
+  const btnClickHandler = () => {
+    setCheckShow(!checkShow);
+    console.log(checkShow);
+  };
   const deleteHandler = async () => {
     try {
       const { data } = await authInstance.delete(requests.ITEM(id));
@@ -170,10 +173,18 @@ function Item() {
               <div
                 id="here"
                 className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
-              ></div>
+              />
               {/* <Chip tradeState={item.tradeState} /> */}
 
-              <BagguOfferList requestUserList={item.requestUserList} />
+              <BagguOfferList
+                requestUserList={item.requestUserList}
+                numOfferUser={numOfferUser}
+                setNumOfferUser={setNumOfferUser}
+                selected={selected}
+                setSelected={setSelected}
+                selectedIdx={selectedIdx}
+                setSelectedIdx={setSelectedIdx}
+              />
               <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
                 <Product img={item.itemImgUrls} />
                 {/* <Carousel images={item.itemImgUrls} /> */}
@@ -199,10 +210,22 @@ function Item() {
               </Info>
             </Wrapper>
           </ListWrapper>
-          <BottomBar
-            showHeart={`${isSameUser ? false : true}`}
-            canOffer={canOffer}
-            btnTitle={userIdx === item.userIdx ? '바꿀 물건 선택' : '교환 신청'}
+          <ItemBottomBar
+            tradeState={item.tradeState}
+            isSameUser={isSameUser}
+            selected={selected}
+            isAlreadyOffer={isAlreadyOffer}
+            isFull={isFull}
+            btnClickHandler={btnClickHandler}
+            itemIdx={id}
+            checkShow={checkShow}
+            // 거래 상태에 따라서 거래중이면 버튼 비활성화 거래완료도 비활성화
+            // 거래중이 아니라면 바꿀 물건 선택
+            // 바꿀 물건 선택 버튼 누를시 선택완료 비활성화, selectedIdx가 null이 아닐경우 활성화
+            // 사용자와 작성자가 동일하다면 바꿀물건 선택 ,
+            // 사용자와 작성자가 동일하지 않다면, 이미 거래신청한 사람일 경우 바꾸 취소버튼, 거래신청하지는 않았지만 isFull이라면 신청불가
+            //사용자와 작성자가 동일하지 않으며 위의 조건에 속하지 않는다면 바꾸신청, 바꾸신청 페이지로 이동
+            // 비활성화 조건: 거래상대 (거래중, 거래완료)
           />
         </div>
       )}

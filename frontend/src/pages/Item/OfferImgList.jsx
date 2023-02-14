@@ -5,7 +5,14 @@ import requests from 'api/config';
 import { useState } from 'react';
 import OfferImgListItem from './OfferImgListItem';
 
-function OfferImgList({ requestItemList }) {
+function OfferImgList({
+  requestItemList,
+  selected,
+  setSelected,
+  selectedIdx,
+  setSelectedIdx,
+}) {
+  // const [selected, setSelected] = useState(false);
   return (
     <div>
       <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
@@ -14,6 +21,11 @@ function OfferImgList({ requestItemList }) {
             <OfferImgListItem
               requestItemIdx={requestItem.requestItemIdx}
               requestItemFirstImg={requestItem.requestItemFirstImg}
+              checkShow={true}
+              selected={selected}
+              setSelected={setSelected}
+              selectedIdx={selectedIdx}
+              setSelectedIdx={setSelectedIdx}
             />
           </div>
         ))}
