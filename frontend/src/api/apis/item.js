@@ -9,8 +9,7 @@ export const get_main_items = async pageParam => {
       requests.GET_MAIN_ITEM(dong, pageParam)
     );
     const { items, isLast } = data;
-    console.log('items, isLast :', items, isLast);
-    console.log('nextPage :', pageParam + 1);
+
     return { items, nextPage: pageParam + 1, isLast };
   } catch (error) {
     throw error;
