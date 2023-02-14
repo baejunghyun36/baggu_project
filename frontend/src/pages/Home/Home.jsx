@@ -45,19 +45,6 @@ function Home() {
     if (inView && !isFetchingNextFeedsPage && fetchNextFeedsPage) {
       fetchNextFeedsPage();
     }
-
-    // const get_main_feeds = async () => {
-    //   try {
-    //     const { data } = await authInstance.get(requests.GET_MAIN_TRADE(0));
-
-    //     console.log(data);
-    //     return setBaggus(data);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-
-    // get_main_feeds();
   }, [inView]);
 
   const [page, setPage] = useState(0);
@@ -105,11 +92,10 @@ function Home() {
     }
   );
 
-  console.log('feeds :', feeds);
   return (
     <div id="home" className="top-[60px] absolute w-full">
       <TabBar tabNames={tabNames} getIndex={getIndex} />
-      {main_item_status === 'loading' ? (
+      {main_item_status === 'loading' || main_feed_status === 'loading' ? (
         <p>Loading...</p>
       ) : (
         <ListHeightWrapper id="listHeightWrapper">
