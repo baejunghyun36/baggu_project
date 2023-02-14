@@ -127,7 +127,10 @@ function App() {
               <Route path="" element={<StartLogin />} />
               <Route path="nickname" element={<StartNickname />} />
               <Route path="town" element={<StartTown />} />
-              <Route path="category" element={<StartCategory />} />
+              <Route
+                path="category"
+                element={<StartCategory onLogin={handleLogin} />}
+              />
               <Route path="ready" element={<StartReady />} />
               <Route path="introduce" element={<StartIntroduce />} />
             </Route>
