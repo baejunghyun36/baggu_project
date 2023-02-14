@@ -50,33 +50,85 @@ public class ItemController {
     return  itemService.itemDetail(itemIdx);
   }
 
-  //POST baggu/item
-  //새로운 아이템을 작성한다.
+//  //POST baggu/item
+//  //새로운 아이템을 작성한다.
+//  @PostMapping
+//  public ItemRegistDto registItem(@ModelAttribute UserRegistItemDto u) throws Exception {
+//
+//    Long authUserIdx = Long.parseLong(
+//        SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+//    if (authUserIdx != u.getUserIdx()) {
+//      throw new BaseException(BaseResponseStatus.UNVALID_USER);
+//    }
+//    ItemRegistDto result = new ItemRegistDto();
+//
+//    try{
+//
+//      result.setItemIdx(itemService.registItem(u));
+//      result.setSuccess(true);
+//
+//      return result;
+//    } catch(Exception e){
+//      result.setSuccess(false);
+//      return result;
+//    }
+//
+//  }
+  /**
+   * Tansactional이 없는 ElasticSearch의 무결성을 위해 JPA의 트랜잭셔널이 다 이루어지고 난 후, ElasticSearch에 저장
+   *
+   *
+   * @param u Item 등록을 위한 DTO
+   * @return BaseIsSuccessDto Request에 응답을 정상적으로 반환하기 위한 Dto
+   * @throws Exception
+   *
+   * @author So Jung Kim
+   * @author An Chae Lee (modifier)
+   */
   @PostMapping
-  public ItemRegistDto registItem(@ModelAttribute UserRegistItemDto u) throws Exception {
+  public ResponseEntity<ItemRegistDto> registItem(@ModelAttribute UserRegistItemDto u) throws Exception {
 
     Long authUserIdx = Long.parseLong(
         SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
     if (authUserIdx != u.getUserIdx()) {
       throw new BaseException(BaseResponseStatus.UNVALID_USER);
     }
+
     ItemRegistDto result = new ItemRegistDto();
+
+    ItemDocumentDto itemDocumentDto = itemService.registItem(u);
+    itemService.registItemDocument(itemDocumentDto);
 
     try{
 
-      result.setItemIdx(itemService.registItem(u));
+      result.setItemIdx(itemDocumentDto.getItemIdx());
       result.setSuccess(true);
 
-      return result;
+      return new ResponseEntity<>(result,HttpStatus.OK);
     } catch(Exception e){
       result.setSuccess(false);
-      return result;
+      return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
   }
+
+
+
+
 
   //PUT /baggu/item/{itemIdx}
   //게시글 정보를 갱신한다.
+//  @PutMapping("/{itemIdx}")
+//  public UpdateItemResponseDto updateItem(@PathVariable("itemIdx") Long itemIdx,
+//      @RequestBody UpdateItemDto updateItemDto){
+//
+//    Long itemWriter = itemService.getUserIdxByItemIdx(itemIdx);
+//    Long authUserIdx = Long.parseLong(
+//        SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+//    if(itemWriter==null || itemWriter!=authUserIdx ){
+//      throw new BaseException(BaseResponseStatus.UNVALID_USER);
+//    }
+//    return itemService.updateItem(itemIdx, updateItemDto);
+//  }
   @PutMapping("/{itemIdx}")
   public UpdateItemResponseDto updateItem(@PathVariable("itemIdx") Long itemIdx,
       @RequestBody UpdateItemDto updateItemDto){
@@ -87,8 +139,18 @@ public class ItemController {
     if(itemWriter==null || itemWriter!=authUserIdx ){
       throw new BaseException(BaseResponseStatus.UNVALID_USER);
     }
-    return itemService.updateItem(itemIdx, updateItemDto);
+    UpdateItemResponseDto updateItemResponseDto = itemService.updateItem(itemIdx, updateItemDto);
+    itemService.updateItemDocument(ItemDocumentDto.builder()
+        .itemIdx(updateItemResponseDto.getItemIdx())
+        .title(updateItemResponseDto.getTitle())
+        .build());
+    return updateItemResponseDto;
+
   }
+
+
+
+
 
   //DELETE /baggu/item/{itemIdx}
   //게시글을 삭제한다.
@@ -132,7 +194,7 @@ public class ItemController {
   @GetMapping()
   public ScrollResponseDto<?> getItemList(@RequestParam(name = "dong", required = false) String dong,
       @RequestParam(name="userIdx", required=false) Long userIdx,
-      @RequestParam(name="keyword", required=false) String keyword,
+//      @RequestParam(name="keyword", required=false) String keyword,
       @RequestParam(name="page", required=false) Integer page){
 
     if(page==null){
@@ -143,9 +205,10 @@ public class ItemController {
       return itemService.getItemListByNeighbor(dong,page);
     } else if(userIdx!=null){
       return itemService.getUserItemList(userIdx, page);
-    } else if(keyword!=null){
-      return itemService.getItemListByItemName(keyword);
-    } else{
+//    } else if(keyword!=null){
+//      return itemService.getItemListByItemtitle(keyword,page);
+    }
+    else{
       throw new BaseException(BaseResponseStatus.UNVALID_PARAMETER);
     }
   }
@@ -156,6 +219,25 @@ public class ItemController {
 
     return new UploadImagesDto(s3UploadService.upload(itemImgs, IMAGE_DIR_USER));
   }
+  /**
+   * Keyword(문장도 가능)를 통해 검색 후 ItemListDto을 반환함
+   * @param itemTitleDto
+   * @return
+   * @author An Chae Lee
+   */
+//  @PostMapping("/keyword")
+//  public ResponseEntity<List<ItemListDto>> getItemListByTitle(@RequestBody ItemTitleDto itemTitleDto){
+//    List<ItemListDto> itemList = itemService.getItemListByItemtitle(itemTitleDto.getTitle());
+//    if (itemList == null) {
+//      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
+//    return new ResponseEntity<>(itemList, HttpStatus.OK);
+//  }
+  @PostMapping("/keyword")
+  public ScrollResponseDto<ItemListDto> getItemListByTitle(@RequestBody ItemTitleDto itemTitleDto){
 
+    return itemService.getItemListByItemtitle(itemTitleDto.getTitle(),
+        itemTitleDto.getPage());
+  }
 
 }

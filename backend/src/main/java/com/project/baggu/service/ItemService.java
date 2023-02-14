@@ -1,12 +1,14 @@
 package com.project.baggu.service;
 
 import com.project.baggu.domain.Item;
+import com.project.baggu.domain.ItemDocument;
 import com.project.baggu.domain.ItemImage;
 import com.project.baggu.domain.ReviewText;
 import com.project.baggu.domain.TradeDetail;
 import com.project.baggu.domain.TradeRequest;
 import com.project.baggu.domain.User;
 import com.project.baggu.domain.enumType.TradeState;
+import com.project.baggu.dto.ItemDocumentDto;
 import com.project.baggu.dto.RequestItemDto;
 import com.project.baggu.dto.ScrollResponseDto;
 import com.project.baggu.exception.BaseResponseStatus;
@@ -21,6 +23,7 @@ import com.project.baggu.dto.UserDto;
 import com.project.baggu.dto.UserItemDto;
 import com.project.baggu.dto.UserRegistItemDto;
 import com.project.baggu.exception.BaseException;
+import com.project.baggu.repository.ItemDocumentRepository;
 import com.project.baggu.repository.ItemImageRepository;
 import com.project.baggu.repository.ItemKeepRepository;
 import com.project.baggu.repository.ItemRepository;
@@ -29,6 +32,9 @@ import com.project.baggu.repository.TradeDetailRepository;
 import com.project.baggu.repository.TradeFinRepository;
 import com.project.baggu.repository.TradeRequestRepository;
 import com.project.baggu.repository.UserRepository;
+import io.jsonwebtoken.lang.Collections;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +67,7 @@ public class ItemService {
   private final TradeDetailRepository tradeDetailRepository;
   private final TradeFinRepository tradeFinRepository;
   private final ItemKeepRepository itemKeepRepository;
-
+  private final ItemDocumentRepository itemDocumentRepository;
   private final S3UploadService s3UploadService;
 
   private final ItemImageRepository itemImageRepository;
@@ -171,12 +177,31 @@ public class ItemService {
 
     itemRepository.save(item);
 
-    return new UpdateItemResponseDto(item.getCategory().ordinal(), item.getTitle(), item.getContent(), item.getFirstImg(),item.getItemImageUrls());
+    return new UpdateItemResponseDto(item.getCategory().ordinal(), item.getTitle(), item.getContent(), item.getFirstImg(),item.getItemImageUrls(),item.getItemIdx());
+//    return new UpdateItemResponseDto(item.getCategory().ordinal(), item.getTitle(), item.getContent(), item.getFirstImg(),item.getItemImageUrls()); ES에러생길시
   }
-
+  /**
+   * ItemDocument update를 위한 method
+   * @param itemDocumentDto {@link ItemDocumentDto} itemDocument update를 위한 Dto
+   *
+   * @author Jung hyun Bae
+   * @author An Chae Lee (modifier)
+   */
+  public void updateItemDocument(ItemDocumentDto itemDocumentDto){
+    itemDocumentRepository.save(
+        ItemDocument.builder()
+            .itemIdx(itemDocumentDto.getItemIdx())
+            .title(itemDocumentDto.getTitle()).build());
+  }
+  /**
+   * JPA를 이용하여 Main DB에 item등록
+   * @param u {@link UserRegistItemDto} Item Entity를 위한 Dto
+   * @return ItemDocumentDto {@link ItemDocumentDto} 트랜잭셔널 완료 후 ElasticSearch에 저장하기 위해 ItemDocumentDto를 반환
+   * @author So Jung Kim
+   * @author An Chae Lee (modifier)
+   */
   @Transactional
-  public Long registItem(UserRegistItemDto u) throws Exception {
-
+  public ItemDocumentDto registItem(UserRegistItemDto u) throws Exception {
 
     User user = userRepository.findById(u.getUserIdx()).get();
 
@@ -190,39 +215,104 @@ public class ItemService {
     item.setCategory(u.getCategory());
     item.setUser(user);
 
-
-    Long generatedIdx = itemRepository.save(item).getItemIdx();
-    Item registeredItem = itemRepository.findById(generatedIdx).get();
-
-    List<ItemImage> imageList = new ArrayList<>();
-
+    Item tmpItem = itemRepository.save(item);
+//    item.setItemIdx(tmpItem.getItemIdx());
     //이미지 존재시 이미지 저장 -> 순서대로
-    if(u.getItemImgs()!=null&&u.getItemImgs().size()>0){
+    List<ItemImage> itemImageList = new ArrayList<>();
+    if(u.getItemImgs().size()>0){
       ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImgs(), IMAGE_DIR_ITEM);
 
       int tempImageOrder = 0;
       for(int i=0; i<uploadUrls.size(); i++){
         if(i==u.getItemFirstImgIdx()){
-          registeredItem.setFirstImg(uploadUrls.get(i));
+          tmpItem.setFirstImg(uploadUrls.get(i));
           continue;
         }
 
         ItemImage itemImage = ItemImage.builder()
             .imgOrder(tempImageOrder++)
             .itemImg(uploadUrls.get(i))
-            .item(item)
+//            .item(item)
+            .item(tmpItem)
             .build();
-
-        itemImage.setItem(registeredItem);
         itemImageRepository.save(itemImage);
-        imageList.add(itemImage);
-
+        itemImageList.add(itemImage);
       }
-      registeredItem.setItemImages(imageList);
+//      item.setItemImages(itemImageList);
+      tmpItem.setItemImages(itemImageList);
     }
-
-    return registeredItem.getItemIdx();
+//    itemRepository.save(item);
+    itemRepository.save(tmpItem);
+    return ItemDocumentDto.builder()
+        .itemIdx(tmpItem.getItemIdx())
+        .title(tmpItem.getTitle())
+        .build();
   }
+
+  /**
+   * Elasticsearch에 itemidx와 title 저장
+   * @param itemDocumentDto {@link ItemDocumentDto} ItemDocumnet Entity를 위한 Dto
+   * @author An Chae Lee
+   */
+  public void registItemDocument(ItemDocumentDto itemDocumentDto){
+    itemDocumentRepository.save(
+        ItemDocument.builder()
+            .itemIdx(itemDocumentDto.getItemIdx())
+            .title(itemDocumentDto.getTitle())
+            .build());
+  }
+
+
+  // 엘라스틱 오류 발생시 주석풀곳
+//  @Transactional
+//  public Long registItem(UserRegistItemDto u) throws Exception {
+//
+//
+//    User user = userRepository.findById(u.getUserIdx()).get();
+//
+//    //아이템 생성
+//    Item item = new Item();
+//    item.setSi(user.getSi());
+//    item.setGu(user.getGu());
+//    item.setDong(user.getDong());
+//    item.setTitle(u.getTitle());
+//    item.setContent(u.getContent());
+//    item.setCategory(u.getCategory());
+//    item.setUser(user);
+//
+//
+//    Long generatedIdx = itemRepository.save(item).getItemIdx();
+//    Item registeredItem = itemRepository.findById(generatedIdx).get();
+//
+//    List<ItemImage> imageList = new ArrayList<>();
+//
+//    //이미지 존재시 이미지 저장 -> 순서대로
+//    if(u.getItemImgs()!=null&&u.getItemImgs().size()>0){
+//      ArrayList<String> uploadUrls = s3UploadService.upload(u.getItemImgs(), IMAGE_DIR_ITEM);
+//
+//      int tempImageOrder = 0;
+//      for(int i=0; i<uploadUrls.size(); i++){
+//        if(i==u.getItemFirstImgIdx()){
+//          registeredItem.setFirstImg(uploadUrls.get(i));
+//          continue;
+//        }
+//
+//        ItemImage itemImage = ItemImage.builder()
+//            .imgOrder(tempImageOrder++)
+//            .itemImg(uploadUrls.get(i))
+//            .item(item)
+//            .build();
+//
+//        itemImage.setItem(registeredItem);
+//        itemImageRepository.save(itemImage);
+//        imageList.add(itemImage);
+//
+//      }
+//      registeredItem.setItemImages(imageList);
+//    }
+//
+//    return registeredItem.getItemIdx();
+//  }
 
   public ItemDetailDto itemDetail(Long itemIdx) {
 
@@ -270,27 +360,67 @@ public class ItemService {
     return idd;
   }
 
-  public ScrollResponseDto<ItemListDto> getItemListByItemName(String itemName) {
+  /**
+   * itemName을 통해 ElasticSearch에서 itemIdx를 가져온 후, itemIdx를 이용해 Main DB에서 item정보를 return함
+   * @param keyword
+   * @return List<ItemListDto> {@link ItemListDto}
+   * @author Jung Hyun Bae
+   * @author An Chae Lee (modifier)
+   */
+  public ScrollResponseDto<ItemListDto> getItemListByItemtitle(String keyword,int page) {
 
     ScrollResponseDto<ItemListDto> response = new ScrollResponseDto<>();
 
-    Slice<Item> itemList =  itemRepository.getItemListByItemName(itemName);
-    List<ItemListDto> list = new ArrayList<>();
-    for(Item i : itemList){
-      ItemListDto itemListDto = new ItemListDto();
-      itemListDto.setDong(i.getDong());
-      itemListDto.setState(i.getState());
-      itemListDto.setCreatedAt(i.getCreatedAt());
-      itemListDto.setTitle(i.getTitle());
-      itemListDto.setItemImgUrl(i.getFirstImg());
-      list.add(itemListDto);
-    }
+    List<ItemDocument> itemDocumentList = itemDocumentRepository.findByTitleContaining(keyword);
+    List<Long> itemIdxList = itemDocumentList.stream().map(ItemDocument::getItemIdx).collect(
+        Collectors.toList());
 
-    response.setItems(list);
-    response.setIsLast(!itemList.hasNext());
+    Slice<Item> itemList = itemRepository.findItemsByItemIdxList(itemIdxList, PageRequest.of(page,20,Sort.by(
+        Direction.DESC,"createdAt")));
+
+    List<ItemListDto> itemListDtoList =  itemList.stream()
+        .map(item -> ItemListDto.builder()
+            .title(item.getTitle())
+            .dong(item.getDong())
+            .state(item.getState())
+            .itemImgUrl(item.getFirstImg())
+            .createdAt(item.getCreatedAt())
+            .build()
+        )
+        .collect(Collectors.toList());
+
+    response.setItems(itemListDtoList);
+    response.setIsLast(itemList.isLast());
 
     return response;
+
   }
+
+
+
+
+//
+//  public ScrollResponseDto<ItemListDto> getItemListByItemName(String itemName) {
+//
+//    ScrollResponseDto<ItemListDto> response = new ScrollResponseDto<>();
+//
+//    Slice<Item> itemList =  itemRepository.getItemListByItemName(itemName);
+//    List<ItemListDto> list = new ArrayList<>();
+//    for(Item i : itemList){
+//      ItemListDto itemListDto = new ItemListDto();
+//      itemListDto.setDong(i.getDong());
+//      itemListDto.setState(i.getState());
+//      itemListDto.setCreatedAt(i.getCreatedAt());
+//      itemListDto.setTitle(i.getTitle());
+//      itemListDto.setItemImgUrl(i.getFirstImg());
+//      list.add(itemListDto);
+//    }
+//
+//    response.setItems(list);
+//    response.setIsLast(!itemList.hasNext());
+//
+//    return response;
+//  }
 
 
   @Transactional

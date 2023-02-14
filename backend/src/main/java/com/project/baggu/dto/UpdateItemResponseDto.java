@@ -14,4 +14,6 @@ public class UpdateItemResponseDto {
   private String content;
   private String itemFirstImgUrl;
   private List<String> itemImgUrls;
+
+  private Long itemIdx;
 }
