@@ -141,7 +141,7 @@ function BottomNav() {
   // 온보딩 페이지에서 하단바 숨기기
   const location = useLocation().pathname;
   if (
-    location.startsWith('/start') ||
+    location.startsWith('/login') ||
     location.startsWith('/item') ||
     location.startsWith('/userReview') ||
     location.startsWith('/bagguReview') ||
