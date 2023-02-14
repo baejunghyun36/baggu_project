@@ -4,7 +4,9 @@ import com.project.baggu.domain.Item;
 import com.project.baggu.domain.enumType.CategoryType;
 import java.util.List;
 import javax.persistence.LockModeType;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,19 +17,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-  @Query(value = "select i from Item i join fetch i.reviewText where i.dong = ?1 and i.isValid = true")
-  List<Item> itemListOrderByNeighbor(String dong, Pageable pageable);
+  @Query(value = "select i from Item i left outer join fetch i.reviewText where i.dong = ?1 and i.isValid = true")
+  Slice<Item> getItemListByNeighbor(String dong, Pageable pageable);
 
-  @Query(value = "select i from Item i join fetch i.reviewText where i.user.userIdx = ?1 ")
-  List<Item> getUserItemList(Long userIdx, Pageable pageable);
+  @Query(value = "select i from Item i left outer join fetch i.reviewText where i.user.userIdx = ?1 ")
+  Slice<Item> getUserItemList(Long userIdx, Pageable pageable);
 
   @Modifying
   @Query("update Item i set i.isValid = false where i.itemIdx = :itemIdx")
   void deleteItem(@Param("itemIdx") Long itemIdx);
 
   //fetch join
-  @Query("select i from Item i join fetch i.reviewText where i.title like %:itemName% order by i.createdAt desc")
-  List<Item> itemListByItemName(@Param("itemName") String itemName);
+  @Query("select i from Item i left outer join i.reviewText where i.title like %:itemName% order by i.createdAt desc")
+  Slice<Item> getItemListByItemName(@Param("itemName") String itemName);
 
   @Query("select i from Item i, ItemKeep ik where ik.user.userIdx = :userIdx and ik.item = i")
   List<Item> userKeepItemList(@Param("userIdx") Long userIdx);

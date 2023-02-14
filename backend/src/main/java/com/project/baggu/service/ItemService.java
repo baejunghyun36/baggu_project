@@ -8,6 +8,7 @@ import com.project.baggu.domain.TradeRequest;
 import com.project.baggu.domain.User;
 import com.project.baggu.domain.enumType.TradeState;
 import com.project.baggu.dto.RequestItemDto;
+import com.project.baggu.dto.ScrollResponseDto;
 import com.project.baggu.exception.BaseResponseStatus;
 import com.project.baggu.dto.ItemDetailDto;
 import com.project.baggu.dto.ItemOrderByNeighborDto;
@@ -29,6 +30,7 @@ import com.project.baggu.repository.TradeFinRepository;
 import com.project.baggu.repository.TradeRequestRepository;
 import com.project.baggu.repository.UserRepository;
 import javax.persistence.EntityManager;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -65,12 +68,14 @@ public class ItemService {
 
   private final String IMAGE_DIR_ITEM = "item";
 
-  public List<ItemOrderByNeighborDto> itemListOrderByNeighbor(String dong, int page) {
+  public ScrollResponseDto<ItemOrderByNeighborDto> getItemListByNeighbor(String dong, int page) {
 
-    List <Item> itemList = itemRepository.itemListOrderByNeighbor(dong, PageRequest.of(page,20,
+    ScrollResponseDto<ItemOrderByNeighborDto> response = new ScrollResponseDto<>();
+
+    Slice<Item> itemList = itemRepository.getItemListByNeighbor(dong, PageRequest.of(page,20,
         Sort.by(Direction.DESC, "createdAt")));
-    List<ItemOrderByNeighborDto> ItemDtoList = new ArrayList<>();
-    for(Item i : itemList){
+    List<ItemOrderByNeighborDto> itemDtoList = new ArrayList<>();
+    for(Item i : itemList.getContent()){
       ItemOrderByNeighborDto itemDto = new ItemOrderByNeighborDto();
       itemDto.setItemIdx(i.getItemIdx());
       itemDto.setTitle(i.getTitle());
@@ -78,14 +83,20 @@ public class ItemService {
       itemDto.setState(i.getState());
       itemDto.setItemImgUrl(i.getFirstImg());
       itemDto.setDong(i.getDong());
-      ItemDtoList.add(itemDto);
+      itemDtoList.add(itemDto);
     }
-    return ItemDtoList;
+
+    response.setItems(itemDtoList);
+    response.setIsLast(!itemList.hasNext());
+
+    return response;
   }
 
-  public List<UserItemDto> getUserItemList(Long userIdx, int page) {
+  public ScrollResponseDto<UserItemDto> getUserItemList(Long userIdx, int page) {
 
-    List <Item> itemList = itemRepository.getUserItemList(userIdx, PageRequest.of(page, 20, Sort.by(
+    ScrollResponseDto<UserItemDto> response = new ScrollResponseDto<>();
+
+    Slice<Item> itemList = itemRepository.getUserItemList(userIdx, PageRequest.of(page, 20, Sort.by(
         Direction.DESC, "createdAt")));
     List<UserItemDto> userItemDtoList = new ArrayList<>();
     for(Item i : itemList){
@@ -102,7 +113,11 @@ public class ItemService {
       }
       userItemDtoList.add(itemDto);
     }
-    return userItemDtoList;
+
+    response.setItems(userItemDtoList);
+    response.setIsLast(!itemList.isLast());
+
+    return response;
   }
 
   @Transactional
@@ -255,9 +270,11 @@ public class ItemService {
     return idd;
   }
 
-  public List<ItemListDto> itemListByItemName(String itemName) {
+  public ScrollResponseDto<ItemListDto> getItemListByItemName(String itemName) {
 
-    List<Item> itemList =  itemRepository.itemListByItemName(itemName);
+    ScrollResponseDto<ItemListDto> response = new ScrollResponseDto<>();
+
+    Slice<Item> itemList =  itemRepository.getItemListByItemName(itemName);
     List<ItemListDto> list = new ArrayList<>();
     for(Item i : itemList){
       ItemListDto itemListDto = new ItemListDto();
@@ -268,7 +285,11 @@ public class ItemService {
       itemListDto.setItemImgUrl(i.getFirstImg());
       list.add(itemListDto);
     }
-    return list;
+
+    response.setItems(list);
+    response.setIsLast(!itemList.hasNext());
+
+    return response;
   }
 
 

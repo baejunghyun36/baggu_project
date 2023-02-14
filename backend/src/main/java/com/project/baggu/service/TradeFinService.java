@@ -2,6 +2,7 @@ package com.project.baggu.service;
 
 //import static com.project.baggu.config.RedisConfig.RedisCacheKey.TRADE_FIN_LIST;
 
+import com.project.baggu.dto.ScrollResponseDto;
 import com.project.baggu.dto.TradeCompleteDto;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.exception.BaseResponseStatus;
@@ -20,6 +21,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -39,49 +41,26 @@ public class TradeFinService {
 
 
 //  @Cacheable(value = "trade", cacheManager = "redisCacheManager")
-  public List<TradeFinDto> getTradeFinList(Long userIdx, int page) {
-    User user = userRepository.findById(userIdx).orElseThrow();
+  public ScrollResponseDto<TradeFinDto> getTradeFinList(Long authUserIdx, int page) {
 
-    List<TradeFin> tradeFinList = tradeFinRepository.findAll(PageRequest.of(page,20,Sort.by(Sort.Direction.DESC, "createdAt"))).getContent();
-    List<TradeFinDto> tradeFinDtos = new ArrayList<>();
-    for(TradeFin tf : tradeFinList){
-      TradeFinDto tradeFinDto = new TradeFinDto();
-      tradeFinDto.setTradeFinIdx(tf.getTradeFinIdx());
-      tradeFinDto.setHeartCount(tf.getHeartCount());
-      tradeFinDto.setCreatedAt(tf.getCreatedAt());
+    User authUser = userRepository.findById(authUserIdx).orElseThrow();
+    Slice<TradeFin> tradeFinList = tradeFinRepository.findAll(PageRequest.of(page,20,Sort.by(Sort.Direction.DESC, "createdAt")));
 
-      tradeFinDto.setReceiveItemIdx(tf.getReceiveItemIdx());
-      tradeFinDto.setRequestItemIdx(tf.getRequestItemIdx());
-      tradeFinDto.setReceiveNickname(tf.getReceiveNickname());
-      tradeFinDto.setRequestNickname(tf.getRequestNickname());
-      tradeFinDto.setReceiveUserImgUrl(tf.getReceiveProfileImgUrl());
-      tradeFinDto.setRequestUserImgUrl(tf.getRequestProfileImgUrl());
-      tradeFinDto.setReceiveUserIdx(tf.getReceiveUserIdx());
-      tradeFinDto.setRequestUserIdx(tf.getRequestUserIdx());
-
-      Item item1 = itemRepository.findById(tf.getReceiveItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
-      Item item2 = itemRepository.findById(tf.getRequestItemIdx()).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
-      tradeFinDto.setReceiveItemImgUrl(item1.getFirstImg());
-      tradeFinDto.setRequestItemImgUrl(item2.getFirstImg());
-
-      user.getHearts().forEach((heart)->{
-        if(heart.getTradeFin().getTradeFinIdx()==tf.getTradeFinIdx()){
-          tradeFinDto.setUserHeart(true);
-        }
-      });
-
-      tradeFinDtos.add(tradeFinDto);
-    }
-
-    return tradeFinDtos;
+    return getTradeFinDtoList(tradeFinList, authUser);
   }
 
-  public List<TradeFinDto> getTradeFinList(Long userIdx, Long authUserIdx, int page) {
+  public ScrollResponseDto<TradeFinDto> getTradeFinList(Long authUserIdx, int page, Long userIdx) {
 
-    User user = userRepository.findById(authUserIdx).orElseThrow();
+    User authUser = userRepository.findById(authUserIdx).orElseThrow();
+    Slice<TradeFin> tradeFinList = tradeFinRepository.getTradeFinListByUser(userIdx, PageRequest.of(page,20,Sort.by(Sort.Direction.DESC, "createdAt")));
 
-    List<TradeFin> tradeFinList = tradeFinRepository.userTradeFinList(userIdx, PageRequest.of(page,20,Sort.by(Sort.Direction.DESC, "createdAt")));
-    List<TradeFinDto> tradeFinDtos = new ArrayList<>();
+    return getTradeFinDtoList(tradeFinList, authUser);
+  }
+
+  public ScrollResponseDto<TradeFinDto> getTradeFinDtoList(Slice<TradeFin> tradeFinList, User authUser){
+    ScrollResponseDto<TradeFinDto> response = new ScrollResponseDto<>();
+    List<TradeFinDto> tradeFinDtoList = new ArrayList<>();
+
     for(TradeFin tf : tradeFinList){
       TradeFinDto tradeFinDto = new TradeFinDto();
       tradeFinDto.setTradeFinIdx(tf.getTradeFinIdx());
@@ -101,15 +80,19 @@ public class TradeFinService {
       tradeFinDto.setReceiveItemImgUrl(item1.getFirstImg());
       tradeFinDto.setRequestItemImgUrl(item2.getFirstImg());
 
-      user.getHearts().forEach((heart)->{
+      authUser.getHearts().forEach((heart)->{
         if(heart.getTradeFin().getTradeFinIdx()==tf.getTradeFinIdx()){
           tradeFinDto.setUserHeart(true);
         }
       });
 
-      tradeFinDtos.add(tradeFinDto);
+      tradeFinDtoList.add(tradeFinDto);
     }
-    return tradeFinDtos;
+
+    response.setItems(tradeFinDtoList);
+    response.setIsLast(!tradeFinList.hasNext());
+
+    return response;
   }
 
   public void createTagReview(ReviewTagDto reviewTagDto) {
