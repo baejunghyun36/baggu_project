@@ -16,11 +16,17 @@ import requests from 'api/config';
 import ProductListItem from 'components/common/ProductListItem';
 
 // twin.macro
-import tw from 'twin.macro';
+import tw, { styled, css } from 'twin.macro';
 
 // Styled Component
 // Loading 컴포넌트 따로 만들기
 const Loading = tw.div``;
+
+const ListWrapper = styled.div`
+  ${css`
+    height: calc(100vh -218px);
+  `}
+`;
 
 // Main Component
 function Home() {
@@ -43,68 +49,59 @@ function Home() {
   const {
     data,
     fetchNextPage,
-    hasNextPage,
     isFetchingNextPage,
     status: main_item_status,
-  } = useInfiniteQuery({
-    queryKey: ['getMainItems', { dong: dong }],
-    queryFn: get_main_items,
-    getNextPageParam: lastPage => (lastPage.isLast ? undefined : lastPage + 1),
-  });
+  } = useInfiniteQuery(
+    // queryKey
+    ['getMainItems', { dong: dong }],
+    // queryFn
+    ({ pageParam = 0 }) => get_main_items(pageParam),
+    // options
+    {
+      getNextPageParam: lastPage =>
+        lastPage.isLast ? undefined : lastPage.nextPage,
+    }
+  );
 
   useEffect(() => {
-    // const get_main_items = async () => {
+    // ref
+    if (inView) {
+      fetchNextPage();
+    }
+
+    // const get_main_feeds = async () => {
     //   try {
-    //     const { data } = await authInstance.get(
-    //       requests.GET_MAIN_ITEM(dong, 0),
-    //       {
-    //         dong: dong,
-    //       }
-    //     );
+    //     const { data } = await authInstance.get(requests.GET_MAIN_TRADE(0));
+
     //     console.log(data);
-    //     return setItems(data);
+    //     return setBaggus(data);
     //   } catch (error) {
     //     console.log(error);
     //   }
     // };
 
-    // ref
-    if (inView) {
-      fetchNextPage();
-      console.log('fetchNextPage');
-    }
-
-    const get_main_feeds = async () => {
-      try {
-        const { data } = await authInstance.get(requests.GET_MAIN_TRADE(0));
-
-        console.log(data);
-        return setBaggus(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    get_main_feeds();
+    // get_main_feeds();
   }, [inView]);
+  console.log('data :', data);
   return (
-    <div className="top-[60px] absolute w-full" id="check">
-      <div>
-        <TabBar tabNames={tabNames} getIndex={getIndex} />
-      </div>
+    <div id="home" className="top-[60px] absolute w-full">
+      <TabBar tabNames={tabNames} getIndex={getIndex} />
       <div className={`${page === 0 ? '' : 'hidden'}`}>
         {main_item_status === 'loading' ? (
           <p>Loading...</p>
         ) : (
-          // <ProductList items={items} />
-          <>
+          <ListWrapper id="listWrapper">
             <div>
               {data?.pages.map((page, index) => (
-                <ProductList key={index} items={page} />
+                <>
+                  {page.items.map(item => (
+                    <ProductListItem key={item.itemIdx} item={item} />
+                  ))}
+                </>
               ))}
             </div>
             {isFetchingNextPage ? <Loading /> : <div ref={ref} />}
-          </>
+          </ListWrapper>
         )}
       </div>
       <div className={`${page === 1 ? '' : 'hidden'}`}>

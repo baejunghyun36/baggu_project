@@ -2,13 +2,16 @@ import requests from 'api/config';
 import { authInstance, defaultInstance } from '../axios';
 
 // 홈 게시글 GET
-export const get_main_items = async ({ pageParam = 0 }) => {
+export const get_main_items = async pageParam => {
   try {
     const dong = localStorage.getItem('dong');
     const { data } = await authInstance.get(
       requests.GET_MAIN_ITEM(dong, pageParam)
     );
-    return data;
+    const { items, isLast } = data;
+    console.log('items, isLast :', items, isLast);
+    console.log('nextPage :', pageParam + 1);
+    return { items, nextPage: pageParam + 1, isLast };
   } catch (error) {
     throw error;
   }

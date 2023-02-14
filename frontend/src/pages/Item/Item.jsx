@@ -181,6 +181,7 @@ function Item() {
           <BottomBar
             showHeart={`${userIdx === item.userIdx ? false : true}`}
             canOffer={canOffer}
+            btnTitle={userIdx === item.userIdx ? '바꿀 물건 선택' : '교환 신청'}
           />
         </div>
       )}
