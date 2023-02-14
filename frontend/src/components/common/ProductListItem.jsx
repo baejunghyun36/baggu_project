@@ -62,7 +62,7 @@ function ProductListItem({ item, onClick, selected, checkShow }) {
       <ItemInfo>
         <p>{item.title}</p>
         <span>
-          {item.dong} | {GetRelativeTime(year, month, day, hour, minute)}
+          {item.dong} | {GetRelativeTime({ year, month, day, hour, minute })}
         </span>
       </ItemInfo>
       <SubInfo>
