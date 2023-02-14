@@ -1,4 +1,4 @@
-import { get_search } from 'api/apis/search';
+import { get_search, post_search } from 'api/apis/search';
 import ProductListItem from 'components/common/ProductListItem';
 import TopBar2 from 'components/common/TopBar2';
 import React, { useState } from 'react';
@@ -45,29 +45,15 @@ const Search = props => {
   const onSubmitHandler = async () => {
     console.log('press enter');
     if (searchKey) {
-      await get_search(searchKey).then(data => setSearchResult(data));
+      const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
+      searchKey.replace(reg, '');
+      const data = { title: searchKey, page: 0 };
+      await post_search(data).then(data => setSearchResult(data));
       setSearchKey('');
     }
   };
   /*
-  [
-    {
-        "itemIdx": 39,
-        "title": "hello",
-        "createdAt": "2023-02-01T10:27:14.153045",
-        "state": 0,
-				"dong": "역삼동",
-        "firstImgUrl": "https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/e57fdfa1-804e-43c4-98c5-9d98b91f090d.png"
-    },
-    {
-        "itemIdx": 38,
-        "title": "hello",
-        "createdAt": "2023-02-01T10:21:04.279052",
-        "state": 0,
-				"dong": "역삼동",
-        "firstImgUrl": "https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/c5d9b362-7abb-404c-9494-ba42d9fad6f1.png"
-    },
-  }
+  
   */
   return (
     <div>

@@ -12,12 +12,15 @@ export const post_request = async (itemIdx, data) => {
     }
 
     < response data 예시 >
-    data ={
-        "receiveUserIdx" : 1, //아이템을 등록한 사람
-        "type" : 0, 
-        "typeIdx" : 2, // 등록된 아이템 idx 
-        "requestUserNickName" : "서울사람"
-    }
+    data = {
+          "message": "Success",
+          "data": {
+            "receiveUserIdx": 1,
+            "type": 0,
+            "typeIdx": 1,
+            "requestUserNickName": "test"
+          }
+}
     */
   try {
     const response = await authInstance.post(

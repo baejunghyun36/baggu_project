@@ -119,9 +119,7 @@ const requests = {
   },
 
   // 검색어 기반 아이템 리스트 (GET)
-  GET_SEARCH_RESULT(keyword) {
-    return `/baggu/item?keyword=${keyword}`;
-  },
+  GET_SEARCH_RESULT: '/baggu/item/keyword',
 
   // 거래 완료 후 유저에 대한 후기 작성 (POST)
   POST_USER_REVIEW: `/baggu/tradeFin/reviewTag`,
