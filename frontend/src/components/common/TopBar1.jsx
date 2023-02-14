@@ -40,7 +40,7 @@ function TopBar1() {
   // 온보딩 페이지에서 상단바 숨기기
   const location = useLocation().pathname;
   if (
-    location.startsWith('/start') ||
+    location.startsWith('/login') ||
     location.startsWith('/chat') ||
     location.startsWith('/bagguReview') ||
     location.startsWith('/makeRequest') ||

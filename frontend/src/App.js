@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import {
+  Route,
+  Routes,
+  BrowserRouter,
+  useNavigate,
+  Navigate,
+} from 'react-router-dom';
 import Home from 'pages/Home/Home';
 import Start from 'pages/Start/Start';
 import StartLogin from 'pages/Start/StartLogin';
@@ -35,7 +41,6 @@ import Notification from 'pages/Notification/Notification';
 import { CookiesProvider } from 'react-cookie';
 
 // Store
-import { signUpStore, userStore } from 'store/store';
 import { notificationStore } from 'store/notication';
 
 // API
@@ -47,18 +52,10 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // styled component
 import tw, { styled, css } from 'twin.macro';
-import { chatStore } from 'store/chat';
 import Search from 'pages/Search/Search';
 import ItemEdit from 'pages/Item/ItemEdit';
 
 const queryClient = new QueryClient();
-
-const Wrapper = styled.div`
-  ${tw`w-full`}
-  ${css`
-    height: calc(100% - 60px - 98px);
-  `}
-`;
 
 // Main Component
 function App() {
@@ -103,6 +100,7 @@ function App() {
 
     return () => {
       notifyEvent.close();
+      setListeningToNotify(false);
       // console.log('useEffect ended & notify closed');
     };
   }, []);
@@ -113,8 +111,7 @@ function App() {
         <BrowserRouter className="App">
           <TopBar1 />
           <Routes>
-            <Route path="/example" element={<Example />} />
-            <Route path="/start" element={<Start />}>
+            <Route path="/login" element={<Start />}>
               <Route path="" element={<StartLogin />} />
               <Route path="nickname" element={<StartNickname />} />
               <Route path="town" element={<StartTown />} />
@@ -123,37 +120,136 @@ function App() {
               <Route path="introduce" element={<StartIntroduce />} />
             </Route>
             <Route path="/kakaoLogin" element={<KakaoLogin />} />
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
+            />
             {/* 후기 */}
-            <Route path="/userReview" element={<UserReview />} />
-            <Route path="/bagguReview" element={<BagguReview />} />
+            <Route
+              path="/userReview"
+              element={
+                isLoggedIn ? <UserReview /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/bagguReview"
+              element={
+                isLoggedIn ? <BagguReview /> : <Navigate to="/login" replace />
+              }
+            />
             {/* 게시글 */}
-            <Route path="/item/:id" element={<Item />} />
-            <Route path="/item/:id/edit" element={<ItemEdit />} />
-            <Route path="/item/create" element={<ItemCreate />} />
+            <Route
+              path="/item/:id"
+              element={isLoggedIn ? <Item /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/item/:id/edit"
+              element={
+                isLoggedIn ? <ItemEdit /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/item/create"
+              element={
+                isLoggedIn ? <ItemCreate /> : <Navigate to="/login" replace />
+              }
+            />
             {/* 내 바꾸관리 */}
-            <Route path="/mybaggu" element={<MyBaggu />} />
+            <Route
+              path="/mybaggu"
+              element={
+                isLoggedIn ? <MyBaggu /> : <Navigate to="/login" replace />
+              }
+            />
             {/* 채팅 */}
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/chat/:roomId" element={<ChatDetail />} />
+            <Route
+              path="/chat"
+              element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/chat/:roomId"
+              element={
+                isLoggedIn ? <ChatDetail /> : <Navigate to="/login" replace />
+              }
+            />
             {/* 내 프로필 */}
-            <Route path="/myprofile" element={<MyProfile />} />
-            <Route path="/myprofile/edit" element={<MyProfileEdit />} />
-            <Route path="/myprofile/:id/baggu" element={<Baggu />} />
-            <Route path="/myprofile/:id/myreview" element={<Myreview />} />
-            <Route path="/myprofile/:id/favorite" element={<Favorite />} />
-            <Route path="/myprofile/:id/town" element={<ProfileTown />} />
-            <Route path="/user/:id" element={<UserDetail />} />
+            <Route
+              path="/myprofile"
+              element={
+                isLoggedIn ? <MyProfile /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/myprofile/edit"
+              element={
+                isLoggedIn ? (
+                  <MyProfileEdit />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/myprofile/:id/baggu"
+              element={
+                isLoggedIn ? <Baggu /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/myprofile/:id/myreview"
+              element={
+                isLoggedIn ? <Myreview /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/myprofile/:id/favorite"
+              element={
+                isLoggedIn ? <Favorite /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/myprofile/:id/town"
+              element={
+                isLoggedIn ? <ProfileTown /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/user/:id"
+              element={
+                isLoggedIn ? <UserDetail /> : <Navigate to="/login" replace />
+              }
+            />
             {/* 바꾸신청 */}
-            <Route path="/makeRequest/:itemIdx" element={<MakeRequest />} />
+            <Route
+              path="/makeRequest/:itemIdx"
+              element={
+                isLoggedIn ? <MakeRequest /> : <Navigate to="/login" replace />
+              }
+            />
             <Route
               path="/makeRequest/message/:itemIdx"
-              element={<MakeRequestMessage />}
+              element={
+                isLoggedIn ? (
+                  <MakeRequestMessage />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
             />
             {/* 알림 */}
-            <Route path="/notification" element={<Notification />} />
+            <Route
+              path="/notification"
+              element={
+                isLoggedIn ? <Notification /> : <Navigate to="/login" replace />
+              }
+            />
             {/* 검색 */}
-            <Route path="/search" element={<Search />} />
+            <Route
+              path="/search"
+              element={
+                isLoggedIn ? <Search /> : <Navigate to="/login" replace />
+              }
+            />
           </Routes>
           <BottomNav />
         </BrowserRouter>
