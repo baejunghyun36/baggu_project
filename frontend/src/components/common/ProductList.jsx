@@ -11,6 +11,7 @@ const ListWrapper = styled.div`
 `;
 
 function ProductList({ items }) {
+  // console.log('items in ProductList :', items);
   return (
     <ListWrapper id="list-wrapper">
       {items
