@@ -14,7 +14,7 @@ import requests from 'api/config';
 import { signUpStore, userStore } from 'store/store';
 
 // Main Component
-function KakaoLogin() {
+function KakaoLogin({ onLogin }) {
   // 2. Redirect URI로 받은 인가코드 저장
   const location = useLocation();
   const navigate = useNavigate();
@@ -59,7 +59,11 @@ function KakaoLogin() {
           setCookie('token', response.headers['authorization']);
           setCookie('refresh-token', response.headers['refresh-token']);
           setCookie('isLoggedIn', true);
-
+          onLogin(true);
+          // console.log(
+          //   '카카오로그인하고 홈으로 넘어갈때 로컬스토리지에 isLoggedIn이 있는지',
+          //   localStorage.getItem('isLoggedIn')
+          // );
           navigate('/');
           return true;
         } else {
@@ -69,7 +73,7 @@ function KakaoLogin() {
           saveUserIdx(response.data.user.userIdx);
           saveKakaoId(response.data.kakaoId);
 
-          navigate('/start/nickname');
+          navigate('/login/nickname');
           return false;
         }
       })
