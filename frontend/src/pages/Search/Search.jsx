@@ -2,6 +2,7 @@ import { get_search, post_search } from 'api/apis/search';
 import ProductListItem from 'components/common/ProductListItem';
 import TopBar2 from 'components/common/TopBar2';
 import React, { useState } from 'react';
+import { useInfiniteQuery } from 'react-query';
 
 // twin.macro
 import tw, { styled, css } from 'twin.macro';
@@ -41,9 +42,15 @@ const Search = props => {
     setSearchKey(e.target.value);
   };
 
+  // react-query
+  const { data, fetchNextPage, isFetchingNextPage, status } = useInfiniteQuery(
+    ['search', { searchKey: searchKey }],
+    ({ pageParam = 0 }) => post_search()
+  );
   // 검색 API
   const onSubmitHandler = async () => {
     console.log('press enter');
+
     if (searchKey) {
       const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
       searchKey.replace(reg, '');
