@@ -23,7 +23,7 @@ const PreviewContainer = styled.div`
 `;
 
 const PreviewImg = styled.img`
-  ${tw`rounded-lg w-[5rem] h-[5rem] box-border`}
+  ${tw`rounded-lg w-[5rem] h-[5rem] box-border cursor-pointer`}
   ${props => (props.isFirstImg ? tw`border-2 border-primary` : tw``)}
 `;
 
@@ -205,7 +205,7 @@ function ItemCreate() {
             {itemImage.map((itemImage, index) => (
               <div
                 key={index}
-                className="relative text-sub-bold text-primary"
+                className="relative text-sub-bold text-primary cursor-pointer"
                 onClick={() => selectFirstImg(index)}
               >
                 <DeleteBtn onClick={() => handleDeleteItemImage(index)}>

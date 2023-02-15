@@ -7,11 +7,11 @@ import tw, { styled, css } from 'twin.macro';
 // ex) 유저pk를 불러와서 이용자와 열람하려는 사용자의 정보가 같을경우 내 프로필 페이지로, 아니라면 유저상세정보 페이지로
 
 const Wrapper = styled.div`
-  ${tw`p-2 flex`}
+  ${tw`p-2 flex hover:bg-primary-hover`}
 `;
 
 const InfoContainer = styled.div`
-  ${tw`flex`}
+  ${tw`flex cursor-pointer`}
 `;
 const Avatar = styled.div`
   ${tw`bg-primary rounded-full w-6 h-6 bg-cover bg-center mr-2`}
@@ -57,14 +57,12 @@ function UserInfo({ user }) {
       </InfoContainer>
       <div
         onClick={() => navigate('/myprofile/edit')}
-        className={`${location === '/myprofile' ? '' : 'hidden'}`}
+        className={`${
+          location === '/myprofile' ? '' : 'hidden'
+        } cursor-pointer`}
       >
         <img src={edit} alt="profile_edit" />
       </div>
-      {/* <Link
-        to="/myprofile/edit"
-        className={`${location === '/myprofile' ? '' : 'hidden'}`}
-      ></Link> */}
     </Wrapper>
   );
 }

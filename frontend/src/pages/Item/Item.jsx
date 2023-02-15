@@ -22,17 +22,15 @@ const Container = styled.div`
   ${tw`w-full`}
 `;
 const ListWrapper = styled.div`
-  ${tw`border-t-4 mt-[60px] overflow-scroll`}
+  ${tw`border-t-2 overflow-scroll overflow-x-hidden`}
   ${css`
-    height: calc(100vh - 218px);
+    height: calc(100vh - 158px);
   `}
 `;
 const Wrapper = tw.div`flex p-2 border-b justify-between`;
+
 const Info = styled.div`
-  ${tw`relative flex mr-2 overflow-hidden box-content whitespace-nowrap text-ellipsis`}
-  ${css`
-    width: calc(100% - 112px);
-  `}
+  ${tw`relative flex items-start mr-[4px] overflow-hidden box-content whitespace-nowrap text-ellipsis w-full`}
 
   & {
     section {
@@ -203,12 +201,29 @@ function Item() {
                   ...item.itemImgUrls,
                 ]}
               />
-              <div
-                id="here"
-                className="overflow-hidden p-2 flex w-full h-[300px] justify-center hover:bg-primary-hover border-b gap-2 relative"
-              />
+
               {/* <Chip tradeState={item.tradeState} /> */}
 
+              <Wrapper>
+                <Info>
+                  <section>
+                    <Title>{item.title}</Title>
+                    <Message>
+                      {CategoryTypes[item.category]} | {item.dong} |
+                      {GetRelativeTime(FormatDate(item.createdAt))}
+                    </Message>
+                  </section>
+                  <img
+                    className={`${isSameUser ? '' : 'hidden'}`}
+                    onClick={() => setShowModal(true)}
+                    src={option_button}
+                    alt="profile_edit"
+                  />
+                </Info>
+              </Wrapper>
+              <Wrapper id="content">
+                <p>{item.content}</p>
+              </Wrapper>
               <BagguOfferList
                 requestUserList={item.requestUserList}
                 numOfferUser={numOfferUser}
@@ -227,23 +242,6 @@ function Item() {
                 {/* {item.itemImgUrls && <Carousel images={item.itemImgUrls} />} */}
               </div>
             </Container>
-            <Wrapper>
-              <Info>
-                <section>
-                  <Title>{item.title}</Title>
-                  <Message>
-                    {CategoryTypes[item.category]} | {item.dong} |{' '}
-                    {/* {GetRelativeTime(year, month, day, hour, minute)} */}
-                  </Message>
-                </section>
-                <img
-                  className={`${isSameUser ? '' : 'hidden'}`}
-                  onClick={() => setShowModal(true)}
-                  src={option_button}
-                  alt="profile_edit"
-                />
-              </Info>
-            </Wrapper>
           </ListWrapper>
           <ItemBottomBar
             tradeState={item.tradeState}

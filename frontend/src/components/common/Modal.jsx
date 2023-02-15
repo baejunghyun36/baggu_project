@@ -27,7 +27,7 @@ const BackdropWrapper = styled.div`
 `;
 
 const Btn = styled.div`
-  ${tw`w-full h-5 flex rounded-full items-center justify-center`}
+  ${tw`w-full h-5 flex rounded-full items-center justify-center cursor-pointer`}
   ${props => btnStyles[props.type]}
 `;
 

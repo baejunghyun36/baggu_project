@@ -20,7 +20,7 @@ const Container = styled.div`
   ${tw`w-full`}
 `;
 
-const Wrapper = tw.div`flex p-2 border-b hover:bg-primary-hover`;
+const Wrapper = tw.div`flex p-2 border-b`;
 
 const Avatar = styled.div`
   ${tw`bg-primary rounded-full w-5 h-5 bg-cover bg-center relative`}
@@ -110,7 +110,7 @@ function BagguListItem({ baggu }) {
           <span>{GetRelativeTime(FormatDate(baggu.createdAt))}</span>
         </Info>
       </Wrapper>
-      <div className="p-2 py-4 flex w-full justify-evenly hover:bg-primary-hover border-b gap-2 relative">
+      <div className="p-2 py-4 flex w-full justify-evenly border-b gap-2 relative">
         <Link to={`/item/${baggu.requestItemIdx}`}>
           <Product img={baggu.requestItemImgUrl} />
         </Link>

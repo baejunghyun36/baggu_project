@@ -84,7 +84,7 @@ function MyProfile() {
           <h4>내 동네설정</h4>
         </Container>
       </Link>
-      <Container onClick={() => setShowModal(true)}>
+      <Container onClick={() => setShowModal(true)} className="cursor-pointer">
         <h4>로그아웃</h4>
       </Container>
     </div>

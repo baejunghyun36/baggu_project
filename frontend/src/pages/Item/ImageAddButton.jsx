@@ -3,7 +3,7 @@ import upload_icon from '../../assets/icons/upload-Icon.png';
 
 function ImageAddButton({ clickFunction }) {
   return (
-    <div className="flex flex-col justify-center items-center w-[80px] h-[80px]">
+    <div className="flex flex-col justify-center items-center w-[80px] h-[80px] cursor-pointer">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 576 512"
