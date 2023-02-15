@@ -4,6 +4,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import TopBar2 from '../../components/common/TopBar2';
 import UserInfo from 'components/common/UserInfo';
 import tw, { styled, css } from 'twin.macro';
+import { deleteCookie } from 'utils/cookie';
+import { useCookies } from 'react-cookie';
 import { authInstance } from 'api/axios';
 import requests from 'api/config';
 
@@ -20,7 +22,7 @@ const Container = styled.div`
 const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
 
 // Main Component
-function MyProfile() {
+function MyProfile({ onLogin }) {
   // 모달 상태
   const [showModal, setShowModal] = useState(false);
 
@@ -38,6 +40,11 @@ function MyProfile() {
   const navigate = useNavigate();
   const logoutHandler = async () => {
     await logout(userIdx).then(() => {
+      deleteCookie('userIdx');
+      deleteCookie('token');
+      deleteCookie('refresh-token');
+      deleteCookie('isLoggedIn');
+      onLogin(false);
       navigate('/login');
     });
   };
@@ -69,11 +76,6 @@ function MyProfile() {
       <Link to={`/myprofile/${user.userIdx}/myreview`}>
         <Container>
           <h4>받은후기</h4>
-        </Container>
-      </Link>
-      <Link to={`/myprofile/${user.userIdx}/favorite`}>
-        <Container>
-          <h4>관심목록</h4>
         </Container>
       </Link>
       <Container className="font-bold">

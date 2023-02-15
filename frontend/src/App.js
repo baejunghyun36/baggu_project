@@ -25,7 +25,6 @@ import StartIntroduce from 'pages/Start/StartIntroduce';
 import MyProfileEdit from 'pages/MyProfile/MyProfileEdit';
 import Baggu from 'pages/MyProfile/Baggu';
 import Myreview from 'pages/MyProfile/Myreview';
-import Favorite from 'pages/MyProfile/Favorite';
 import ProfileTown from 'pages/MyProfile/ProfileTown';
 import Chat from 'pages/Chat/Chat';
 import UserDetail from 'pages/User/UserDetail';
@@ -194,7 +193,11 @@ function App() {
             <Route
               path="/myprofile"
               element={
-                isLoggedIn ? <MyProfile /> : <Navigate to="/login" replace />
+                isLoggedIn ? (
+                  <MyProfile onLogin={handleLogin} />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
               }
             />
             <Route
@@ -217,12 +220,6 @@ function App() {
               path="/myprofile/:id/myreview"
               element={
                 isLoggedIn ? <Myreview /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/myprofile/:id/favorite"
-              element={
-                isLoggedIn ? <Favorite /> : <Navigate to="/login" replace />
               }
             />
             <Route
