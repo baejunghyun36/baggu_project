@@ -144,7 +144,7 @@ function ChatDetail() {
   const chatRoomInfo = chatRoomList.find(
     chatRoom => chatRoom.roomId === roomId
   );
-
+  console.log('chatRoomInfo :', chatRoomInfo);
   // 현재 로그인된 사용자
   const userIdx = Number(localStorage.getItem('userIdx'));
   const isLoggedIn = localStorage.getItem('isLoggedIn');

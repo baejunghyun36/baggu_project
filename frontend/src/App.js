@@ -35,6 +35,9 @@ import KakaoLogin from 'pages/Start/KakaoLogin';
 import MakeRequest from 'pages/MakeRequest/MakeRequest';
 import MakeRequestMessage from 'pages/MakeRequest/MakeRequestMessage';
 import Notification from 'pages/Notification/Notification';
+import Item2 from 'pages/Item/Item2';
+import Search from 'pages/Search/Search';
+import ItemEdit from 'pages/Item/ItemEdit';
 
 // react-cookie
 import { CookiesProvider } from 'react-cookie';

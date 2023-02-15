@@ -45,9 +45,7 @@ function ItemBottomBar({
   if (location.startsWith('/start') || location.startsWith('/chat')) {
     return null;
   }
-  console.log('itemBottomBar / isSameUser :', isSameUser);
-  console.log('itemBottomBar / checkShow :', checkShow);
-  console.log('itemBottomBar / selected :', selected);
+
   return (
     <div className="flex flex-wrap justify-between gap-2 fixed bottom-0 bg-white border-t w-full h-[98px] px-4 py-2">
       <div

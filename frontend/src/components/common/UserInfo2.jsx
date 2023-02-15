@@ -38,7 +38,7 @@ const Nickname = tw.p`text-main-bold `;
 const Message = tw.span`text-sub`;
 
 // Main Component
-function UserInfo({ user, addUserIdx }) {
+function UserInfo2({ addUserIdx, message }) {
   const location = useLocation().pathname;
   const userIdx = localStorage.getItem('userIdx');
 
@@ -46,17 +46,14 @@ function UserInfo({ user, addUserIdx }) {
   const [userInfo, setUserInfo] = useState();
 
   useEffect(() => {
-    if (user) setUserInfo(user);
-    else {
-      get_user(addUserIdx).then(data => {
-        setUserInfo(data);
-        console.log(
-          '유저 인포 안에서 유저 데이터(데이터 직접 안 내리고 아이디만 있을 때)',
-          data
-        );
-      });
-    }
-  }, [user, addUserIdx]);
+    get_user(addUserIdx).then(data => {
+      setUserInfo(data);
+      console.log(
+        '유저 인포 안에서 유저 데이터(데이터 직접 안 내리고 아이디만 있을 때)',
+        data
+      );
+    });
+  }, [addUserIdx]);
 
   const navigate = useNavigate();
 
@@ -78,7 +75,7 @@ function UserInfo({ user, addUserIdx }) {
             <Info id="info">
               <section>
                 <Nickname>{userInfo.nickname}</Nickname>
-                <Message>{userInfo.info}</Message>
+                <Message>{message}</Message>
               </section>
             </Info>
           </InfoContainer>
@@ -98,4 +95,4 @@ function UserInfo({ user, addUserIdx }) {
   );
 }
 
-export default UserInfo;
+export default UserInfo2;

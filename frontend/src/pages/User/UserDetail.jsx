@@ -55,6 +55,7 @@ function UserDetail() {
     ['getUser', { userIdx: id }],
     async () => await get_user(id)
   );
+
   console.log('userInfo', userInfo);
   const { data: userItems, isSuccess: isUserItemsSuccess } = useQuery(
     ['getUserItems', { userIdx: id }],

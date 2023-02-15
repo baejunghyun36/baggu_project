@@ -49,9 +49,9 @@ function ItemButton({
         },
       };
   useEffect(() => {
-    console.log(isSameUser);
-    console.log(checkShow);
-    console.log(selected);
+    console.log('itemButton / isSameUser :', isSameUser);
+    console.log('itemButton / checkShow :', checkShow);
+    console.log('itemButton / selected :', selected);
     if (tradeState === 0) {
       if (isSameUser) {
         setTitle('바꿀 물건 선택');
