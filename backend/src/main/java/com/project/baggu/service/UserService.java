@@ -202,6 +202,11 @@ public class UserService {
   }
 
 
+  public boolean findUserByNickname(String nickname){
+    return userRepository.findUserByNickname(nickname).isPresent();
+  }
+
+
   //========================================================
   //이하 2순위 이하 API (미완성)
   //========================================================

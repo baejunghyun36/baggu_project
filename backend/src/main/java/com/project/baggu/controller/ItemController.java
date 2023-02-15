@@ -170,7 +170,11 @@ public class ItemController {
     Message message = new Message();
     try{
       tradeRequestNotifyDto = optimisticLockRaceConditionFacade.tradeRequest(itemIdx, tradeRequestDto);
-      if(tradeRequestNotifyDto==null){
+      if(tradeRequestNotifyDto.getReceiveUserIdx()==-2L){
+        message.setMessage("최대 신청 인원이 초과됐습니다.");
+        return new ResponseEntity<>(message, HttpStatus.OK);
+      } else if(tradeRequestDto.getRequestUserIdx()==-1L){
+        message.setMessage("이미 신청이 완료됐습니다.");
         return new ResponseEntity<>(message, HttpStatus.OK);
       }
       else{
@@ -234,10 +238,14 @@ public class ItemController {
 //    return new ResponseEntity<>(itemList, HttpStatus.OK);
 //  }
   @PostMapping("/keyword")
-  public ScrollResponseDto<ItemListDto> getItemListByTitle(@RequestBody ItemTitleDto itemTitleDto){
+  public ScrollResponseDto<ItemListDto> getItemListByTitle(@RequestBody ItemTitleDto itemTitleDto,
+      @RequestParam(name="page", required=false) Integer page){
 
-    return itemService.getItemListByItemtitle(itemTitleDto.getTitle(),
-        itemTitleDto.getPage());
+    if(page==null){
+      page = 0;
+    }
+
+    return itemService.getItemListByItemtitle(itemTitleDto.getTitle(), page);
   }
 
 }
