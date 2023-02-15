@@ -46,8 +46,9 @@ function UserInfo({ user, addUserIdx }) {
   const [userInfo, setUserInfo] = useState();
 
   useEffect(() => {
-    if (user) setUserInfo(user);
-    else {
+    if (user) {
+      setUserInfo(user);
+    } else {
       get_user(addUserIdx).then(data => {
         setUserInfo(data);
         console.log(
@@ -73,7 +74,7 @@ function UserInfo({ user, addUserIdx }) {
           <InfoContainer onClick={moveToUserDetail}>
             <Avatar
               id="avatar"
-              // img={user.profileImgUrl ? user.profileImgUrl : null}
+              img={user.profileImgUrl ? user.profileImgUrl : null}
             />
             <Info id="info">
               <section>

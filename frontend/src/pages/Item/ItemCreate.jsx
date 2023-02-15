@@ -154,6 +154,7 @@ function ItemCreate() {
       data.append('itemImgs', []);
       data.append('itemFirstImgIdx', itemFirstImg);
       itemImage.forEach((image, index) => {
+        console.log(image);
         data.append('itemImgs', image);
       });
 

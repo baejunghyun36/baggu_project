@@ -1,25 +1,18 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import TopBar2 from '../../components/common/TopBar2';
-import UserInfo from 'components/common/UserInfo';
-import tw, { styled, css } from 'twin.macro';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { deleteCookie } from 'utils/cookie';
-import { useCookies } from 'react-cookie';
-import { authInstance } from 'api/axios';
-import requests from 'api/config';
-
-// twin.macro
-import { get_user, logout } from 'api/apis/user';
-import Modal from 'components/common/Modal';
 import { useQuery } from 'react-query';
+import { get_user, logout } from 'api/apis/user';
+import tw, { styled, css } from 'twin.macro';
+import Modal from 'components/common/Modal';
+import UserInfo from 'components/common/UserInfo';
+import TopBar2 from 'components/common/TopBar2';
 
 // Styled Component
 const Container = styled.div`
   ${tw`flex flex-col p-2 border-b`}
 `;
-
-const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
 
 // Main Component
 function MyProfile({ onLogin }) {
