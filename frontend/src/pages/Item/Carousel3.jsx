@@ -23,7 +23,7 @@ const Slide = styled.div`
 `;
 
 const Button = styled.div`
-  ${tw`absolute w-2 h-2 z-10 cursor-pointer`}
+  ${tw`absolute w-2 h-2 z-10 cursor-pointer fill-secondary`}
   ${css`
     top: calc(50% - 16px);
   `}
