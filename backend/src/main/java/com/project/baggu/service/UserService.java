@@ -182,7 +182,7 @@ public class UserService {
     User user = userRepository.findById(userIdx).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
     //만약 이미지가 존재하고, 파일 형식이라면 이미지 업로드 처리
-    if(userUpdateProfileDto.getProfileImg()!=null && userUpdateProfileDto.getProfileImgs() instanceof MultipartFile){
+    if(userUpdateProfileDto.getProfileImg()!=null && userUpdateProfileDto.getProfileImg() instanceof MultipartFile){
       String IMAGE_DIR_USER = "user";
       String uploadUrl = s3UploadService.upload(userUpdateProfileDto.getProfileImg(),
           IMAGE_DIR_USER);

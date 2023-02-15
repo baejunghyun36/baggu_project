@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class UserUpdateProfileDto {
 
-  private ArrayList<Object> profileImgs;
   private MultipartFile profileImg;
   private String nickname;
   private String info;
