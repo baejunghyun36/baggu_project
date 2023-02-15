@@ -4,12 +4,12 @@ import BagguOfferListItem from './BagguOfferListItem';
 function BagguOfferList({
   requestUserList,
   numOfferUser,
-  setNumOfferUser,
   selected,
   checkShow,
   setSelected,
   selectedIdx,
   setSelectedIdx,
+  setTradeDetailIdx,
 }) {
   // setNumOfferUser(requestUserList.length);
   // const [selected, setSelected] = useState(false);
@@ -29,6 +29,7 @@ function BagguOfferList({
             selectedIdx={selectedIdx}
             setSelectedIdx={setSelectedIdx}
             checkShow={checkShow}
+            setTradeDetailIdx={setTradeDetailIdx}
           />
         </div>
       ))}

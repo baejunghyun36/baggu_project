@@ -68,6 +68,7 @@ function Item() {
   const [item, setItem] = useState([]);
   const [user, setUser] = useState([]);
   const [tradeDetailIdx, setTradeDetailIdx] = useState();
+  const [matchData, setMatchData] = useState([]);
   // const { year, month, day, hour, minute } = FormatDate(item.createdAt);
   // const date = GetRelativeTime(year, month, day);
   const navigate = useNavigate();
@@ -102,13 +103,14 @@ function Item() {
     };
     get_item(id);
   }, [id]);
-  const choose_request = async selectedIdx => {
+  const choose_request = async tradeDetailIdx => {
     try {
       const { data } = await authInstance.get(
-        requests.CHOOSE_REQUEST(selectedIdx)
+        requests.CHOOSE_REQUEST(tradeDetailIdx)
       );
       console.log(data);
-      return setTradeDetailIdx(data.tradeDetailIdx);
+      console.log(tradeDetailIdx);
+      return setMatchData(data);
     } catch (error) {
       console.log(error);
     }
@@ -119,6 +121,7 @@ function Item() {
     {
       onSuccess: data => {
         // console.log(isSameUser);
+        console.log(data);
         setUser(data);
         if (userIdx === item.userIdx) {
           setIsSameUser(true);
@@ -142,13 +145,16 @@ function Item() {
     if (isSameUser) {
       setCheckShow(!checkShow);
       if (apiState === '선택 완료') {
-        choose_request(selectedIdx);
+        choose_request(tradeDetailIdx);
       }
-    } else if (!isSameUser && apiState === '바꾸신청') {
-      navigate(`/makeRequest/${id}`);
-    } else if (!isSameUser && apiState === '바꾸신청 취소') {
-      console.log(apiState);
-      setIsAlreadyOffer(!isAlreadyOffer);
+    } else if (!isSameUser) {
+      if (apiState === '바꾸신청 취소') {
+        console.log(apiState);
+        setIsAlreadyOffer(false);
+      } else if (apiState === '바꾸신청') {
+        navigate(`/makeRequest/${id}`);
+        setIsAlreadyOffer(true);
+      }
     }
   };
   const deleteHandler = async () => {
@@ -212,6 +218,7 @@ function Item() {
                 setSelected={setSelected}
                 selectedIdx={selectedIdx}
                 setSelectedIdx={setSelectedIdx}
+                setTradeDetailIdx={setTradeDetailIdx}
               />
               <div className="p-2 flex w-full justify-center hover:bg-primary-hover border-b gap-2 relative">
                 <Product img={item.itemImgUrls} />

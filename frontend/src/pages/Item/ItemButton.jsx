@@ -57,7 +57,7 @@ function ItemButton({
         setTitle('바꿀 물건 선택');
         setDisabled('default');
         setOnOff(true);
-        if (!checkShow && selected) {
+        if (checkShow && selected) {
           console.log(selected);
           setTitle('선택 완료');
           setDisabled('default');
@@ -66,15 +66,14 @@ function ItemButton({
         } else if (checkShow && !selected) {
           setTitle('선택 완료');
           setDisabled('disabled');
-          setOnOff(true);
+          setOnOff(false);
         }
-      }
-      if (!isSameUser) {
+      } else if (!isSameUser) {
         setTitle('바꾸신청');
         setDisabled('default');
         setApiState(title);
         setOnOff(true);
-        if (isFull || tradeState !== 0) {
+        if (isFull) {
           setTitle('바꾸신청');
           setDisabled('disabled');
           setOnOff(false);
@@ -84,14 +83,19 @@ function ItemButton({
           setApiState(title);
           setOnOff(true);
         }
+      }
+    } else {
+      if (isSameUser) {
+        setTitle('바꿀 물건 선택');
+        setDisabled('disabled');
+        setOnOff(false);
       } else {
-        if (isSameUser) {
-          setTitle('바꿀 물건 선택');
-          setDisabled('disabled');
-          setOnOff(false);
-        } else {
-          setTitle('바꾸신청');
-          setDisabled('disabled');
+        setTitle('바꾸신청');
+        setDisabled('disabled');
+        setOnOff(false);
+        if (isAlreadyOffer) {
+          setTitle('바꾸신청 취소');
+          setDisabled('cancle');
           setOnOff(false);
         }
       }
