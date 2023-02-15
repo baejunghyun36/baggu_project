@@ -15,7 +15,7 @@ const Slider = styled.div`
 `;
 
 const Slide = styled.div`
-  ${tw`w-full h-full bg-cover bg-center flex-none border-1`}
+  ${tw`w-full h-full bg-contain bg-no-repeat bg-center flex-none border-1`}
   ${props =>
     css`
       background-image: url(${props.imgUrl});
