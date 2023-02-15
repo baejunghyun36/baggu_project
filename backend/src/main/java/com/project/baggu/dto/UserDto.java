@@ -14,5 +14,6 @@ public class UserDto {
   private String nickname;
   private String comment;
   private String profileImgUrl;
+  private Long tradeRequestIdx;
   private ArrayList<RequestItemDto> requestItemList = new ArrayList<>();
 }

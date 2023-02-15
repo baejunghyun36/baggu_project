@@ -344,6 +344,7 @@ public class ItemService {
 
       List<TradeDetail> tradeDetailList = tr.getTradeDetails();
       UserDto userDto = new UserDto();
+      userDto.setTradeRequestIdx(tr.getTradeRequestIdx());
       userDto.setUserIdx(tr.getRequestUser().getUserIdx());
       userDto.setNickname(tr.getRequestUser().getNickname());
       userDto.setComment(tr.getComment());
