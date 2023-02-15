@@ -34,4 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Modifying
   @Query("update User u set u.tradeCount = 0 ")
   void initUserTradeCount();
+
+  @Query("select u from User u where u.nickname = :nickname")
+  Optional<User> findUserByNickname(@Param("nickname") String nickname);
 }

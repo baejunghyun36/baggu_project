@@ -8,5 +8,4 @@ import lombok.Setter;
 
 public class ItemTitleDto {
   String title;
-  int page;
 }
