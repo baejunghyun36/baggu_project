@@ -21,6 +21,8 @@ function OfferImgListItem({
   setSelected,
   selectedIdx,
   setSelectedIdx,
+  tradeDetailIdx,
+  setTradeDetailIdx,
 }) {
   const navigate = useNavigate();
   const linkProps = checkShow
@@ -29,6 +31,8 @@ function OfferImgListItem({
           e.preventDefault();
           setSelected(!selected);
           setSelectedIdx(requestItemIdx);
+          console.log(tradeDetailIdx);
+          setTradeDetailIdx(tradeDetailIdx);
         },
       }
     : {
