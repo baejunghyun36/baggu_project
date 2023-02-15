@@ -44,6 +44,7 @@ function TopBar2({
         src={arrow_back}
         alt="button to go back"
         onClick={BackHandler ? BackHandler : handleGoBack}
+        className="cursor-pointer"
       />
       <h3 className="text-h3" onClick={onClickTitle}>
         {title}
@@ -53,7 +54,7 @@ function TopBar2({
         disabled={!useCheckBtn}
         src={check}
         alt="button to confirm"
-        className="opacity-1"
+        className="opacity-1 cursor-pointer"
         onClick={clickHandler}
       />
     </Container>

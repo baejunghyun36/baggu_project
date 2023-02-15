@@ -15,7 +15,7 @@ const Btn = styled.div`
 `;
 
 const BtnContainer = styled.div`
-  ${tw`flex pt-2 pb-2 px-4 fixed bottom-0 w-full h-[98px]`}
+  ${tw`flex pt-2 pb-2 px-4 fixed bottom-0 w-full h-[98px] cursor-pointer`}
 `;
 
 function FormSubmitBtn({ disabled, onClick, title }) {

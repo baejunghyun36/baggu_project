@@ -12,7 +12,7 @@ import Chip from './Chip';
 // Styled Component
 const ItemContainer = styled.div`
   ${props => (props.selected ? tw`bg-primary-hover` : '')}
-  ${tw`p-2 flex w-full hover:bg-primary-hover border-b gap-2 relative`}
+  ${tw`p-2 flex w-full hover:bg-primary-hover border-b gap-2 relative cursor-pointer`}
 `;
 const ItemImg = styled.div`
   ${props =>
