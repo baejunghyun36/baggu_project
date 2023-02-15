@@ -141,7 +141,6 @@ function Item() {
     }
   );
   const btnClickHandler = () => {
-    setToggle(!toggle);
     if (isSameUser) {
       setCheckShow(!checkShow);
       if (apiState === '선택 완료') {
@@ -156,6 +155,7 @@ function Item() {
         setIsAlreadyOffer(true);
       }
     }
+    setToggle(!toggle);
   };
   const deleteHandler = async () => {
     try {
