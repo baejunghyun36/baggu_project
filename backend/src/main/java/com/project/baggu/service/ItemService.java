@@ -426,9 +426,21 @@ public class ItemService {
   @Transactional
   public TradeRequestNotifyDto tradeRequest(Long itemIdx, TradeRequestDto tradeRequestDto){
 
+    TradeRequestNotifyDto tn = new TradeRequestNotifyDto();
+
     Item item = itemRepository.findByIdLock(itemIdx);
     String nickname = item.getUser().getNickname();
-    if (item.getUserRequestCount() >= 10) return null;
+
+    //이미 신청됐는지
+    if(tradeRequestRepository.findByUserIdxAndItemIdx(tradeRequestDto.getRequestUserIdx(), itemIdx).isPresent()){
+      tn.setReceiveUserIdx(-1L);
+      return tn;
+    }
+
+    if (item.getUserRequestCount() >= 10) {
+      tn.setReceiveUserIdx(-2L);
+      return tn;
+    }
     item.setUserRequestCount(item.getUserRequestCount()+1);
     itemRepository.save(item);
 
@@ -445,7 +457,7 @@ public class ItemService {
     }
     User user = userRepository.findById(tradeRequestDto.getRequestUserIdx()).get();
     user.setTradeCount(user.getTradeCount()+1);
-    TradeRequestNotifyDto tn = new TradeRequestNotifyDto();
+
     tn.setReceiveUserIdx(item.getUser().getUserIdx());
     tn.setType(0);
     tn.setTypeIdx(itemIdx);
