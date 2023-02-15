@@ -103,30 +103,37 @@ function MyProfileEdit() {
   //   console.log(formData);
   // };
   const handleUserImage = event => {
-    const files = Array.from(event.target.files);
-    setUserImage([...files]);
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = event => {
+      setUserImage(event.target.result);
+    };
+
+    reader.readAsDataURL(file);
+    console.log(event.target.files[0]);
   };
   const submitHandler = () => {
     if (isValidName && isValidIntroduction) {
       const formData = new FormData();
-      formData.append('username', nickname);
+      formData.append('nickname', nickname);
       formData.append('info', introduction);
-      userImage.forEach((userImage, index) => {
-        formData.append('profileImg', userImage);
-      });
+      formData.append('profileImg', userImage);
+
       const put_user_detail = async () => {
         try {
-          const response = await authInstance.put(
+          const response = await authInstance.get(
             requests.PUT_USER_DETAIL,
             formData,
             {
               headers: {
+                Authorization: localStorage.getItem('token'),
                 'Content-Type': 'multipart/form-data',
               },
             }
           );
 
-          return response.data;
+          return response;
         } catch (error) {
           throw error;
         }
@@ -177,6 +184,7 @@ function MyProfileEdit() {
         accept="img/*"
         onChange={handleUserImage}
         className="display: hidden"
+        multiple={false}
       />
 
       {/* 유저 프로필 이미지 컴포넌트 (클릭시 앨범에서 이미지 파일 선택받기) */}
