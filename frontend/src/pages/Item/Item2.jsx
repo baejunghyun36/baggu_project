@@ -211,7 +211,7 @@ const Item2 = props => {
 
   // 3. 선택하기
   const chooseRequest = () => {
-    navigate(`/choooseRequest/${itemIdx}`);
+    navigate(`/chooseRequest/${itemIdx}`);
   };
 
   // 4. 거절하기

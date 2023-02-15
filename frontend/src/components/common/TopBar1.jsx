@@ -44,7 +44,7 @@ function TopBar1() {
     location.startsWith('/chat') ||
     location.startsWith('/bagguReview') ||
     location.startsWith('/makeRequest') ||
-    location.startsWith('/makeRequest') ||
+    location.startsWith('/chooseRequest') ||
     location.startsWith('/myprofile') ||
     location.startsWith('/notification') ||
     location.startsWith('/search') ||
