@@ -1,5 +1,6 @@
 package com.project.baggu.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +8,8 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class CheckNicknameRequestDto {
-  private String nickname;
+@AllArgsConstructor
+public class UserCheckDuplicatedNicknameResponseDto {
+  private boolean isDuplicated;
 
 }
