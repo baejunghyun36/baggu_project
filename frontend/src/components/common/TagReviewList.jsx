@@ -38,9 +38,11 @@ const TagStyles = {
 };
 const Tag = styled.div`
   ${props => TagStyles[props.type]}
-  ${tw`p-1 px-[12px] text-main text-black bg-success rounded-full border-1`}
+  ${tw`p-1 px-[12px] text-main text-white bg-secondary rounded-full border-1`}
 `;
-
+const Text = styled.span`
+  ${tw`text-secondary px-[12px] text-main p-1`}
+`;
 const TagWrapper = tw.div`flex gap-1`;
 
 const TagList = tw.div`flex flex-col gap-1 p-2`;
@@ -61,6 +63,9 @@ const TagReviewList = ({ tags }) => {
     '답장이 빨라요.',
     '상품설명과 상품상태가 같아요.',
   ];
+  // if (tags.length === 0) {
+  //   return <span>'받은태그가 없습니다'</span>;
+  // }
 
   return (
     <TagList>
@@ -68,7 +73,7 @@ const TagReviewList = ({ tags }) => {
         ? Object.keys(tags).map(idx => (
             <TagWrapper key={idx}>
               <Tag>{userReviews[idx]}</Tag>
-              <span>{tags[idx]}</span>
+              <Text>{tags[idx]}</Text>
             </TagWrapper>
           ))
         : ''}

@@ -7,20 +7,24 @@ import { authInstance } from 'api/axios';
 import requests from 'api/config';
 
 function Baggu() {
+  const userIdx = Number(localStorage.getItem('userIdx'));
   const [baggus, setBaggus] = useState([]);
   useEffect(() => {
-    const get_user_trade = async () => {
+    const get_user_trade = async userIdx => {
       try {
-        const { data } = await authInstance.get(requests.GET_MAIN_TRADE(0));
+        const { data } = await authInstance.get(
+          requests.GET_USER_TRADE(userIdx)
+        );
 
-        console.log(data);
-        return setBaggus(data);
+        console.log('바꾸', data);
+        setBaggus(data.items);
+        return;
       } catch (error) {
         console.log(error);
       }
     };
 
-    get_user_trade();
+    get_user_trade(userIdx);
   }, []);
   return (
     <div>
