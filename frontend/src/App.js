@@ -54,8 +54,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // styled component
 import tw, { styled, css } from 'twin.macro';
-import Search from 'pages/Search/Search';
-import ItemEdit from 'pages/Item/ItemEdit';
+import ChooseRequest from 'pages/ChooseRequest/ChooseRequest';
+import DeleteRequest from 'pages/ChooseRequest/ChooseRequest';
 
 const queryClient = new QueryClient();
 
@@ -160,7 +160,9 @@ function App() {
             {/* 게시글 */}
             <Route
               path="/item/:id"
-              element={isLoggedIn ? <Item /> : <Navigate to="/login" replace />}
+              element={
+                isLoggedIn ? <Item2 /> : <Navigate to="/login" replace />
+              }
             />
             <Route
               path="/item/:id/edit"
@@ -249,6 +251,27 @@ function App() {
               element={
                 isLoggedIn ? (
                   <MakeRequestMessage />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            {/* 교환할 물건 선택 및 삭제 */}
+            <Route
+              path="/chooseRequest/:itemIdx"
+              element={
+                isLoggedIn ? (
+                  <ChooseRequest />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/deleteRequest/:itemIdx"
+              element={
+                isLoggedIn ? (
+                  <DeleteRequest />
                 ) : (
                   <Navigate to="/login" replace />
                 )
