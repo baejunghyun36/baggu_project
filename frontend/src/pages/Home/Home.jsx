@@ -21,7 +21,7 @@ import { get_main_trades } from 'api/apis/feed';
 const Loading = tw.div``;
 
 const ListHeightWrapper = styled.div`
-  ${tw`relative top-[60px]`}
+  ${tw`relative top-[60px] overflow-scroll overflow-x-hidden`}
   ${css`
     height: calc(100vh - 218px);
   `}
@@ -48,8 +48,8 @@ function Home() {
   }, [inView]);
 
   const [page, setPage] = useState(0);
-  const [items, setItems] = useState([]);
-  const [baggus, setBaggus] = useState([]);
+  // const [items, setItems] = useState([]);
+  // const [baggus, setBaggus] = useState([]);
   const tabNames = ['최근물건', '최근바꾸'];
   const getIndex = data => {
     setPage(data);
@@ -91,7 +91,7 @@ function Home() {
         lastPage.isLast ? undefined : lastPage.nextPage,
     }
   );
-
+  console.log('feeds :', feeds);
   return (
     <div id="home" className="top-[60px] absolute w-full">
       <TabBar tabNames={tabNames} getIndex={getIndex} />
