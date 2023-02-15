@@ -234,10 +234,14 @@ public class ItemController {
 //    return new ResponseEntity<>(itemList, HttpStatus.OK);
 //  }
   @PostMapping("/keyword")
-  public ScrollResponseDto<ItemListDto> getItemListByTitle(@RequestBody ItemTitleDto itemTitleDto){
+  public ScrollResponseDto<ItemListDto> getItemListByTitle(@RequestBody ItemTitleDto itemTitleDto,
+      @RequestParam(name="page", required=false) Integer page){
 
-    return itemService.getItemListByItemtitle(itemTitleDto.getTitle(),
-        itemTitleDto.getPage());
+    if(page==null){
+      page = 0;
+    }
+
+    return itemService.getItemListByItemtitle(itemTitleDto.getTitle(), page);
   }
 
 }
