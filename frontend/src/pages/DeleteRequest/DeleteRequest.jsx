@@ -55,7 +55,7 @@ const SelectedItem = styled.div`
 `;
 
 // Main Component
-function ChooseRequest() {
+function DeleteRequest() {
   // 바꾸 신청 대상 아이템 pk
   const { itemIdx } = useParams();
   // 신청자의 userIdx
@@ -174,4 +174,4 @@ function ChooseRequest() {
   );
 }
 
-export default ChooseRequest;
+export default DeleteRequest;
