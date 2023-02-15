@@ -33,4 +33,23 @@ export const post_request = async (itemIdx, data) => {
   }
 };
 
-// 거래 상태 변경
+// 바꾸신청 취소
+export const delete_my_request = async tradeRequestIdx => {
+  try {
+    await authInstance.delete(requests.DELETE_MY_REQUEST(tradeRequestIdx));
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 교환신청 수락
+export const choose_request = async tradeDetailIdx => {
+  try {
+    const { data } = await authInstance.get(
+      requests.CHOOSE_REQUEST(tradeDetailIdx)
+    );
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

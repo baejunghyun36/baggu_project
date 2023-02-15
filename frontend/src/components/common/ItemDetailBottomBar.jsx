@@ -1,12 +1,34 @@
 import React, { useState } from 'react';
-import Button from './Button';
 import { useLocation } from 'react-router-dom';
 
 // icons
 import heart_unliked from '../../assets/icons/heart_unliked.svg';
 import heart_liked from '../../assets/icons/heart_liked.svg';
 
-function ItemDetailBottomBar({ showHeart, btnTitle, btnClickHandler }) {
+// twin.macro
+import tw, { styled } from 'twin.macro';
+
+// Styled Component
+const ButtonStyles = {
+  바꾸신청: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary`,
+  선택하기: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary`,
+  신청취소: tw`bg-negative text-white hover:bg-white hover:text-negative hover:border-1 hover:border-negative`,
+};
+const Button = styled.div`
+  ${tw`w-fit h-5 flex text-main rounded-full items-center justify-center p-2 cursor-pointer`}
+  ${props => ButtonStyles[props.title]}
+  ${props =>
+    props.disabled
+      ? tw`bg-grey1 text-grey2 hover:bg-grey1 hover:text-grey2 hover:border-none cursor-default`
+      : tw``}
+`;
+
+function ItemDetailBottomBar({
+  showHeart,
+  btnTitle,
+  disabled,
+  btnClickHandler,
+}) {
   const [liked, setLiked] = useState(false);
   // 좋아요 API 요청
   const likeHandler = () => {
@@ -37,7 +59,14 @@ function ItemDetailBottomBar({ showHeart, btnTitle, btnClickHandler }) {
         />
       </div>
       {/* 사용자와 게시글 작성자 정보를 비교하여 title 변경 */}
-      <Button title={btnTitle} className="default" onClick={btnClickHandler} />
+      {/* <Button title={btnTitle} className="default" onClick={btnClickHandler} /> */}
+      <Button
+        title={btnTitle}
+        onClick={disabled ? null : btnClickHandler}
+        disabled={disabled}
+      >
+        <span>{btnTitle}</span>
+      </Button>
     </div>
   );
 }
