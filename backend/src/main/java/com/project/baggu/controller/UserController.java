@@ -130,6 +130,15 @@ public class UserController {
   }
 
 
+  // [POST] /baggu/user/nickname
+  // 유저의 닉네임 중복체크를 실행한다.
+  @PostMapping("/nickname")
+  public BaseIsSuccessDto checkDuplicatedNickname(@RequestBody CheckNicknameRequestDto checkNicknameRequestDto){
+    return new BaseIsSuccessDto(userService.findUserByNickname(checkNicknameRequestDto.getNickname()));
+  }
+
+
+
   //============================
   //이하 2순위 이하 API (미완성)
   //============================
