@@ -15,7 +15,7 @@ const Slider = styled.div`
 `;
 
 const Slide = styled.div`
-  ${tw`w-full h-full bg-cover bg-center flex-none border-1`}
+  ${tw`w-full h-full bg-contain bg-no-repeat bg-center flex-none border-1`}
   ${props =>
     css`
       background-image: url(${props.imgUrl});
@@ -23,7 +23,7 @@ const Slide = styled.div`
 `;
 
 const Button = styled.div`
-  ${tw`absolute w-2 h-2`}
+  ${tw`absolute w-2 h-2 z-10 cursor-pointer fill-secondary`}
   ${css`
     top: calc(50% - 16px);
   `}
