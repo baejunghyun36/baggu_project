@@ -9,7 +9,7 @@
       "tokenizer": {
         "nori_t_discard": {
           "type": "nori_tokenizer",
-          "decompound_mode": "discard"
+          "decompound_mode": "mixed"
         }
       },
       "filter": {

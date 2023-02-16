@@ -155,22 +155,27 @@ public class UserService {
 
     //보낸 텍스트 리뷰
     reviewTextRepository.findReviewReceiveTextListByUserIdx(userIdx).forEach(
-        (c) ->
-            reviewDto.getReceiveReviewText().add(c)
-    );
-
-    //받은 텍스트 리뷰(정보)
-    reviewTextRepository.findReviewRequestTextListByUserIdx(userIdx).forEach(
         (rt) ->
-            reviewDto.getRequestReviewText().add(
+            reviewDto.getReceiveReviewText().add(
                 ReviewTextDto.builder()
+                    .targetItemFirstImgUrl(rt.getItem().getFirstImg())
                     .targetItemIdx(rt.getItem().getItemIdx())
-                    .reviewText(rt.getComment())
-                    .writeUserIdx(rt.getUser().getUserIdx())
-                    .profileImgUrl(rt.getUser().getProfileImg())
                     .build()
             )
     );
+
+//    //받은 텍스트 리뷰(정보)
+//    reviewTextRepository.findReviewRequestTextListByUserIdx(userIdx).forEach(
+//        (rt) ->
+//            reviewDto.getRequestReviewText().add(
+//                ReviewTextDto.builder()
+//                    .targetItemIdx(rt.getItem().getItemIdx())
+//                    .reviewText(rt.getComment())
+//                    .writeUserIdx(rt.getUser().getUserIdx())
+//                    .profileImgUrl(rt.getUser().getProfileImg())
+//                    .build()
+//            )
+//    );
 
     return reviewDto;
   }
