@@ -21,6 +21,7 @@ import { get_item } from 'api/apis/item';
 import UserInfo2 from 'components/common/UserInfo2';
 import { post_chatroom } from 'api/apis/chat';
 import { post_notify } from 'api/apis/notify';
+import { chatStore } from 'store/chat';
 
 // Styled Component
 const Wrapper = styled.div``;
@@ -134,13 +135,23 @@ function ChooseRequest() {
     });
   }, [itemIdx]);
 
+  // 채팅방리스트 전역 저장소
+  const {
+    chatRoomList,
+    totalUnreadMsg,
+    addChatRoom,
+    clearChatRoom,
+    updateChatRoom,
+  } = chatStore(state => state);
+
   // 제출 버튼 클릭시 작동하는 함수
   const navigate = useNavigate();
   const chooseRequestSubmitHandler = () => {
     if (selectedItem) {
       choose_request(selectedItem)
         .then(data => post_chatroom(data))
-        .then(() => {
+        .then(data => {
+          addChatRoom(data);
           post_notify({
             title: '새로운 채팅',
             content: `${selectedPerson}님과의 거래를 시작해보세요.`,

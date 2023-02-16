@@ -8,8 +8,7 @@ export const post_chatroom = async data => {
       ...data,
       reviewState: [0, 0],
     });
-    console.log('바꾸수락시 채팅서버에 POST 응답 :', response);
-    return data;
+    return response.data;
   } catch (error) {
     throw error;
   }
