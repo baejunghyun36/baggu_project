@@ -122,7 +122,10 @@ function BottomNav() {
           </span>
         </div>
       </Link>
-      <Link to="/item/create" className="h-fit">
+      <Link
+        to="/item/create"
+        className="h-fit transition ease-in-out hover:-translate-y-1 hover:scale-125 duration-200"
+      >
         <div className="flex flex-col items-center">
           <img
             src={itemCreate}

@@ -21,6 +21,7 @@ import UserInfo2 from 'components/common/UserInfo2';
 import ItemDetailBottomBar from 'components/common/ItemDetailBottomBar';
 import Modal from 'components/common/Modal';
 import FormSubmitBtn from 'components/common/FormSubmitBtn';
+import { delete_my_request } from 'api/apis/request';
 
 // Styled component
 const Container = styled.div`
@@ -32,10 +33,10 @@ const ListWrapper = styled.div`
     height: calc(100vh - 158px);
   `}
 `;
-const Wrapper = tw.div`flex p-2 border-b justify-between`;
+const Wrapper = tw.div`flex p-2 border-b justify-between relative`;
 
 const Info = styled.div`
-  ${tw`relative flex items-start mr-[4px] overflow-hidden box-content whitespace-nowrap text-ellipsis w-full`}
+  ${tw`relative flex items-start justify-between mr-[4px] overflow-hidden box-content whitespace-nowrap text-ellipsis w-full`}
 
   & {
     section {
@@ -45,7 +46,7 @@ const Info = styled.div`
 `;
 
 const Title = tw.p`text-main-bold text-xl `;
-const Message = tw.span`text-sub`;
+const Message = tw.span`text-sub text-grey2`;
 const Product = styled.div`
   ${tw`w-80 h-80 rounded bg-cover bg-center`}
   ${props =>
@@ -54,14 +55,17 @@ const Product = styled.div`
     `}
 `;
 const BagguListWrapper = styled.div`
-  ${tw`bg-primary p-2 m-1 rounded-xl w-full mb-[98px]`}
+  ${tw`bg-primary p-2 rounded-xl m-2 mb-[114px] shadow-lg`}
 `;
 const BagguListHeading = styled.div`
-  ${tw`flex`}
+  ${tw`flex m-1 gap-1 items-end`}
   & {
     h3 {
       ${tw`text-h3`}
     }
+  }
+  span {
+    ${tw`text-grey3`}
   }
 `;
 
@@ -79,6 +83,10 @@ const RequestItem = styled.div`
 
 const UserContainer = styled.div`
   ${tw`border-b border-primary-hover last:border-none`}
+`;
+
+const MoreMenu = styled.div`
+  ${props => (props.show ? tw`` : tw`hidden`)}
 `;
 
 // Main Component
@@ -107,6 +115,10 @@ const Item2 = props => {
   const [selectedItemIdx, setSelectedItemIdx] = useState();
   // 9. 제출 버튼 상태
   const [showSubmitBtn, setShowSubmitBtn] = useState(false);
+  // 10. 수정삭제 메뉴 상태
+  const [showMore, setShowMore] = useState(false);
+  // 11. 삭제 모달 상태
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -204,8 +216,13 @@ const Item2 = props => {
 
   // 2. 바꾸신청 취소 -> 새로고침
   const cancelRequest = () => {
-    // 내 바꾸신청
-    // const myTradeRequestIdx =
+    let tradeRequestIdx = '';
+    requestList.forEach(request => {
+      if (request.userIdx === me) {
+        tradeRequestIdx = request.tradeRequestIdx;
+      }
+    });
+    delete_my_request(tradeRequestIdx).then(() => navigate(`/item/${itemIdx}`));
     window.location.reload();
   };
 
@@ -227,6 +244,11 @@ const Item2 = props => {
     거절하기: rejectRequest,
   };
 
+  // 수정페이지로 이동
+  const moveToEdit = () => {
+    navigate(`/item/${itemIdx}/edit`);
+  };
+
   return (
     <div>
       {showModal ? (
@@ -243,7 +265,7 @@ const Item2 = props => {
       )}
       <TopBar2 />
       {item && writer ? (
-        <>
+        <div className="relative">
           <UserInfo user={writer} />
           <Carousel3 imgUrls={item.itemImgUrls} />
           <Wrapper>
@@ -252,17 +274,36 @@ const Item2 = props => {
                 <Title>{item.title}</Title>
                 <Message>
                   {CategoryTypes[item.category]} | {item.dong} |
-                  {GetRelativeTime(FormatDate(item.createdAt))}
+                  <span> {GetRelativeTime(FormatDate(item.createdAt))}</span>
                 </Message>
               </section>
-              <img src={option_button} alt="profile_edit" />
+              <img
+                src={option_button}
+                alt="profile_edit"
+                className="cursor-pointer"
+                onClick={() => setShowMore(prev => !prev)}
+              />
             </Info>
+            <MoreMenu
+              show={showMore}
+              className="absolute right-1 w-fit h-fit z-10 bg-white top-5 flex flex-col shadow-md rounded border-1"
+            >
+              <div
+                className="p-1 px-2 cursor-pointer hover:bg-primary-hover hover:text-primary"
+                onClick={moveToEdit}
+              >
+                <span>수정</span>
+              </div>
+              <div className="p-1 px-2 cursor-pointer hover:bg-primary-hover hover:text-primary">
+                <span>삭제</span>
+              </div>
+            </MoreMenu>
           </Wrapper>
-          <Wrapper id="content">
+          <div id="content" className="p-3 pb-5">
             <p>{item.content}</p>
-          </Wrapper>
+          </div>
           {requestList ? (
-            <BagguListWrapper id="here" className="pb-[98px]">
+            <BagguListWrapper id="here">
               <BagguListHeading>
                 <h3>신청자 목록</h3>
                 <span>{requestList.length} / 10</span>
@@ -293,7 +334,7 @@ const Item2 = props => {
             disabled={disabled}
             btnClickHandler={ButtonHandlerTypes[btnTitle]}
           />
-        </>
+        </div>
       ) : (
         ''
       )}

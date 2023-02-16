@@ -2,6 +2,7 @@ import { get_search, post_search } from 'api/apis/search';
 import ProductListItem from 'components/common/ProductListItem';
 import TopBar2 from 'components/common/TopBar2';
 import React, { useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from 'react-query';
 
 // twin.macro
@@ -31,31 +32,39 @@ const ResultArea = styled.div`
 
 // Main Component
 const Search = props => {
+  // ref로 연결해놓은 요소가 화면에 보이는지 안 보이는지를 inView로 알 수 있음
+  const { ref, inView } = useInView();
+
   // input focus 상태를 나타내는 State
   const [inputFocus, setInputFocus] = useState(false);
   // 검색어 state
   const [searchKey, setSearchKey] = useState('');
   // 검색 결과
-  const [searchResult, setSearchResult] = useState([]);
+  // const [searchResult, setSearchResult] = useState([]);
 
   const onChangeHandler = e => {
     setSearchKey(e.target.value);
   };
 
-  // react-query
+  // 무한 스크롤
   const { data, fetchNextPage, isFetchingNextPage, status } = useInfiniteQuery(
     ['search', { searchKey: searchKey }],
-    ({ pageParam = 0 }) => post_search()
+    ({ keyword, pageParam = 0 }) => post_search(keyword, pageParam),
+    {
+      getNextPageParam: lastPage =>
+        lastPage.isLast ? undefined : lastPage.nextPage,
+      initialData: [{ items: [] }],
+    }
   );
+
   // 검색 API
   const onSubmitHandler = async () => {
     console.log('press enter');
 
     if (searchKey) {
-      const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
+      let reg = /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gim;
       searchKey.replace(reg, '');
-      const data = { title: searchKey, page: 0 };
-      await post_search(data).then(data => setSearchResult(data));
+      fetchNextPage({ pageParam: 0, replace: true });
       setSearchKey('');
     }
   };
@@ -88,10 +97,8 @@ const Search = props => {
         />
       </SearchBar>
       <ResultArea>
-        {searchResult
-          ? searchResult.map(item => (
-              <ProductListItem key={item.itemIdx} item={item} />
-            ))
+        {data
+          ? data.map(item => <ProductListItem key={item.itemIdx} item={item} />)
           : ''}
       </ResultArea>
     </div>
