@@ -160,6 +160,7 @@ public class UserService {
                 ReviewTextDto.builder()
                     .targetItemFirstImgUrl(rt.getItem().getFirstImg())
                     .targetItemIdx(rt.getItem().getItemIdx())
+                    .reviewText(rt.getComment())
                     .build()
             )
     );
