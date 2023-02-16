@@ -124,6 +124,9 @@ function ChooseRequest() {
   // 5. 선택한 아이템의 작성자 아이디
   const [selectedPersonIdx, setSelectedPersonIdx] = useState(null);
 
+  // 6. 선택한 아이템의 이미지
+  const [selectedItemImg, setSelectedItemImg] = useState(null);
+
   useEffect(() => {
     get_item(itemIdx).then(data => {
       setItem(data);
@@ -172,7 +175,7 @@ function ChooseRequest() {
             <img src={icon_exchange} alt="" />
             <ImgWrapper>
               <p>상대 아이템</p>
-              <ItemImg />
+              <ItemImg img={selectedItemImg ? selectedItemImg : ''} />
             </ImgWrapper>
           </BagguPreviewContainer>
           <HeadingBar>
@@ -194,13 +197,17 @@ function ChooseRequest() {
                           onClick={() => {
                             console.log(requestItem.tradeDetailIdx);
                             if (selectedItem === requestItem.tradeDetailIdx) {
-                              setSelectedItem();
-                              setSelectedPerson();
-                              setSelectedPersonIdx();
+                              setSelectedItem(null);
+                              setSelectedPerson(null);
+                              setSelectedPersonIdx(null);
+                              setSelectedItemImg(null);
                             } else {
                               setSelectedItem(requestItem.tradeDetailIdx);
                               setSelectedPerson(request.nickname);
                               setSelectedPersonIdx(request.userIdx);
+                              setSelectedItemImg(
+                                requestItem.requestItemFirstImg
+                              );
                             }
                           }}
                         >
