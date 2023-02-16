@@ -82,12 +82,14 @@ function ItemCreate() {
   useEffect(() => {
     if (itemImage) {
       setItemFirstImg(0);
+      console.log(itemImage);
     }
   }, [itemImage]);
   // --------------------------------------------------------
   const handleItemImage = event => {
     const files = Array.from(event.target.files);
     setItemImage(prevItemImage => [...prevItemImage, ...files]);
+    console.log(files);
   };
   const moveToCategoryPage = () => {
     setPage(1);
@@ -151,18 +153,18 @@ function ItemCreate() {
       data.append('title', itemTitle);
       data.append('content', itemContent);
       data.append('category', itemCategories);
-      data.append('itemImgs', []);
+      // data.append('itemImgs', []);
       data.append('itemFirstImgIdx', itemFirstImg);
       itemImage.forEach((image, index) => {
-        console.log(image);
+        // console.log(image);
         data.append('itemImgs', image);
       });
 
       for (let key of data.keys()) {
-        console.log(key);
+        // console.log(key);
       }
       for (let value of data.values()) {
-        console.log(value);
+        // console.log(value);
       }
 
       // await post_item(data).then(data => {
@@ -170,7 +172,7 @@ function ItemCreate() {
       // });
       const post_item_create = async () => {
         try {
-          console.log('form data :', data);
+          // console.log('form data :', data);
           const response = await authInstance.post(requests.POST_ITEM, data, {
             headers: {
               Authorization: localStorage.getItem('token'),
@@ -190,7 +192,7 @@ function ItemCreate() {
     }
   };
 
-  console.log(itemImage);
+  // console.log(itemImage);
   return (
     <div>
       <div className={`${page === 0 ? '' : 'hidden'}`}>

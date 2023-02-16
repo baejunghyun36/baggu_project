@@ -101,7 +101,9 @@ const requests = {
   },
 
   // 유저 프로필 수정 (PUT)
-  PUT_USER_DETAIL: `/baggu/user/`,
+  PUT_USER_DETAIL(userIdx) {
+    return `/baggu/user/${userIdx}/detail`;
+  },
 
   // 바꾸 신청 삭제 (DELETE)
   DELETE_REQUEST(tradeRequestIdx) {

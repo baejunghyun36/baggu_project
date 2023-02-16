@@ -18,6 +18,10 @@ const Avatar = styled.div`
     background-image: url(${props.img});
   `}
 `;
+const PreviewImg = styled.img`
+  ${tw`rounded-lg w-[5rem] h-[5rem] box-border cursor-pointer`}
+  ${props => (props.isFirstImg ? tw`border-2 border-primary` : tw``)}
+`;
 const InputContainer = styled.div`
   ${tw`flex-col pt-2 pb-2 px-4`}
 
@@ -49,6 +53,7 @@ const ImgAddBtn = styled.div`
 
 // Main Component
 function MyProfileEdit() {
+  const userIdx = Number(localStorage.getItem('userIdx'));
   const [nickname, setNickname] = useState('');
   const [nicknameMessage, setNicknameMessage] = useState('');
   const [isNicknameTouched, setIsNicknameTouched] = useState(false);
@@ -57,7 +62,9 @@ function MyProfileEdit() {
   const [introductionMessage, setIntroductionMessage] = useState('');
   const [isIntroductionTouched, setIsIntroductionTouched] = useState(false);
   const [isIntroductionValid, setIsIntroductionValid] = useState(false);
-  const [userImage, setUserImage] = useState([]);
+  const [userImage, setUserImage] = useState();
+  const [newImage, setNewImage] = useState();
+
   const navigate = useNavigate();
   const onChangeNicknameInput = useCallback(e => {
     // setIsTouched(true);
@@ -102,28 +109,41 @@ function MyProfileEdit() {
   //   setUserImage(formData.file);
   //   console.log(formData);
   // };
+  useEffect(() => {
+    console.log(newImage);
+  }, [newImage]);
   const handleUserImage = event => {
     const file = event.target.files[0];
-    const reader = new FileReader();
 
-    reader.onload = event => {
-      setUserImage(event.target.result);
-    };
+    // const reader = new FileReader();
 
-    reader.readAsDataURL(file);
-    console.log(event.target.files[0]);
+    // reader.onload = event => {
+    //   setUserImage(event.target.result);
+    //   console.log(event.target.result);
+    // };
+
+    // reader.readAsDataURL(file);
+    // // console.log(event.target.files[0]);
+    setNewImage(file);
   };
   const submitHandler = () => {
     if (isValidName && isValidIntroduction) {
       const formData = new FormData();
       formData.append('nickname', nickname);
+      // console.log(nickname);
       formData.append('info', introduction);
-      formData.append('profileImg', userImage);
+      // console.log(introduction);
+      if (newImage === 0) {
+        formData.append('profileImg', userImage);
+      } else {
+        formData.append('profileImg', newImage);
+      }
+      // console.log(userImage);
 
       const put_user_detail = async () => {
         try {
-          const response = await authInstance.get(
-            requests.PUT_USER_DETAIL,
+          const response = await authInstance.put(
+            requests.PUT_USER_DETAIL(userIdx),
             formData,
             {
               headers: {
@@ -132,7 +152,7 @@ function MyProfileEdit() {
               },
             }
           );
-
+          // console.log(response);
           return response;
         } catch (error) {
           throw error;
@@ -140,19 +160,18 @@ function MyProfileEdit() {
       };
       put_user_detail();
 
-      // navigate('/myprofile');
+      navigate('/');
     }
   };
 
   const isValidName = isNicknameTouched && isNicknameValid;
   const isValidIntroduction = isIntroductionTouched && isIntroductionValid;
-  const userIdx = Number(localStorage.getItem('userIdx'));
   useEffect(() => {
     const get_user = async () => {
       try {
         const { data } = await authInstance.get(requests.GET_USER(userIdx));
 
-        console.log(data);
+        // console.log(data);
         setNickname(data.nickname);
         setIntroduction(data.info);
         setUserImage(data.profileImgUrl);
@@ -169,7 +188,11 @@ function MyProfileEdit() {
       <TopBar2 title="프로필수정" />
       <ProfileImgContainer>
         <ImgWrapper>
-          <Avatar img={userImage} />
+          {newImage ? (
+            <Avatar img={URL.createObjectURL(newImage)} />
+          ) : (
+            <Avatar img={userImage} />
+          )}
           <ImgAddBtn onClick={handleClickAddImage}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path d="M149.1 64.8L138.7 96H64C28.7 96 0 124.7 0 160V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H373.3L362.9 64.8C356.4 45.2 338.1 32 317.4 32H194.6c-20.7 0-39 13.2-45.5 32.8zM256 192a96 96 0 1 1 0 192 96 96 0 1 1 0-192z" />
