@@ -314,3 +314,30 @@ _- 나에게 가치없는 물건을 가치있는 물건으로 -_
 - [시스템 구성도](./exec/시스템 구성도.md)
 - [기능명세서](./exec/기능명세서.md)
 - [컨벤션](./exec/컨벤션.md)
+
+## ✔ 바꾸바꾸 서비스 화면
+
+# 게시물 등록
+
+![](https://i.imgur.com/c4bpFES.gif)
+
+# 로그인
+
+![](https://i.imgur.com/I1AkwKm.gif)
+
+# 교환 수락
+![](../img/accept.gif)
+
+
+# 교환 신청
+![](../img/offer.gif)
+# 예약 중
+
+![](https://i.imgur.com/3LTariB.gif)
+
+# 실시간 알람 및 실시간 채팅방 개설
+
+![](https://i.imgur.com/8phgtLV.gif)
+
+# 채팅
+![](https://i.imgur.com/ExCkcB8.gif)
