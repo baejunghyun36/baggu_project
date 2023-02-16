@@ -280,6 +280,11 @@ function ChatDetail() {
     post_trade_status(data1);
     // 채팅서버에 PUT
     put_trade_status(userIdx, data2);
+    saveYourIdx(yourIdx);
+    saveYourNickname(yourNickname);
+    saveTargetItemIdx(yourItemIdx);
+    saveWriteUserIdx(userIdx);
+    saveRoomId(roomId);
     navigate(`/userReview`);
   };
 
