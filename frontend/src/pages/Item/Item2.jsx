@@ -248,7 +248,7 @@ const Item2 = props => {
   const moveToEdit = () => {
     navigate(`/item/${itemIdx}/edit`);
   };
-  const deleteHandler = async () => {
+  const deleteconfirmHandler = async () => {
     try {
       const { data } = await authInstance.delete(requests.ITEM(itemIdx));
       navigate('/');
@@ -257,9 +257,25 @@ const Item2 = props => {
       console.log(error);
     }
   };
+  const deleteHandler = async () => {
+    setShowDeleteModal(true);
+  };
 
   return (
     <div>
+      {showDeleteModal ? (
+        <Modal
+          onConfirm={deleteconfirmHandler}
+          onCancel={() => setShowModal(false)}
+          title="게시글 삭제"
+          content="정말 게시글을 삭제하시겠어요??"
+          cancelText="아니요"
+          confirmText="네"
+        />
+      ) : (
+        ''
+      )}
+
       {showModal ? (
         <Modal
           onConfirm={cancelRequest}
