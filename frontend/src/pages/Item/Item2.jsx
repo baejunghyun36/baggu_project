@@ -248,6 +248,15 @@ const Item2 = props => {
   const moveToEdit = () => {
     navigate(`/item/${itemIdx}/edit`);
   };
+  const deleteHandler = async () => {
+    try {
+      const { data } = await authInstance.delete(requests.ITEM(itemIdx));
+      navigate('/');
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -294,7 +303,10 @@ const Item2 = props => {
               >
                 <span>수정</span>
               </div>
-              <div className="p-1 px-2 cursor-pointer hover:bg-primary-hover hover:text-primary">
+              <div
+                className="p-1 px-2 cursor-pointer hover:bg-primary-hover hover:text-primary"
+                onClick={deleteHandler}
+              >
                 <span>삭제</span>
               </div>
             </MoreMenu>
