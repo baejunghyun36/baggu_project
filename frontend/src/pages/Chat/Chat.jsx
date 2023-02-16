@@ -43,6 +43,14 @@ function Chat() {
   const [chatList, setChatList] = useState([]);
 
   useEffect(() => {
+    chatRoomList.sort((a, b) => {
+      const dateA = new Date(a.createdAt.replace('T', ' '));
+      const dateB = new Date(b.createdAt.replace('T', ' '));
+      console.log(dateA < dateB);
+      if (dateA < dateB) return 1;
+      else return -1;
+    });
+    console.log(chatRoomList);
     setChatList(chatRoomList);
   }, [chatRoomList]);
 
