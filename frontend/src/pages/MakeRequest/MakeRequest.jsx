@@ -135,32 +135,34 @@ function MakeRequest() {
       </HeadingBar>
       <ItemList>
         {userItems ? (
-          userItems.map(item => (
-            <ProductListItem
-              key={item.itemIdx}
-              id={item.itemIdx}
-              item={item}
-              onClick={e => {
-                setSelectedItems(prev => {
-                  // 선택한 아이템이 3개 이상이 되면
-                  if (prev.length >= 3) {
-                    if (prev.includes(item.itemIdx)) {
-                      return prev.filter(idx => idx !== item.itemIdx);
+          userItems
+            .filter(item => item.tradeState === 0)
+            .map(item => (
+              <ProductListItem
+                key={item.itemIdx}
+                id={item.itemIdx}
+                item={item}
+                onClick={e => {
+                  setSelectedItems(prev => {
+                    // 선택한 아이템이 3개 이상이 되면
+                    if (prev.length >= 3) {
+                      if (prev.includes(item.itemIdx)) {
+                        return prev.filter(idx => idx !== item.itemIdx);
+                      } else {
+                        return prev;
+                      }
                     } else {
-                      return prev;
+                      if (prev.includes(item.itemIdx)) {
+                        return prev.filter(idx => idx !== item.itemIdx);
+                      } else {
+                        return [...prev, item.itemIdx];
+                      }
                     }
-                  } else {
-                    if (prev.includes(item.itemIdx)) {
-                      return prev.filter(idx => idx !== item.itemIdx);
-                    } else {
-                      return [...prev, item.itemIdx];
-                    }
-                  }
-                });
-              }}
-              selected={selectedItems.includes(item.itemIdx)}
-            />
-          ))
+                  });
+                }}
+                selected={selectedItems.includes(item.itemIdx)}
+              />
+            ))
         ) : (
           <span>등록된 아이템이 없습니다.</span>
         )}

@@ -208,7 +208,7 @@ function ItemEdit() {
         };
         mutate({ ItemIdx: id, data: data });
       });
-
+      navigate(`/item/${id}`);
       // const response = await put_item(id, data);
     }
   };

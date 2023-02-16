@@ -12,7 +12,7 @@ import tw, { styled } from 'twin.macro';
 import { notificationStore } from 'store/notication';
 
 // Styled Component
-const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border-grey1 h-[60px] w-full z-10 `;
+const Container = tw.div`flex fixed justify-between p-2 border-b border-grey1 h-[60px] w-full z-10 rounded-b-lg`;
 
 const Notify = styled.div`
   ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px]`}
@@ -63,10 +63,7 @@ function TopBar1() {
     return null;
   }
   return (
-    <Container
-      id="top-bar-1"
-      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px] bg-primary"
-    >
+    <Container id="top-bar-1">
       <div>
         {/* 동네설정 url은 임시 */}
         <Link to="/dong" className="flex items-center">

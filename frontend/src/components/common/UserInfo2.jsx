@@ -8,7 +8,7 @@ import { get_user } from 'api/apis/user';
 // ex) 유저pk를 불러와서 이용자와 열람하려는 사용자의 정보가 같을경우 내 프로필 페이지로, 아니라면 유저상세정보 페이지로
 
 const Wrapper = styled.div`
-  ${tw`p-2 flex hover:bg-primary-hover`}
+  ${tw`p-2 flex`}
 `;
 
 const InfoContainer = styled.div`
@@ -35,7 +35,7 @@ const Info = styled.div`
   }
 `;
 const Nickname = tw.p`text-main-bold `;
-const Message = tw.span`text-sub`;
+const Message = tw.span`text-sub bg-secondary py-[4px] px-1 rounded-full mt-1`;
 
 // Main Component
 function UserInfo2({ addUserIdx, message }) {
@@ -70,12 +70,14 @@ function UserInfo2({ addUserIdx, message }) {
           <InfoContainer onClick={moveToUserDetail}>
             <Avatar
               id="avatar"
-              // img={user.profileImgUrl ? user.profileImgUrl : null}
+              img={userInfo.profileImgUrl ? userInfo.profileImgUrl : null}
             />
             <Info id="info">
-              <section>
+              <section className="flex flex-col">
                 <Nickname>{userInfo.nickname}</Nickname>
-                <Message>{message}</Message>
+                <Message>
+                  {message ? message : '신청 메세지가 없습니다.'}
+                </Message>
               </section>
             </Info>
           </InfoContainer>

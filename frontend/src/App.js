@@ -91,8 +91,6 @@ function App() {
   useEffect(() => {
     // 채팅방리스트 SSE
     let chatRoomEvent = undefined;
-    // 채팅방 변경사항 SSE
-    let chatRoomUpdateEvent = undefined;
 
     // 채팅방리스트 SSE 연결
     if (isLoggedIn && !isListeningToRoom) {
@@ -119,6 +117,14 @@ function App() {
 
       setIsListeningToRoom(true);
     }
+
+    // clean up function!
+    return;
+  }, [isLoggedIn, isListeningToRoom]);
+
+  // 채팅방 변경사항 SSE
+  useEffect(() => {
+    let chatRoomUpdateEvent = undefined;
 
     // 채팅방 변경사항 SSE 연결
     if (isLoggedIn && !isListeningToRoomUpdate) {
@@ -159,8 +165,6 @@ function App() {
 
       setIsListeningToRoomUpdate(true);
     }
-    // clean up function!
-    return;
   }, [isLoggedIn]);
 
   useEffect(() => {
@@ -214,179 +218,201 @@ function App() {
     <CookiesProvider>
       <QueryClientProvider client={queryClient} contextSharing={true}>
         <BrowserRouter className="App">
-          <TopBar1 />
-          <Routes>
-            <Route
-              path="/login"
-              element={!isLoggedIn ? <Start /> : <Navigate to="/" replace />}
-            >
-              <Route path="" element={<StartLogin />} />
-              <Route path="nickname" element={<StartNickname />} />
-              <Route path="town" element={<StartTown />} />
+          <div className="w-[300px]">
+            <TopBar1 />
+            <Routes>
               <Route
-                path="category"
-                element={<StartCategory onLogin={handleLogin} />}
+                path="/login"
+                element={!isLoggedIn ? <Start /> : <Navigate to="/" replace />}
+              >
+                <Route path="" element={<StartLogin />} />
+                <Route path="nickname" element={<StartNickname />} />
+                <Route path="town" element={<StartTown />} />
+                <Route
+                  path="category"
+                  element={<StartCategory onLogin={handleLogin} />}
+                />
+                <Route path="ready" element={<StartReady />} />
+                <Route path="introduce" element={<StartIntroduce />} />
+              </Route>
+              <Route
+                path="/kakaoLogin"
+                element={<KakaoLogin onLogin={handleLogin} />}
               />
-              <Route path="ready" element={<StartReady />} />
-              <Route path="introduce" element={<StartIntroduce />} />
-            </Route>
-            <Route
-              path="/kakaoLogin"
-              element={<KakaoLogin onLogin={handleLogin} />}
-            />
-            <Route
-              path="/"
-              element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
-            />
-            {/* 후기 */}
-            <Route
-              path="/userReview"
-              element={
-                isLoggedIn ? <UserReview /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/bagguReview"
-              element={
-                isLoggedIn ? <BagguReview /> : <Navigate to="/login" replace />
-              }
-            />
-            {/* 게시글 */}
-            <Route
-              path="/item/:id"
-              element={
-                isLoggedIn ? <Item2 /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/item/:id/edit"
-              element={
-                isLoggedIn ? <ItemEdit /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/item/create"
-              element={
-                isLoggedIn ? <ItemCreate /> : <Navigate to="/login" replace />
-              }
-            />
-            {/* 내 바꾸관리 */}
-            <Route
-              path="/mybaggu"
-              element={
-                isLoggedIn ? <MyBaggu /> : <Navigate to="/login" replace />
-              }
-            />
-            {/* 채팅 */}
-            <Route
-              path="/chat"
-              element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />}
-            />
-            <Route
-              path="/chat/:roomId"
-              element={
-                isLoggedIn ? <ChatDetail /> : <Navigate to="/login" replace />
-              }
-            />
-            {/* 내 프로필 */}
-            <Route
-              path="/myprofile"
-              element={
-                isLoggedIn ? (
-                  <MyProfile onLogin={handleLogin} />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            <Route
-              path="/myprofile/edit"
-              element={
-                isLoggedIn ? (
-                  <MyProfileEdit />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            <Route
-              path="/myprofile/:id/baggu"
-              element={
-                isLoggedIn ? <Baggu /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/myprofile/:id/myreview"
-              element={
-                isLoggedIn ? <Myreview /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/myprofile/:id/town"
-              element={
-                isLoggedIn ? <ProfileTown /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/user/:id"
-              element={
-                isLoggedIn ? <UserDetail /> : <Navigate to="/login" replace />
-              }
-            />
-            {/* 바꾸신청 */}
-            <Route
-              path="/makeRequest/:itemIdx"
-              element={
-                isLoggedIn ? <MakeRequest /> : <Navigate to="/login" replace />
-              }
-            />
-            <Route
-              path="/makeRequest/message/:itemIdx"
-              element={
-                isLoggedIn ? (
-                  <MakeRequestMessage />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            {/* 교환할 물건 선택 및 삭제 */}
-            <Route
-              path="/chooseRequest/:itemIdx"
-              element={
-                isLoggedIn ? (
-                  <ChooseRequest />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            <Route
-              path="/deleteRequest/:itemIdx"
-              element={
-                isLoggedIn ? (
-                  <DeleteRequest />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            {/* 알림 */}
-            <Route
-              path="/notification"
-              element={
-                isLoggedIn ? <Notification /> : <Navigate to="/login" replace />
-              }
-            />
-            {/* 검색 */}
-            <Route
-              path="/search"
-              element={
-                isLoggedIn ? <Search /> : <Navigate to="/login" replace />
-              }
-            />
-          </Routes>
-          <BottomNav />
+              <Route
+                path="/"
+                element={
+                  isLoggedIn ? <Home /> : <Navigate to="/login" replace />
+                }
+              />
+              {/* 후기 */}
+              <Route
+                path="/userReview"
+                element={
+                  isLoggedIn ? <UserReview /> : <Navigate to="/login" replace />
+                }
+              />
+              <Route
+                path="/bagguReview"
+                element={
+                  isLoggedIn ? (
+                    <BagguReview />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              {/* 게시글 */}
+              <Route
+                path="/item/:id"
+                element={
+                  isLoggedIn ? <Item2 /> : <Navigate to="/login" replace />
+                }
+              />
+              <Route
+                path="/item/:id/edit"
+                element={
+                  isLoggedIn ? <ItemEdit /> : <Navigate to="/login" replace />
+                }
+              />
+              <Route
+                path="/item/create"
+                element={
+                  isLoggedIn ? <ItemCreate /> : <Navigate to="/login" replace />
+                }
+              />
+              {/* 내 바꾸관리 */}
+              <Route
+                path="/mybaggu"
+                element={
+                  isLoggedIn ? <MyBaggu /> : <Navigate to="/login" replace />
+                }
+              />
+              {/* 채팅 */}
+              <Route
+                path="/chat"
+                element={
+                  isLoggedIn ? <Chat /> : <Navigate to="/login" replace />
+                }
+              />
+              <Route
+                path="/chat/:roomId"
+                element={
+                  isLoggedIn ? <ChatDetail /> : <Navigate to="/login" replace />
+                }
+              />
+              {/* 내 프로필 */}
+              <Route
+                path="/myprofile"
+                element={
+                  isLoggedIn ? (
+                    <MyProfile onLogin={handleLogin} />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/myprofile/edit"
+                element={
+                  isLoggedIn ? (
+                    <MyProfileEdit />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/myprofile/:id/baggu"
+                element={
+                  isLoggedIn ? <Baggu /> : <Navigate to="/login" replace />
+                }
+              />
+              <Route
+                path="/myprofile/:id/myreview"
+                element={
+                  isLoggedIn ? <Myreview /> : <Navigate to="/login" replace />
+                }
+              />
+              <Route
+                path="/myprofile/:id/town"
+                element={
+                  isLoggedIn ? (
+                    <ProfileTown />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/user/:id"
+                element={
+                  isLoggedIn ? <UserDetail /> : <Navigate to="/login" replace />
+                }
+              />
+              {/* 바꾸신청 */}
+              <Route
+                path="/makeRequest/:itemIdx"
+                element={
+                  isLoggedIn ? (
+                    <MakeRequest />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/makeRequest/message/:itemIdx"
+                element={
+                  isLoggedIn ? (
+                    <MakeRequestMessage />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              {/* 교환할 물건 선택 및 삭제 */}
+              <Route
+                path="/chooseRequest/:itemIdx"
+                element={
+                  isLoggedIn ? (
+                    <ChooseRequest />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/deleteRequest/:itemIdx"
+                element={
+                  isLoggedIn ? (
+                    <DeleteRequest />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              {/* 알림 */}
+              <Route
+                path="/notification"
+                element={
+                  isLoggedIn ? (
+                    <Notification />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              {/* 검색 */}
+              <Route
+                path="/search"
+                element={
+                  isLoggedIn ? <Search /> : <Navigate to="/login" replace />
+                }
+              />
+            </Routes>
+            <BottomNav />
+          </div>
         </BrowserRouter>
       </QueryClientProvider>
     </CookiesProvider>
