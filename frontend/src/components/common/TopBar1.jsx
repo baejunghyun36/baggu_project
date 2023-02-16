@@ -18,6 +18,10 @@ const Notify = styled.div`
   ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px]`}
   ${props => (props.notifyCount > 0 ? tw`` : tw`hidden`)}
 `;
+const NotifyAni = styled.div`
+  ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px] animate-ping`}
+  ${props => (props.notifyCount > 0 ? tw`` : tw`hidden`)}
+`;
 
 // Main Component
 function TopBar1() {
@@ -61,7 +65,7 @@ function TopBar1() {
   return (
     <Container
       id="top-bar-1"
-      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px]"
+      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px] bg-primary"
     >
       <div>
         {/* 동네설정 url은 임시 */}
@@ -84,7 +88,10 @@ function TopBar1() {
             alt="icon-notification"
             className="absolute w-[40px] h-[40px]"
           />
-          <Notify notifyCount={notifyCount}></Notify>
+          <div>
+            <Notify notifyCount={notifyCount} />
+            <NotifyAni notifyCount={notifyCount} />
+          </div>
         </Link>
       </div>
     </Container>
