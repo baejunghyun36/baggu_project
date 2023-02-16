@@ -386,6 +386,7 @@ public class ItemService {
             .state(item.getState())
             .itemImgUrl(item.getFirstImg())
             .createdAt(item.getCreatedAt())
+            .itemIdx(item.getItemIdx())
             .build()
         )
         .collect(Collectors.toList());
