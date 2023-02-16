@@ -11,7 +11,7 @@ const Container = styled.div`
 const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
 
 const Avatar = styled.div`
-  ${tw`bg-primary rounded-full w-6 h-6 bg-cover bg-center mr-2`}
+  ${tw`bg-primary rounded-full w-6 h-6 bg-cover bg-center mr-2 shadow`}
   ${props => css`
     background-image: url(${props.img});
   `}
@@ -36,7 +36,7 @@ const Notification = styled.div`
   ${props => (props.unreadCnt ? tw`` : tw`hidden`)}
 `;
 const Product = styled.div`
-  ${tw`w-6 h-6 rounded bg-cover bg-center`}
+  ${tw`w-6 h-6 rounded bg-cover bg-center shadow`}
   ${props =>
     css`
       background-image: url(${props.img});
@@ -66,7 +66,7 @@ function ChatListItem({ info }) {
 
   // 채팅방 정보의 userIdx 중 현재 로그인한 사용자의 인덱스
   const targetIdx = info['userIdx'].findIndex(x => x !== userIdx);
-  console.log('상대 타겟 인덱스', targetIdx);
+  // console.log('상대 타겟 인덱스', targetIdx);
   // 리뷰 작성시 필요한 정보들
   const yourIdx = info.userIdx[targetIdx];
   const yourItemIdx = info.itemIdx[targetIdx];
@@ -79,7 +79,7 @@ function ChatListItem({ info }) {
   const itemImg = info.itemImg[targetIdx];
   const unreadCnt = info.readNotCnt[1 - targetIdx];
 
-  console.log('chatlistitem roominfo', info);
+  // console.log('chatlistitem roominfo', info);
   // 거래 후기 버튼 관련 데이터 정제
   // 1. 거래 상태 : true-거래완료, false-거래진행중
   const tradeStatus = info.tradeCompleteStatus;

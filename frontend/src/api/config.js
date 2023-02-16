@@ -2,7 +2,7 @@
 // 각 key의 상단의 주석으로 API 명세 상 API 제목 명시함
 const requests = {
   // baggu 공식
-  base_url: 'https://test.baggu.shop/api',
+  base_url: 'https://baggu.shop/api',
 
   // 알림 서버 URL
   notify_base_url: 'https://baggu.shop/notifyapi',
@@ -11,7 +11,7 @@ const requests = {
   chat_base_url: 'https://baggu.shop/chatapi',
 
   // 소정님 IP
-  // base_url: 'http://70.12.247.158:9999',
+  // base_url: 'http://49.167.206.142:9999',
 
   // 안채님 IP
   // base_url: 'http://70.12.247.174:9999',
@@ -101,7 +101,9 @@ const requests = {
   },
 
   // 유저 프로필 수정 (PUT)
-  PUT_USER_DETAIL: `/baggu/user/`,
+  PUT_USER_DETAIL(userIdx) {
+    return `/baggu/user/${userIdx}/detail`;
+  },
 
   // 바꾸 신청 삭제 (DELETE)
   DELETE_REQUEST(tradeRequestIdx) {
@@ -119,9 +121,7 @@ const requests = {
   },
 
   // 검색어 기반 아이템 리스트 (GET)
-  GET_SEARCH_RESULT(keyword) {
-    return `/baggu/item?keyword=${keyword}`;
-  },
+  GET_SEARCH_RESULT: '/baggu/item/keyword',
 
   // 거래 완료 후 유저에 대한 후기 작성 (POST)
   POST_USER_REVIEW: `/baggu/tradeFin/reviewTag`,

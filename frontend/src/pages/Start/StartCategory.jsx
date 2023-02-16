@@ -49,7 +49,7 @@ const CategoryBtn = styled.div`
   }
 `;
 
-function StartCategory() {
+function StartCategory({ onLogin }) {
   const [clickedCategories, setClickedCategories] = useState({
     0: false,
     1: false,
@@ -146,10 +146,11 @@ function StartCategory() {
             response.headers['authorization']
           );
           window.localStorage.setItem('dong', dong);
+          onLogin(true);
           navigate('/');
         })
         .catch(error => {
-          navigate('/start');
+          navigate('/login');
           console.log(error);
         });
     }

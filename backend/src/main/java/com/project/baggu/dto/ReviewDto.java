@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ReviewDto {
 
   private Map <Integer, Integer> reviewTag = new HashMap<>();
-  private ArrayList<String> receiveReviewText = new ArrayList<>();
+  private ArrayList<ReviewTextDto> receiveReviewText = new ArrayList<>();
   private ArrayList<ReviewTextDto> requestReviewText = new ArrayList<>();
 
 }

@@ -14,7 +14,7 @@ import requests from 'api/config';
 import { signUpStore, userStore } from 'store/store';
 
 // Main Component
-function KakaoLogin() {
+function KakaoLogin({ onLogin }) {
   // 2. Redirect URI로 받은 인가코드 저장
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,26 +50,37 @@ function KakaoLogin() {
         if (response.data.signed) {
           // 가입된 사용자
           // token, userIdx, dong 모두 로컬스토리지에 저장
+
           localStorage.setItem('isLoggedIn', true);
           localStorage.setItem('token', response.headers['authorization']);
           localStorage.setItem('dong', response.data.user.dong);
           // 쿠키에 저장
           setCookie('userIdx', response.data.user.userIdx);
           setCookie('token', response.headers['authorization']);
-          setCookie('refresh-token', response.headers['refresh-token'], {
-            httponly: true,
-          });
+          setCookie('refresh-token', response.headers['refresh-token']);
           setCookie('isLoggedIn', true);
+          onLogin(true);
+          // console.log(
+          //   '카카오로그인하고 홈으로 넘어갈때 로컬스토리지에 isLoggedIn이 있는지',
+          //   localStorage.getItem('isLoggedIn')
+          // );
           navigate('/');
+          return true;
         } else {
           // 가입되지 않은 사용자
           // SignUpStore에 정보 저장하고 온보딩 단계로 넘어감
           saveEmail(response.data.email);
           saveUserIdx(response.data.user.userIdx);
           saveKakaoId(response.data.kakaoId);
-          navigate('/start/nickname');
+
+          navigate('/login/nickname');
+          return false;
         }
       })
+      // .then(data => {
+      //   if (data) navigate('/');
+      //   else navigate('/start/nickname');
+      // })
       .catch(error => {
         throw error;
       });

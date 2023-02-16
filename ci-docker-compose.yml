@@ -38,8 +38,27 @@ services:
   baggu-frontend-test:
     container_name: baggu-frontend-test
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-test
       context: ./frontend
     ports:
       - "3001:3000"
+    restart: always
+  baggu-elasticsearch-test:
+    container_name: baggu-elasticsearch-test
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+    environment:
+      - node.name=single-node
+      - cluster.name=baggutest
+      - discovery.type=single-node
+    ports:
+      - 9201:9200
+
+    build:
+      dockerfile: Dockerfile
+      context: ./elasticsearch
+      args:
+        ELK_VERSION: 7.15.2
     restart: always

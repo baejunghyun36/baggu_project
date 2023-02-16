@@ -1,0 +1,18 @@
+{
+    "properties": {
+      "title": {
+        "type": "text",
+        "fields": {
+          "nori_discard": {
+            "type": "text",
+            "analyzer": "nori_discard",
+            "search_analyzer": "standard"
+          }
+        }
+      },
+      "itemIdx": {
+        "type": "long",
+        "index": true
+      }
+    }
+}

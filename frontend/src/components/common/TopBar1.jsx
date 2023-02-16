@@ -12,10 +12,14 @@ import tw, { styled } from 'twin.macro';
 import { notificationStore } from 'store/notication';
 
 // Styled Component
-const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border-grey1 h-[60px] w-full`;
+const Container = tw.div`flex fixed justify-between p-2 border-b border-grey1 h-[60px] w-full z-10 rounded-b-lg`;
 
 const Notify = styled.div`
   ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px]`}
+  ${props => (props.notifyCount > 0 ? tw`` : tw`hidden`)}
+`;
+const NotifyAni = styled.div`
+  ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px] animate-ping`}
   ${props => (props.notifyCount > 0 ? tw`` : tw`hidden`)}
 `;
 
@@ -40,11 +44,11 @@ function TopBar1() {
   // 온보딩 페이지에서 상단바 숨기기
   const location = useLocation().pathname;
   if (
-    location.startsWith('/start') ||
+    location.startsWith('/login') ||
     location.startsWith('/chat') ||
     location.startsWith('/bagguReview') ||
     location.startsWith('/makeRequest') ||
-    location.startsWith('/makeRequest') ||
+    location.startsWith('/chooseRequest') ||
     location.startsWith('/myprofile') ||
     location.startsWith('/notification') ||
     location.startsWith('/search') ||
@@ -59,10 +63,7 @@ function TopBar1() {
     return null;
   }
   return (
-    <Container
-      id="top-bar-1"
-      className="flex flex-wrap justify-between p-2 border-b border-grey1 h-[60px]"
-    >
+    <Container id="top-bar-1">
       <div>
         {/* 동네설정 url은 임시 */}
         <Link to="/dong" className="flex items-center">
@@ -84,7 +85,10 @@ function TopBar1() {
             alt="icon-notification"
             className="absolute w-[40px] h-[40px]"
           />
-          <Notify notifyCount={notifyCount}></Notify>
+          <div>
+            <Notify notifyCount={notifyCount} />
+            <NotifyAni notifyCount={notifyCount} />
+          </div>
         </Link>
       </div>
     </Container>

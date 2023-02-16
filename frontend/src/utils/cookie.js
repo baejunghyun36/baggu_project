@@ -11,3 +11,8 @@ export const setCookie = (name, value, option) => {
 export const getCookie = name => {
   return cookies.get(name);
 };
+
+// 삭제
+export const deleteCookie = name => {
+  cookies.remove(name);
+};

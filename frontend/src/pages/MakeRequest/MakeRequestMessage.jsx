@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // component
 import FormSubmitBtn from 'components/common/FormSubmitBtn';
@@ -63,6 +63,8 @@ function MakeRequestMessage() {
   // API 요청시 파라미터로 전송
   const { itemIdx } = useParams();
 
+  const navigate = useNavigate();
+
   const { requestItemIdxList, requestUserIdx, comment, saveComment } =
     makeRequestStore(state => state);
   const [message, setMessage] = useState(comment);
@@ -81,14 +83,16 @@ function MakeRequestMessage() {
 
     // 즉시 실행 익명 함수
     (async () => {
-      await post_request(itemIdx, data).then(data => {
-        data = {
-          ...data,
-          title: '새로운 바꾸 신청이 도착했습니다.',
-          content: `${data.receiveUserIdx}님과의 물물교환을 시작해보세요.`,
-        };
-        post_notify(data);
-      });
+      await post_request(itemIdx, data)
+        .then(data => {
+          data = {
+            ...data,
+            title: '새로운 바꾸 신청이 도착했습니다.',
+            content: `${data.receiveUserIdx}님과의 물물교환을 시작해보세요.`,
+          };
+          post_notify(data);
+        })
+        .then(() => navigate(`/item/${itemIdx}`));
     })();
   };
 

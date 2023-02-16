@@ -21,4 +21,5 @@ public class ItemListDto {
   private int state;
   private boolean isValid;
   private String itemImgUrl;
+  private Long itemIdx;
 }

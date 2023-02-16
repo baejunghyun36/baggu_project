@@ -29,13 +29,14 @@ import requests from 'api/config';
 import FormatDate from 'hooks/FormatDate';
 import { post_trade_status } from 'api/apis/trade';
 import { reviewStore } from 'store/reviewStore';
+import FormatDateForChat from 'hooks/FormatDateForChat';
 
 // Styled Components
 const Summary = styled.div`
   ${tw`flex justify-center p-2 gap-3 border-b`}
   & {
     div {
-      ${tw`flex gap-2`}
+      ${tw`flex gap-2 `}
     }
   }
 `;
@@ -45,24 +46,27 @@ const Product = styled.div`
     css`
       background-image: url(${props.img});
     `}
-  ${tw`bg-cover bg-center w-[60px] h-[60px] rounded`}
+  ${tw`bg-cover bg-center w-[60px] h-[60px] rounded shadow`}
 `;
 
 const ButtonStyles = {
-  0: tw`bg-white text-secondary border-1 border-secondary hover:bg-secondary hover:text-white`,
-  1: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary`,
-  2: tw`bg-grey1 text-grey2`,
+  0: tw`bg-white text-secondary border-1 border-secondary hover:bg-secondary hover:text-white shadow`,
+  1: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary shadow`,
+  2: tw`bg-grey1 text-grey2 shadow`,
 };
 const Button = styled.div`
   ${tw`text-sub-bold rounded-full flex justify-center items-center h-5 w-fit p-2`}
   ${props => ButtonStyles[props.buttonType]}
 `;
+const ChatContentWrapper = styled.div`
+  ${tw`relative`}
+  ${css`
+    height: calc(100vh - 225px);
+  `}
+`;
 
 const ChatContent = styled.div`
-  ${css`
-    height: calc(100vh - 60px - 92.5px - 72px);
-  `}
-  ${tw`overflow-scroll`}
+  ${tw`p-2 absolute bottom-0 h-full overflow-y-auto`}
 `;
 
 const MessageForm = styled.div`
@@ -78,7 +82,7 @@ const MessageForm = styled.div`
 const TextInput = tw.input`w-[320px] h-[44px] p-1 rounded`;
 
 const MessageSection = styled.section`
-  ${tw`flex p-1 w-full gap-1`}
+  ${tw`flex py-1 w-full gap-1`}
 `;
 
 const Avatar = styled.div`
@@ -144,7 +148,7 @@ function ChatDetail() {
   const chatRoomInfo = chatRoomList.find(
     chatRoom => chatRoom.roomId === roomId
   );
-
+  console.log('chatRoomInfo :', chatRoomInfo);
   // 현재 로그인된 사용자
   const userIdx = Number(localStorage.getItem('userIdx'));
   const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -196,6 +200,12 @@ function ChatDetail() {
       break;
   }
 
+  // 새로운 메세지 올때마다 스크롤 Top 설정하기
+  function handleScrollPosition() {
+    const target = document.getElementById('ChatContent');
+    target.scrollBottom = target.scrollHeight;
+  }
+
   useEffect(() => {
     // focusState 변경 API 먼저 날리기
     post_chatroom_focus(userIdx, roomId, true).then(res => {
@@ -222,6 +232,8 @@ function ChatDetail() {
         setMessageList(prev => {
           return [...prev, parsedData];
         });
+        document.getElementById('ChatContent').scrollTop =
+          document.getElementById('ChatContent').scrollHeight;
       };
 
       // 에러 발생
@@ -268,6 +280,12 @@ function ChatDetail() {
     post_trade_status(data1);
     // 채팅서버에 PUT
     put_trade_status(userIdx, data2);
+    saveYourIdx(yourIdx);
+    saveYourNickname(yourNickname);
+    saveTargetItemIdx(yourItemIdx);
+    saveWriteUserIdx(userIdx);
+    saveRoomId(roomId);
+    navigate(`/userReview`);
   };
 
   // 유저가 입력한 메세지 state에 저장
@@ -293,6 +311,15 @@ function ChatDetail() {
   };
 
   // 후기 남기기
+  // 후기 남기기 버튼을 누르면 API 요청시 필요한 데이터를 저장
+  // const {
+  //   saveYourIdx,
+  //   saveYourNickname,
+  //   saveTargetItemIdx,
+  //   saveWriteUserIdx,
+  //   saveRoomId,
+  // } = reviewStore(state => state);
+
   const navigate = useNavigate();
   const sendReviewHandler = () => {
     saveYourIdx(yourIdx);
@@ -348,29 +375,31 @@ function ChatDetail() {
           <span>{buttonText}</span>
         </Button>
       </Summary>
-      <ChatContent>
-        {messageList
-          ? messageList.map(message => {
-              const messageType =
-                message.receiverIdx === userIdx ? 'receive' : 'send';
-              const { year, month, day, hour, minute } = FormatDate(
-                message.createdAt
-              );
-              return (
-                <MessageSection type={messageType} key={message.chatId}>
-                  <MessageColumn type={messageType}>
-                    <div>
-                      <Bubble type={messageType}>{message.msg}</Bubble>
-                      <span>{`${hour} : ${minute} ${
-                        hour >= 12 ? 'PM' : 'AM'
-                      }`}</span>
-                    </div>
-                  </MessageColumn>
-                </MessageSection>
-              );
-            })
-          : ''}
-      </ChatContent>
+      <ChatContentWrapper id="ChatContentWrapper">
+        <ChatContent id="ChatContent">
+          {messageList
+            ? messageList.map(message => {
+                const messageType =
+                  message.receiverIdx === userIdx ? 'receive' : 'send';
+                const { year, month, day, hour, minute } = FormatDateForChat(
+                  message.createdAt
+                );
+                return (
+                  <MessageSection type={messageType} key={message.chatId}>
+                    <MessageColumn type={messageType}>
+                      <div>
+                        <Bubble type={messageType}>{message.msg}</Bubble>
+                        <span>{`${hour} : ${minute} ${
+                          hour >= 12 ? 'PM' : 'AM'
+                        }`}</span>
+                      </div>
+                    </MessageColumn>
+                  </MessageSection>
+                );
+              })
+            : ''}
+        </ChatContent>
+      </ChatContentWrapper>
       <MessageForm>
         <TextInput
           type="text"

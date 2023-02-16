@@ -1,26 +1,21 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import TopBar2 from '../../components/common/TopBar2';
-import UserInfo from 'components/common/UserInfo';
-import tw, { styled, css } from 'twin.macro';
-import { authInstance } from 'api/axios';
-import requests from 'api/config';
-
-// twin.macro
-import { get_user, logout } from 'api/apis/user';
-import Modal from 'components/common/Modal';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { deleteCookie } from 'utils/cookie';
 import { useQuery } from 'react-query';
+import { get_user, logout } from 'api/apis/user';
+import tw, { styled, css } from 'twin.macro';
+import Modal from 'components/common/Modal';
+import UserInfo from 'components/common/UserInfo';
+import TopBar2 from 'components/common/TopBar2';
 
 // Styled Component
 const Container = styled.div`
   ${tw`flex flex-col p-2 border-b`}
 `;
 
-const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
-
 // Main Component
-function MyProfile() {
+function MyProfile({ onLogin }) {
   // 모달 상태
   const [showModal, setShowModal] = useState(false);
 
@@ -38,7 +33,12 @@ function MyProfile() {
   const navigate = useNavigate();
   const logoutHandler = async () => {
     await logout(userIdx).then(() => {
-      navigate('/start');
+      deleteCookie('userIdx');
+      deleteCookie('token');
+      deleteCookie('refresh-token');
+      deleteCookie('isLoggedIn');
+      onLogin(false);
+      navigate('/login');
     });
   };
 
@@ -71,11 +71,6 @@ function MyProfile() {
           <h4>받은후기</h4>
         </Container>
       </Link>
-      <Link to={`/myprofile/${user.userIdx}/favorite`}>
-        <Container>
-          <h4>관심목록</h4>
-        </Container>
-      </Link>
       <Container className="font-bold">
         <h4>기타</h4>
       </Container>
@@ -84,7 +79,7 @@ function MyProfile() {
           <h4>내 동네설정</h4>
         </Container>
       </Link>
-      <Container onClick={() => setShowModal(true)}>
+      <Container onClick={() => setShowModal(true)} className="cursor-pointer">
         <h4>로그아웃</h4>
       </Container>
     </div>

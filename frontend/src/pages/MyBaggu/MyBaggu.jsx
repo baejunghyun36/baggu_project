@@ -5,7 +5,20 @@ import BagguList from 'components/common/BagguList';
 import TabBar from 'components/common/TabBar';
 import { authInstance } from 'api/axios';
 import requests from 'api/config';
+import ProductListItem from 'components/common/ProductListItem';
 
+// twin.macro
+import tw, { styled, css } from 'twin.macro';
+
+// Styled Component
+const ListWrapper = styled.div`
+  ${tw`relative top-[60px] overflow-scroll overflow-x-hidden`}
+  ${css`
+    height: calc(100vh - 218px);
+  `}
+`;
+
+// Main Component
 function MyBaggu() {
   const userIdx = Number(localStorage.getItem('userIdx'));
   const [page, setPage] = useState(0);
@@ -22,7 +35,7 @@ function MyBaggu() {
           requests.GET_USER_ITEM(userIdx)
         );
         console.log(data);
-        return setMyItems(data);
+        return setMyItems(data.items);
       } catch (error) {
         console.log(error);
       }
@@ -43,21 +56,27 @@ function MyBaggu() {
     get_user_items();
     get_my_request();
   }, []);
+  console.log('myItems :', myItems);
+  console.log('offers :', offers);
   return (
-    <div className="top-[60px] absolute w-full" id="check">
-      <div>
-        <TabBar tabNames={tabNames} getIndex={getIndex} />
-      </div>
-      <div className={`${page === 0 ? '' : 'hidden'}`}>
-        {/* {status === 'loading' && <div>Loading...</div>}{' '} */}
-        {/* {status === 'success' && <ProductList items={items} />} */}
-        <ProductList items={myItems} />
-      </div>
-      <div className={`${page === 1 ? '' : 'hidden'}`}>
-        {/* {status === 'loading' && <div>Loading...</div>}{' '}
-        {status === 'success' && <FeedList feeds={items} />} */}
-        <ProductList items={offers} />
-      </div>
+    <div className="top-[60px] relative w-full" id="check">
+      <TabBar tabNames={tabNames} getIndex={getIndex} />
+      <ListWrapper id="listWrapper">
+        {page === 0
+          ? myItems
+            ? myItems.map(offer => (
+                <ProductListItem key={offer.itemIdx} item={offer} />
+              ))
+            : ''
+          : ''}
+        {page === 1
+          ? offers
+            ? offers.map(offer => (
+                <ProductListItem key={offer.itemIdx} item={offer} />
+              ))
+            : ''
+          : ''}
+      </ListWrapper>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { authInstance, defaultInstance } from '../axios';
 export const get_user = async userIdx => {
   try {
     const { data } = await authInstance.get(requests.GET_USER(userIdx));
-    console.log('get user', data);
+    // console.log('get user', data);
     return data;
   } catch (error) {
     throw error;
@@ -29,7 +29,7 @@ export const logout = async userIdx => {
 export const get_user_item = async userIdx => {
   try {
     const { data } = await authInstance.get(requests.GET_USER_ITEM(userIdx));
-    return data;
+    return data.items;
   } catch (error) {
     throw error;
   }

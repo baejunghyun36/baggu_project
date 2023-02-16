@@ -2,17 +2,14 @@ package com.project.baggu.controller;
 
 import com.project.baggu.domain.TokenInfo;
 import com.project.baggu.domain.User;
-import com.project.baggu.domain.enumType.Role;
 import com.project.baggu.exception.BaseException;
 import com.project.baggu.dto.*;
 import com.project.baggu.repository.UserRepository;
 import com.project.baggu.service.JwtTokenService;
 import com.project.baggu.service.UserService;
-import com.project.baggu.utils.CookieUtils;
 import com.project.baggu.utils.JwtTokenUtils;
 import java.util.List;
 import com.project.baggu.exception.BaseResponseStatus;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -128,6 +125,16 @@ public class UserController {
 
       return new BaseIsSuccessDto(true);
   }
+
+
+  // [POST] /baggu/user/nickname
+  // 유저의 닉네임 중복체크를 실행한다.
+  @PostMapping("/nickname")
+  public UserCheckDuplicatedNicknameResponseDto checkDuplicatedNickname(@RequestBody UserCheckDuplicatedNicknameRequestDto userCheckDuplicatedNicknameRequestDto){
+    return new UserCheckDuplicatedNicknameResponseDto(userService.findUserByNickname(
+        userCheckDuplicatedNicknameRequestDto.getNickname()));
+  }
+
 
 
   //============================

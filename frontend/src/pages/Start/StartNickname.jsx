@@ -91,7 +91,7 @@ function StartNickname() {
     // {nickname : nickname}으로 중앙저장소에 저장
     if (isValid) {
       saveNickname(nickname);
-      navigate('/start/town');
+      navigate('/login/town');
     }
   };
 

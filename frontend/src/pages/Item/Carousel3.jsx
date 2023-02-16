@@ -15,7 +15,7 @@ const Slider = styled.div`
 `;
 
 const Slide = styled.div`
-  ${tw`w-full h-full bg-cover bg-center flex-none border-1`}
+  ${tw`w-full h-full bg-contain bg-no-repeat bg-center flex-none border-1`}
   ${props =>
     css`
       background-image: url(${props.imgUrl});
@@ -23,11 +23,12 @@ const Slide = styled.div`
 `;
 
 const Button = styled.div`
-  ${tw`absolute w-2 h-2`}
+  ${tw`absolute w-2 h-2 z-10 cursor-pointer fill-secondary opacity-60`}
   ${css`
     top: calc(50% - 16px);
   `}
   ${props => (props.type === 'left' ? tw`left-3` : tw`right-3`)}
+  ${props => (props.cnt < 2 ? tw`hidden` : '')}
 `;
 
 // Main Component
@@ -56,12 +57,12 @@ const Carousel3 = ({ imgUrls }) => {
   };
   return (
     <Window id="window">
-      <Button type="left" onClick={PrevHandler}>
+      <Button type="left" onClick={PrevHandler} cnt={imgUrls.length}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
           <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
         </svg>
       </Button>
-      <Button type="right" onClick={NextHandler}>
+      <Button type="right" onClick={NextHandler} cnt={imgUrls.length}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
           <path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
         </svg>

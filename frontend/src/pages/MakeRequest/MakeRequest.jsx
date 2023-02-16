@@ -13,6 +13,7 @@ import tw, { styled, css } from 'twin.macro';
 import { get_user_item } from 'api/apis/user';
 // store
 import { makeRequestStore } from '../../store/makeRequest';
+import { useQuery } from 'react-query';
 
 // Styled Component
 const Wrapper = styled.div``;
@@ -38,22 +39,27 @@ const HeadingBar = tw.div`w-full h-[60px] p-2 text-h3 border-b bg-white`;
 
 const SelectedItemContainer = styled.div`
   ${tw`flex m-2 h-[100px] items-center gap-2`}
-  ${props =>
-    props.cnt ? tw`` : tw`border border-dashed border-grey1 justify-center`}
+  ${props => (props.cnt ? tw`` : tw`justify-center`)}
   span {
-    ${tw`text-sub text-grey2`}
+    ${tw`text-sub text-grey3`}
   }
 `;
 
 const SelectedItem = styled.div`
   ${tw`rounded border`}
-  ${tw`w-[100px] h-[100px]`}
+  ${tw`w-[100px] h-[100px] bg-cover bg-center`}
+  ${props =>
+    css`
+      background-image: url(${props.item.itemImgUrl});
+    `}
 `;
 
 // Main Component
 function MakeRequest() {
   // 바꾸 신청 대상 아이템 pk
   const { itemIdx } = useParams();
+  // 신청자의 userIdx
+  const userIdx = localStorage.getItem('userIdx');
 
   // store
   const {
@@ -69,6 +75,12 @@ function MakeRequest() {
   // 바꾸 신청자가 선택한 아이템의 itemIdx
   const [selectedItems, setSelectedItems] = useState(requestItemIdxList);
 
+  const { data } = useQuery(
+    ['getUserItems', { userIdx: userIdx }],
+    async () => await get_user_item(userIdx),
+    { onSuccess: data => setUserItems(data) }
+  );
+
   useEffect(() => {
     // 최초 렌더링시 해야할 일
     // useritems API 요청하여 받아오기
@@ -76,76 +88,8 @@ function MakeRequest() {
     //     .then(data => setUserItems(data))
     //     .catch(err => console.log(err));
 
-    // 바꾸 신청자 user
-    // userIdx
-    // const userIdx = localStorage.getItem('userIdx');
-    const userIdx = 1;
     saveRequestUserIdx(userIdx);
     console.log('userIdx', userIdx);
-
-    // 더미데이터
-    setUserItems([
-      {
-        itemIdx: 5,
-        title: '꽃',
-        dong: '당산동',
-        createdAt: '2023-01-28T18:24:43',
-        tradeState: 0,
-        reviewState: false,
-        itemImgUrl:
-          'https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/c5d9b362-7abb-404c-9494-ba42d9fad6f1.png',
-      },
-      {
-        itemIdx: 3,
-        title: '양말',
-        dong: '당산동',
-        createdAt: '2023-01-28T18:22:40',
-        tradeState: 2,
-        reviewState: true,
-        itemImgUrl:
-          'https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/c5d9b362-7abb-404c-9494-ba42d9fad6f1.png',
-      },
-      {
-        itemIdx: 2,
-        title: '델 노트북',
-        dong: '당산동',
-        createdAt: '2023-01-28T18:14:45',
-        tradeState: 0,
-        reviewState: false,
-        itemImgUrl:
-          'https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/c5d9b362-7abb-404c-9494-ba42d9fad6f1.png',
-      },
-      {
-        itemIdx: 1,
-        title: '에어팟',
-        dong: '당산동',
-        createdAt: '2023-01-28T18:13:45',
-        tradeState: 0,
-        reviewState: false,
-        itemImgUrl:
-          'https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/c5d9b362-7abb-404c-9494-ba42d9fad6f1.png',
-      },
-      {
-        itemIdx: 6,
-        title: '에어팟',
-        dong: '당산동',
-        createdAt: '2023-01-28T18:13:45',
-        tradeState: 0,
-        reviewState: false,
-        itemImgUrl:
-          'https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/c5d9b362-7abb-404c-9494-ba42d9fad6f1.png',
-      },
-      {
-        itemIdx: 7,
-        title: '에어팟',
-        dong: '당산동',
-        createdAt: '2023-01-28T18:13:45',
-        tradeState: 0,
-        reviewState: false,
-        itemImgUrl:
-          'https://bagguimgbucket.s3.ap-northeast-2.amazonaws.com/item/c5d9b362-7abb-404c-9494-ba42d9fad6f1.png',
-      },
-    ]);
   }, []);
 
   // userItem에서 itemIdx로 item 객체를 찾아 반환하는 함수
@@ -176,9 +120,11 @@ function MakeRequest() {
       <SelectedItemContainer cnt={selectedItems.length}>
         {selectedItems.length ? (
           selectedItems.map(itemIdx => (
-            <SelectedItem key={`selected ${itemIdx}`} item={findItem(itemIdx)}>
-              {itemIdx}
-            </SelectedItem>
+            <SelectedItem
+              id="selectedItem"
+              key={`selected ${itemIdx}`}
+              item={findItem(itemIdx)}
+            />
           ))
         ) : (
           <span>선택된 아이템이 없습니다.</span>
@@ -189,45 +135,34 @@ function MakeRequest() {
       </HeadingBar>
       <ItemList>
         {userItems ? (
-          userItems.map(item => (
-            <ProductListItem
-              key={item.itemIdx}
-              id={item.itemIdx}
-              item={item}
-              onClick={e => {
-                setSelectedItems(prev => {
-                  // 선택한 아이템이 3개 이상이 되면
-                  if (prev.length >= 3) {
-                    if (prev.includes(item.itemIdx)) {
-                      return prev.filter(idx => idx !== item.itemIdx);
+          userItems
+            .filter(item => item.tradeState === 0)
+            .map(item => (
+              <ProductListItem
+                key={item.itemIdx}
+                id={item.itemIdx}
+                item={item}
+                onClick={e => {
+                  setSelectedItems(prev => {
+                    // 선택한 아이템이 3개 이상이 되면
+                    if (prev.length >= 3) {
+                      if (prev.includes(item.itemIdx)) {
+                        return prev.filter(idx => idx !== item.itemIdx);
+                      } else {
+                        return prev;
+                      }
                     } else {
-                      return prev;
+                      if (prev.includes(item.itemIdx)) {
+                        return prev.filter(idx => idx !== item.itemIdx);
+                      } else {
+                        return [...prev, item.itemIdx];
+                      }
                     }
-                  } else {
-                    if (prev.includes(item.itemIdx)) {
-                      return prev.filter(idx => idx !== item.itemIdx);
-                    } else {
-                      return [...prev, item.itemIdx];
-                    }
-                  }
-                });
-                // if (selectedItems >= 3) {
-                //   if (selectedItems.includes(item.itemIdx)) {
-                //     removeItem(item.itemIdx);
-                //   } else {
-                //     // addItem(item.itemIdx);
-                //   }
-                // } else {
-                //   if (selectedItems.includes(item.itemIdx)) {
-                //     removeItem(item.itemIdx);
-                //   } else {
-                //     addItem(item.itemIdx);
-                //   }
-                // }
-              }}
-              selected={selectedItems.includes(item.itemIdx)}
-            />
-          ))
+                  });
+                }}
+                selected={selectedItems.includes(item.itemIdx)}
+              />
+            ))
         ) : (
           <span>등록된 아이템이 없습니다.</span>
         )}

@@ -165,10 +165,12 @@ public class ItemControllerTest {
   @Order(6)
   public void deleteItem() throws Exception{
 
+
     mockMvc.perform(delete("/baggu/item/1"))
         .andDo(print())
         .andExpect(status().isOk());
 
+    log.info("item is valid {}", itemRepository.findById(1L).get().isValid());
     Assertions.assertThat(false).isEqualTo(itemRepository.findById(1L).get().isValid());
   }
 
@@ -204,25 +206,6 @@ public class ItemControllerTest {
 
   }
 
-  @Test
-  public void timeByIndex(){
-
-    /* 시간 측정 시작 */
-    long startTime = System.nanoTime();
-    Optional<User> user = userRepository.findUserByKakaoId("kakaoId33319");
-    long endTime = System.nanoTime();
-    /* 시간 측정 종료 */
-
-    if(user.isPresent()){
-      // 두 나노 시간 값의 차이를 얻습니다.
-      long timeElapsed = endTime - startTime;
-      System.out.println("수행시간 : " + timeElapsed / 1000000 + "ms");
-
-    }
-    else{
-      System.out.println("검색한 카카오 ID는 존재하지 않습니다.");
-    }
-  }
 
   @AfterEach
   @DisplayName("테스트 종료")

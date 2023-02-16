@@ -155,22 +155,28 @@ public class UserService {
 
     //보낸 텍스트 리뷰
     reviewTextRepository.findReviewReceiveTextListByUserIdx(userIdx).forEach(
-        (c) ->
-            reviewDto.getReceiveReviewText().add(c)
-    );
-
-    //받은 텍스트 리뷰(정보)
-    reviewTextRepository.findReviewRequestTextListByUserIdx(userIdx).forEach(
         (rt) ->
-            reviewDto.getRequestReviewText().add(
+            reviewDto.getReceiveReviewText().add(
                 ReviewTextDto.builder()
+                    .targetItemFirstImgUrl(rt.getItem().getFirstImg())
                     .targetItemIdx(rt.getItem().getItemIdx())
                     .reviewText(rt.getComment())
-                    .writeUserIdx(rt.getUser().getUserIdx())
-                    .profileImgUrl(rt.getUser().getProfileImg())
                     .build()
             )
     );
+
+//    //받은 텍스트 리뷰(정보)
+//    reviewTextRepository.findReviewRequestTextListByUserIdx(userIdx).forEach(
+//        (rt) ->
+//            reviewDto.getRequestReviewText().add(
+//                ReviewTextDto.builder()
+//                    .targetItemIdx(rt.getItem().getItemIdx())
+//                    .reviewText(rt.getComment())
+//                    .writeUserIdx(rt.getUser().getUserIdx())
+//                    .profileImgUrl(rt.getUser().getProfileImg())
+//                    .build()
+//            )
+//    );
 
     return reviewDto;
   }
@@ -182,9 +188,10 @@ public class UserService {
     User user = userRepository.findById(userIdx).orElseThrow(()->new BaseException(BaseResponseStatus.DATABASE_GET_ERROR));
 
     //만약 이미지가 존재하고, 파일 형식이라면 이미지 업로드 처리
-    if(userUpdateProfileDto.getProfileImg()!=null && userUpdateProfileDto.getProfileImgs() instanceof MultipartFile){
+    if(userUpdateProfileDto.getProfileImg()!=null && userUpdateProfileDto.getProfileImg() instanceof MultipartFile){
+      MultipartFile profileImg = (MultipartFile)userUpdateProfileDto.getProfileImg();
       String IMAGE_DIR_USER = "user";
-      String uploadUrl = s3UploadService.upload(userUpdateProfileDto.getProfileImg(),
+      String uploadUrl = s3UploadService.upload(profileImg,
           IMAGE_DIR_USER);
       user.setProfileImg(uploadUrl);
     }
@@ -199,6 +206,11 @@ public class UserService {
       throw new BaseException(BaseResponseStatus.SERVICE_SERVLET_ERROR, e.toString());
     }
 
+  }
+
+
+  public boolean findUserByNickname(String nickname){
+    return userRepository.findUserByNickname(nickname).isPresent();
   }
 
 

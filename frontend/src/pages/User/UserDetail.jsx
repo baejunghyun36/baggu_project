@@ -41,44 +41,49 @@ function UserDetail() {
   };
 
   // State
-  const [items, setItems] = useState();
-  const [trades, setTrades] = useState();
-  const [tagReviews, setTagReviews] = useState();
-  const [textReviews, setTextReviews] = useState();
+  // const [items, setItems] = useState();
+  // const [trades, setTrades] = useState();
+  // const [tagReviews, setTagReviews] = useState();
+  // const [textReviews, setTextReviews] = useState();
 
   // 유저 id
   const { id } = useParams();
-  console.log('id', id);
+  // console.log('id', id);
 
   // 유저정보 GET
   const { data: userInfo, isSuccess: isUserSuccess } = useQuery(
     ['getUser', { userIdx: id }],
     async () => await get_user(id)
   );
-  console.log('userInfo', userInfo);
   const { data: userItems, isSuccess: isUserItemsSuccess } = useQuery(
     ['getUserItems', { userIdx: id }],
     async () => await get_user_item(id)
     // { onSuccess: userItems => setItems(userItems) }
   );
+  // console.log('userItems', userItems);
   // 유저의 바꾸내역 GET
-  const { data: userTrades } = useQuery(
+  const { data: userTrades, isSuccess: isUserTradeSuccess } = useQuery(
     ['getUserTrades', { userIdx: id }],
     async () => await get_user_trade(id)
-    // { onSuccess: data => setTrades(data) }
+
+    // onSuccess: data => {
+    //   setTrades(data);
+    // },
   );
+  console.log('userTrades', userTrades);
   // 유저의 후기 GET
-  const { data } = useQuery(
+  const { data: userReviews, isSuccess: isUserReviewSuccess } = useQuery(
     ['getUserReviews', { userIdx: id }],
-    async () => await get_user_review(id),
-    {
-      onSuccess: data => {
-        console.log('get user reviews', data);
-        setTagReviews(data.reviewTag);
-        // setTextReviews(data.)
-      },
-    }
+    async () => await get_user_review(id)
+    // {
+    // onSuccess: data => {
+    // console.log('get user reviews', data);
+    // setTagReviews(data.reviewTag);
+    // setTextReviews(data.)
+    // },
+    // }
   );
+  console.log('userReviews', userReviews);
 
   /*
     {
@@ -107,7 +112,7 @@ function UserDetail() {
     }
   */
 
-  console.log('userItems', userItems);
+  // console.log('userItems', userItems);
 
   return (
     <div>
@@ -117,24 +122,24 @@ function UserDetail() {
       <TabBar tabNames={tabNames} getIndex={getIndex} />
       <ListWrapper>
         <div className={`${page === 0 ? '' : 'hidden'}`}>
-          {userItems
+          {isUserItemsSuccess
             ? userItems.map(item => (
                 <ProductListItem key={item.itemIdx} item={item} />
               ))
             : ''}
         </div>
         <div className={`${page === 1 ? '' : 'hidden'}`}>
-          {userTrades
-            ? userTrades.map((trade, idx) => (
+          {isUserTradeSuccess
+            ? userTrades.items.map((trade, idx) => (
                 <BagguListItem key={idx} baggu={trade} />
               ))
             : ''}
         </div>
         <div className={`${page === 2 ? '' : 'hidden'}`}>
-          {tagReviews ? (
-            <TagReviewList tags={tagReviews} />
+          {isUserReviewSuccess ? (
+            <TagReviewList tags={userReviews.items} />
           ) : (
-            '받은 유저 후기가 없습니다.'
+            <span>'받은 유저 후기가 없습니다.'</span>
           )}
         </div>
       </ListWrapper>

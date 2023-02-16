@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 public interface TradeFinRepository extends JpaRepository<TradeFin, Long> {
 
   @Query("select t from TradeFin t where t.receiveUserIdx= ?1 or t.requestUserIdx= ?1 order by t.createdAt desc")
-  List<TradeFin> userTradeFinList(Long userIdx, Pageable pabeable);
+  Slice<TradeFin> getTradeFinListByUser(Long userIdx, Pageable pageable);
 
   @Query("select count(t) from TradeFin t where t.receiveItemIdx = :receiveItemIdx or t.requestItemIdx = :receiveItemIdx")
   int findTradeFinByItemIdx(@Param("receiveItemIdx") Long receiveItemIdx);

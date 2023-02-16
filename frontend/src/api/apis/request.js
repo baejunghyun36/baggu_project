@@ -12,12 +12,15 @@ export const post_request = async (itemIdx, data) => {
     }
 
     < response data 예시 >
-    data ={
-        "receiveUserIdx" : 1, //아이템을 등록한 사람
-        "type" : 0, 
-        "typeIdx" : 2, // 등록된 아이템 idx 
-        "requestUserNickName" : "서울사람"
-    }
+    data = {
+          "message": "Success",
+          "data": {
+            "receiveUserIdx": 1,
+            "type": 0,
+            "typeIdx": 1,
+            "requestUserNickName": "test"
+          }
+}
     */
   try {
     const response = await authInstance.post(
@@ -30,4 +33,23 @@ export const post_request = async (itemIdx, data) => {
   }
 };
 
-// 거래 상태 변경
+// 바꾸신청 취소
+export const delete_my_request = async tradeRequestIdx => {
+  try {
+    await authInstance.delete(requests.DELETE_MY_REQUEST(tradeRequestIdx));
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 교환신청 수락
+export const choose_request = async tradeDetailIdx => {
+  try {
+    const { data } = await authInstance.get(
+      requests.CHOOSE_REQUEST(tradeDetailIdx)
+    );
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

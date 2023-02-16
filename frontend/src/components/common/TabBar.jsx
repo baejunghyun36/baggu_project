@@ -17,7 +17,11 @@ function TabBar({ tabNames, getIndex }) {
   return (
     <div className="h-[60px] px-2 flex fixed w-full z-10 bg-white">
       {tabNames.map((tabName, id) => (
-        <div onClick={() => changeTabHandler(id)} key={id} className="w-full">
+        <div
+          onClick={() => changeTabHandler(id)}
+          key={id}
+          className="w-full cursor-pointer "
+        >
           <TabBarItem
             tabName={tabName}
             className={index === id ? 'active' : null}

@@ -71,7 +71,7 @@ function StartTown() {
   });
 
   // store
-  const { saveTown } = signUpStore(state => state);
+  const { saveTown, nickname } = signUpStore(state => state);
 
   const navigate = useNavigate();
 
@@ -126,7 +126,7 @@ function StartTown() {
     // {myTown : myTown}으로 중앙저장소에 저장
     const { si, gu, dong, lng, lat } = myTown;
     saveTown(si, gu, dong, lng, lat);
-    navigate('/start/category');
+    navigate('/login/category');
   };
 
   return (
@@ -134,7 +134,7 @@ function StartTown() {
       <TopBar2 pageTitle="" />
       <TextContainer>
         <p>
-          <span>'닉네임'</span>님의
+          <span>{nickname}</span>님의
           <br /> 동네를 설정해주세요.
         </p>
       </TextContainer>

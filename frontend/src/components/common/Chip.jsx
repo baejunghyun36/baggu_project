@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import tw, { styled } from 'twin.macro';
 
 const ChipContainer = styled.div`
+  ${tw`w-fit h-[24px] p-1 py-[12px] text-sub-bold text-black rounded-full flex justify-center items-center shadow`}
   ${props =>
     props.tradeState === 1
       ? tw`bg-success text-black border border-black`
       : tw`bg-grey1 text-grey2`}
-  ${tw`w-fit h-[24px] p-1 text-black rounded-full flex justify-center items-center`}
 `;
 
 function Chip({ tradeState }) {
@@ -23,12 +23,12 @@ function Chip({ tradeState }) {
   }, []);
   return (
     <>
-      <div className={`${state === 1 ? '' : 'hidden'}`}>
+      <div className={`${tradeState === 1 ? '' : 'hidden'}`}>
         <ChipContainer tradeState={state}>
           <span>예약중</span>
         </ChipContainer>
       </div>
-      <div className={`${state === 2 ? '' : 'hidden'}`}>
+      <div className={`${tradeState === 2 ? '' : 'hidden'}`}>
         <ChipContainer tradeState={state}>
           <span>거래완료</span>
         </ChipContainer>

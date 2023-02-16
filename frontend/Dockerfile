@@ -17,6 +17,8 @@ RUN npm install --silent
 # 나머지 파일을 복사한다.
 COPY . .
 
+RUN sed -i 's/http:\/\/70.12.247.158:9999/https:\/\/baggu.shop\/api/g' /usr/src/app/src/api/config.js
+
 # npm Build
 RUN npm run build
 

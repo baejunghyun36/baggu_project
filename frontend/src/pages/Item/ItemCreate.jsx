@@ -23,12 +23,12 @@ const PreviewContainer = styled.div`
 `;
 
 const PreviewImg = styled.img`
-  ${tw`rounded-lg w-7 h-7`}
-  ${props => (props.isFirstImg ? tw`outline-1 outline-primary` : tw``)}
+  ${tw`rounded-lg w-[5rem] h-[5rem] box-border cursor-pointer`}
+  ${props => (props.isFirstImg ? tw`border-2 border-primary` : tw``)}
 `;
 
 const DeleteBtn = styled.div`
-  ${tw`fill-primary absolute w-2 h-2 right-[4px] top-[4px]`}
+  ${tw`fill-primary absolute w-2 h-2 right-[4px] top-[4px] shadow-sm`}
 `;
 
 const InputContainer = styled.input`
@@ -47,6 +47,15 @@ const CategoryContainer = styled.div`
   ${tw`h-[60px] flex items-center px-1 text-primary hover:bg-primary-hover`}
 `;
 
+const FirstImgText = styled.span`
+  ${tw`absolute drop-shadow-2xl`}
+  ${props => (props.isFirstImg ? '' : tw`hidden`)}
+  ${css`
+    top: calc(50% - 11px);
+    left: calc(50% - 31px);
+  `}
+`;
+
 // Main Component
 function ItemCreate() {
   // 제목
@@ -55,6 +64,7 @@ function ItemCreate() {
   // 내용
   const [itemContent, setItemcontent] = useState('');
   const [itemContentError, setItemContentError] = useState('');
+  // 대표이미지
   const [itemFirstImg, setItemFirstImg] = useState('');
   // 모든 이미지
   const [itemImage, setItemImage] = useState([]);
@@ -72,12 +82,14 @@ function ItemCreate() {
   useEffect(() => {
     if (itemImage) {
       setItemFirstImg(0);
+      console.log(itemImage);
     }
   }, [itemImage]);
   // --------------------------------------------------------
   const handleItemImage = event => {
     const files = Array.from(event.target.files);
     setItemImage(prevItemImage => [...prevItemImage, ...files]);
+    console.log(files);
   };
   const moveToCategoryPage = () => {
     setPage(1);
@@ -141,16 +153,18 @@ function ItemCreate() {
       data.append('title', itemTitle);
       data.append('content', itemContent);
       data.append('category', itemCategories);
-      data.append('itemImgs', []);
+      // data.append('itemImgs', []);
+      data.append('itemFirstImgIdx', itemFirstImg);
       itemImage.forEach((image, index) => {
+        // console.log(image);
         data.append('itemImgs', image);
       });
 
       for (let key of data.keys()) {
-        console.log(key);
+        // console.log(key);
       }
       for (let value of data.values()) {
-        console.log(value);
+        // console.log(value);
       }
 
       // await post_item(data).then(data => {
@@ -158,7 +172,7 @@ function ItemCreate() {
       // });
       const post_item_create = async () => {
         try {
-          console.log('form data :', data);
+          // console.log('form data :', data);
           const response = await authInstance.post(requests.POST_ITEM, data, {
             headers: {
               Authorization: localStorage.getItem('token'),
@@ -178,7 +192,7 @@ function ItemCreate() {
     }
   };
 
-  console.log(itemImage);
+  // console.log(itemImage);
   return (
     <div>
       <div className={`${page === 0 ? '' : 'hidden'}`}>
@@ -189,12 +203,12 @@ function ItemCreate() {
       </div>
       <div className={`${page === 0 ? '' : 'hidden'}`}>
         <FormContainer>
-          <div id="image-area" className="flex gap-1 pb-2 flex-wrap">
+          <div id="image-area" className="flex gap-2 pb-3 flex-wrap">
             <ImageAddButton clickFunction={handleClickAddImage} />
             {itemImage.map((itemImage, index) => (
               <div
                 key={index}
-                className="relative"
+                className="relative text-sub-bold text-primary cursor-pointer"
                 onClick={() => selectFirstImg(index)}
               >
                 <DeleteBtn onClick={() => handleDeleteItemImage(index)}>
@@ -202,14 +216,14 @@ function ItemCreate() {
                     <path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
                   </svg>
                 </DeleteBtn>
-                <span className={itemFirstImg === index ? '' : 'hidden'}>
-                  대표 이미지
-                </span>
                 <PreviewImg
                   isFirstImg={itemFirstImg === index}
                   src={URL.createObjectURL(itemImage)}
                   alt={itemImage.name}
                 />
+                <FirstImgText isFirstImg={itemFirstImg === index}>
+                  대표 이미지
+                </FirstImgText>
               </div>
             ))}
           </div>
@@ -253,7 +267,7 @@ function ItemCreate() {
         </FormContainer>
         <FormSubmitBtn
           title="작성 완료"
-          disabled={!itemContent || !itemImage || !itemCategories}
+          disabled={!itemContent || !itemImage.length || !itemCategories}
           onClick={handleSubmit}
         />
       </div>

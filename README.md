@@ -20,13 +20,13 @@
 
 ### 머릿말
 
-| 머릿말 | 설명 |
-| --- | --- |
-| main | epic 수행 완료 시 merge 및 test용 |
-| dev-front / dev-back | [dev-back]교환 |
-| feature-front / feature-back | [feature-back]교환C:김소정 |
-| fix | fix/[지라issue number] |
-| extra | 기타 문서 수정 등 위에 해당하지 않는 경우 |
+| 머릿말                       | 설명                                      |
+| ---------------------------- | ----------------------------------------- |
+| main                         | epic 수행 완료 시 merge 및 test용         |
+| dev-front / dev-back         | [dev-back]교환                            |
+| feature-front / feature-back | [feature-back]교환C:김소정                |
+| fix                          | fix/[지라issue number]                    |
+| extra                        | 기타 문서 수정 등 위에 해당하지 않는 경우 |
 
 ## 3. 커밋 규칙
 
@@ -36,17 +36,17 @@
 
 ### 머릿말
 
-| 머릿말 | 의미 |
-| --- | --- |
-| Feature | 기능 추가 관련 |
-| Fix | 버그 수정 관련, 내용엔 자라 이슈 번호 |
-| Refactor | 코드 리팩토링 (기능 추가가 아닌 단순 재작성) |
-| Docs | 문서 수정 |
-| Design | CSS 등 사용자 UI 디자인 |
-| Test | 테스트 추가, 변경 등 |
-| Rename | 파일 또는 폴더 명을 수정하는 경우 |
-| Remove | 파일 또는 폴더 삭제의 경우 |
-| Chore | 패키지 매니저, 그 외 기타 설정 파일 수정 (.gitignore 등) |
+| 머릿말   | 의미                                                     |
+| -------- | -------------------------------------------------------- |
+| Feature  | 기능 추가 관련                                           |
+| Fix      | 버그 수정 관련, 내용엔 자라 이슈 번호                    |
+| Refactor | 코드 리팩토링 (기능 추가가 아닌 단순 재작성)             |
+| Docs     | 문서 수정                                                |
+| Design   | CSS 등 사용자 UI 디자인                                  |
+| Test     | 테스트 추가, 변경 등                                     |
+| Rename   | 파일 또는 폴더 명을 수정하는 경우                        |
+| Remove   | 파일 또는 폴더 삭제의 경우                               |
+| Chore    | 패키지 매니저, 그 외 기타 설정 파일 수정 (.gitignore 등) |
 
 # ✔ Code Convention - BE
 
@@ -55,7 +55,6 @@
 ### 구글-자바 코드 컨벤션
 
 > [https://google.github.io/styleguide/javaguide.html](https://google.github.io/styleguide/javaguide.html)
-> 
 
 ## 2. 항상 생각해야 하는 것
 
@@ -76,7 +75,7 @@
 ### 네이밍
 
 - 백엔드 프로젝트 구성 시 패키지는 역할끼리 분류
-    - 예) 모든 도메인에 대한 컨트롤러는 controller 패키지에 저장
+  - 예) 모든 도메인에 대한 컨트롤러는 controller 패키지에 저장
 - 패키지 네임은 카멜케이스로
 
 # ✔ Code Convention - FE
@@ -92,22 +91,22 @@
 
 1. 확장자: 리액트 컴포넌트 파일은 .jsx 확장자 사용하기
 2. 파일이름: 파스칼 형식의 이름 사용하기.
-    
-    ex) `ReservationCard.jsx`
-    
+
+   ex) `ReservationCard.jsx`
+
 3. 참조 값 이름: 인스턴스는 카멜 형식, 리액트 컴포넌트는 파스칼 형식의 이름을 사용하기.
-    
-    ex) `import ReservationCard from './ReservationCard';`
-    
-    `const reservationItem = <ReservationCard />;`
-    
+
+   ex) `import ReservationCard from './ReservationCard';`
+
+   `const reservationItem = <ReservationCard />;`
+
 4. 컴포넌트 이름: 파일 이름과 동일하게 사용하기 예를들어, `ReservationCard.jsx`라는 파일 안에는 `ReservationCard`라는 이름의 컴포넌트가 있어야 한다. 다만 루트 컴포넌트는 파일 이름을 `index.jsx` 로 작성하고, 폴더의 이름을 컴포넌트의 이름으로 작성한다
 
 ## **선언**
 
 컴포넌트의 이름을 지을 때 `displayName` 속성을 사용하지 않는다. 대신에 참조 값으로 컴포넌트의 이름을 짓는다.
 
-ex) 
+ex)
 
 ```
 // bad

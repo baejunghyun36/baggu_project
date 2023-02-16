@@ -15,8 +15,8 @@ const Title = tw.h3`text-h3 text-primary mb-1`;
 
 // 버튼 타입에 따른 스타일
 const btnStyles = {
-  cancel: tw`bg-white border border-primary`,
-  okay: tw`bg-primary`,
+  cancel: tw`bg-white border border-primary shadow`,
+  okay: tw`bg-primary shadow`,
 };
 
 const BackdropWrapper = styled.div`
@@ -27,7 +27,7 @@ const BackdropWrapper = styled.div`
 `;
 
 const Btn = styled.div`
-  ${tw`w-full h-5 flex rounded-full items-center justify-center`}
+  ${tw`w-full h-5 flex rounded-full items-center justify-center cursor-pointer`}
   ${props => btnStyles[props.type]}
 `;
 
