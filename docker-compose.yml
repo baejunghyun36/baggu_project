@@ -11,6 +11,9 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mariadb://baggu-database-deploy:3306/baggu
     ports:
       - "9999:9999"
+    depends_on:
+      - baggu-elasticsearch-deploy
+      - baggu-redis-deploy
     restart: always
   baggu-redis-deploy:
     container_name: baggu-redis-deploy
@@ -43,6 +46,25 @@ services:
       context: ./frontend
     ports:
       - "3000:3000"
+    restart: always
+  baggu-elasticsearch-deploy:
+    container_name: baggu-elasticsearch-deploy
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+    environment:
+      - node.name=single-node
+      - cluster.name=baggudeploy
+      - discovery.type=single-node
+    ports:
+      - 9201:9200
+
+    build:
+      dockerfile: Dockerfile
+      context: ./elasticsearch
+      args:
+        ELK_VERSION: 7.15.2
     restart: always
 networks:
   default:

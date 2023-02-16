@@ -20,4 +20,4 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 9997
 
 # java -jar app.jar을 이용해서 빌드한 파일을 실행한다.
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
