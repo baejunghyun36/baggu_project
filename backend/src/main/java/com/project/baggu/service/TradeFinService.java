@@ -231,6 +231,8 @@ public class TradeFinService {
 
     tradeRequest.setTradeRequestState(2);
     tradeDetail.setTradeState(2);
+    a.setState(2);
+    b.setState(2);
     a.setTradeItemIdx(b.getItemIdx());
     b.setTradeItemIdx(a.getItemIdx());
 
