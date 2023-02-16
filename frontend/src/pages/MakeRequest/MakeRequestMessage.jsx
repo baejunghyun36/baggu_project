@@ -84,11 +84,11 @@ function MakeRequestMessage() {
     // 즉시 실행 익명 함수
     (async () => {
       await post_request(itemIdx, data)
-        .then(data => {
-          data = {
-            ...data,
+        .then(a => {
+          const data = {
+            ...a.data,
             title: '새로운 바꾸 신청이 도착했습니다.',
-            content: `${data.receiveUserIdx}님과의 물물교환을 시작해보세요.`,
+            content: `${a.requestUserNickName}님과의 물물교환을 시작해보세요.`,
           };
           post_notify(data);
         })
