@@ -122,6 +122,7 @@ public class ChatController {
   //@GetMapping 주석의 products 특성은 "MediaType"으로 설정된다. TEXT_EVENT_STREAM_VALUE", 즉 응답 본문이 텍스트 이벤트 스트림된다. 클라이언트에 실시간으로 데이터를 스트리밍하는데 유용
   //@CrossOrigin 주석은 교차 오리진 리소스 공유를 허용하는 데 사용된다. 즉, 다른 도메인의 요청이 허용.
   //이 기능은 웹 서비스가 다른 도메인에서 실행 중인 클라이언트 응용프로그램을 서비스하는 경우에 유용.
+  @CrossOrigin
   @GetMapping(value = "/{userIdx}/chatRoom", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
   public Flux<Chat> findByRecentChatList(@PathVariable("userIdx") Long userIdx){
     return chatRepository.mFindByReceiver(userIdx, LocalDateTime.now())
