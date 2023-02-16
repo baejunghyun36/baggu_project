@@ -183,8 +183,9 @@ public class UserService {
 
     //만약 이미지가 존재하고, 파일 형식이라면 이미지 업로드 처리
     if(userUpdateProfileDto.getProfileImg()!=null && userUpdateProfileDto.getProfileImg() instanceof MultipartFile){
+      MultipartFile profileImg = (MultipartFile)userUpdateProfileDto.getProfileImg();
       String IMAGE_DIR_USER = "user";
-      String uploadUrl = s3UploadService.upload(userUpdateProfileDto.getProfileImg(),
+      String uploadUrl = s3UploadService.upload(profileImg,
           IMAGE_DIR_USER);
       user.setProfileImg(uploadUrl);
     }
