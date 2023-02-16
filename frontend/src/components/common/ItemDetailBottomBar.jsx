@@ -42,22 +42,7 @@ function ItemDetailBottomBar({
   }
 
   return (
-    <div className="flex flex-wrap justify-between gap-2 fixed bottom-0 bg-white border-t w-full h-[98px] px-4 py-2">
-      <div
-        onClick={likeHandler}
-        className={`${showHeart === 'false' ? 'hidden' : ''}`}
-      >
-        <img
-          src={heart_unliked}
-          alt="like button"
-          className={`${liked ? 'hidden' : ''}`}
-        />
-        <img
-          src={heart_liked}
-          alt="like button"
-          className={`${liked ? '' : 'hidden'}`}
-        />
-      </div>
+    <div className="flex flex-wrap justify-end gap-2 fixed bottom-0 bg-white border-t w-full h-[98px] px-4 py-2">
       {/* 사용자와 게시글 작성자 정보를 비교하여 title 변경 */}
       {/* <Button title={btnTitle} className="default" onClick={btnClickHandler} /> */}
       <Button

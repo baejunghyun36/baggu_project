@@ -280,7 +280,7 @@ function ChatDetail() {
     post_trade_status(data1);
     // 채팅서버에 PUT
     put_trade_status(userIdx, data2);
-    navigate(`/makeRequest/${yourIdx}`);
+    navigate(`/userReview`);
   };
 
   // 유저가 입력한 메세지 state에 저장

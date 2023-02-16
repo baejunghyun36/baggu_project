@@ -39,6 +39,31 @@ const ReviewBtn = styled.div`
       : tw`bg-white text-secondary border-1 border-secondary`}
 `;
 
+const BtnContainer = styled.div`
+  ${tw`flex flex-col pt-2 pb-4 px-4 fixed bottom-0 w-full h-fit gap-1`}
+`;
+
+const CancelBtn = styled.div`
+  ${tw`w-full rounded-full flex justify-center items-center h-6 text-negative hover:text-white hover:bg-negative border-1 border-negative`}
+  & {
+    span {
+      ${tw`text-main-bold`}
+    }
+  }
+`;
+
+const SubmitBtn = styled.div`
+  ${tw`w-full rounded-full flex justify-center items-center h-6`}
+  ${props =>
+    props.disabled ? tw`bg-grey1 text-grey2` : tw`bg-primary text-white`}
+
+  & {
+    span {
+      ${tw`text-main-bold`}
+    }
+  }
+`;
+
 // Main Component
 function UserReview() {
   // 리뷰 작성용 중앙 저장소
@@ -93,6 +118,11 @@ function UserReview() {
       });
   };
 
+  // 나중에 하기 클릭 시
+  const cancelHandler = () => {
+    navigate('/chat');
+  };
+
   return (
     <Wrapper>
       <TopBar2 title="유저 후기 남기기" useCheckBtn={false} />
@@ -116,7 +146,23 @@ function UserReview() {
           ))}
         </div>
       </Container>
-      <FormSubmitBtn
+      <BtnContainer>
+        <CancelBtn onClick={cancelHandler}>
+          <span>나중에 하기</span>
+        </CancelBtn>
+        <SubmitBtn
+          title="선택 완료"
+          disabled={
+            Object.values(clickedReviews).filter(x => x === true).length
+              ? false
+              : true
+          }
+          onClick={submitHandler}
+        >
+          <span>작성 완료</span>
+        </SubmitBtn>
+      </BtnContainer>
+      {/* <FormSubmitBtn
         disabled={
           Object.values(clickedReviews).filter(x => x === true).length
             ? false
@@ -124,7 +170,7 @@ function UserReview() {
         }
         onClick={submitHandler}
         title="선택 완료"
-      />
+      /> */}
     </Wrapper>
   );
 }
