@@ -71,7 +71,7 @@ function StartTown() {
   });
 
   // store
-  const { saveTown } = signUpStore(state => state);
+  const { saveTown, nickname } = signUpStore(state => state);
 
   const navigate = useNavigate();
 
@@ -134,7 +134,7 @@ function StartTown() {
       <TopBar2 pageTitle="" />
       <TextContainer>
         <p>
-          <span>'닉네임'</span>님의
+          <span>{nickname}</span>님의
           <br /> 동네를 설정해주세요.
         </p>
       </TextContainer>
