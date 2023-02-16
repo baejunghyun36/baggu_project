@@ -16,11 +16,14 @@ import { authInstance } from 'api/axios';
 import tw, { styled, css } from 'twin.macro';
 
 // Styled Component
+const Text = styled.span`
+  ${tw`text-secondary px-[1px] text-main`}
+`;
 const Container = styled.div`
-  ${tw`w-full`}
+  ${tw`w-full shadow`}
 `;
 
-const Wrapper = tw.div`flex p-2 border-b`;
+const Wrapper = tw.div`flex p-2 border-b `;
 
 const Avatar = styled.div`
   ${tw`bg-primary rounded-full w-5 h-5 bg-cover bg-center relative`}
@@ -55,11 +58,13 @@ const Product = styled.div`
 function BagguListItem({ baggu }) {
   const navigate = useNavigate();
   const [liked, setLiked] = useState(baggu.userHeart);
+  const [heartCount, setHeartCount] = useState(baggu.heartCount);
   const feed_like = async () => {
     try {
       const { data } = await authInstance.post(
         requests.FEED_LIKE(baggu.tradeFinIdx)
       );
+      setHeartCount(heartCount => heartCount + 1);
 
       console.log(data);
       return setLiked(!liked);
@@ -74,6 +79,7 @@ function BagguListItem({ baggu }) {
       );
 
       console.log(data);
+      setHeartCount(heartCount => heartCount - 1);
       return setLiked(!liked);
     } catch (error) {
       console.log(error);
@@ -122,7 +128,7 @@ function BagguListItem({ baggu }) {
       <div
         className={`${
           location.startsWith('/myprofile') ? 'hidden' : ''
-        } flex flex-wrap justify-between gap-2 bg-white mb-3 w-full h-[60px] px-4 py-2`}
+        } flex flex-wrap justify-left items-center gap-2 bg-white mb-3 w-full h-[60px] px-4 py-2`}
       >
         <div>
           <img
@@ -138,6 +144,7 @@ function BagguListItem({ baggu }) {
             className={`${liked ? '' : 'hidden'} w-4 h-4 relative top-[-3px]`}
           />
         </div>
+        <Text>{heartCount}</Text>
         {/* 사용자와 게시글 작성자 정보를 비교하여 title 변경 */}
       </div>
     </Container>
