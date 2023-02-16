@@ -29,6 +29,7 @@ import requests from 'api/config';
 import FormatDate from 'hooks/FormatDate';
 import { post_trade_status } from 'api/apis/trade';
 import { reviewStore } from 'store/reviewStore';
+import FormatDateForChat from 'hooks/FormatDateForChat';
 
 // Styled Components
 const Summary = styled.div`
@@ -353,7 +354,7 @@ function ChatDetail() {
           ? messageList.map(message => {
               const messageType =
                 message.receiverIdx === userIdx ? 'receive' : 'send';
-              const { year, month, day, hour, minute } = FormatDate(
+              const { year, month, day, hour, minute } = FormatDateForChat(
                 message.createdAt
               );
               return (

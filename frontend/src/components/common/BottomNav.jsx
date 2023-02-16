@@ -146,6 +146,7 @@ function BottomNav() {
     location.startsWith('/userReview') ||
     location.startsWith('/bagguReview') ||
     location.startsWith('/makeRequest') ||
+    location.startsWith('/chooseRequest') ||
     location.startsWith('/myprofile') ||
     location.startsWith('/kakaoLogin') ||
     location.startsWith('/chat/')
