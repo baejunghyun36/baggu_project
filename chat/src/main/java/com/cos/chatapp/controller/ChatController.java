@@ -111,6 +111,7 @@ public class ChatController {
           String id = savedChatRoom.getRoomId().toString();
           chat.setRoomId(id);
           chat.setMsg(id);
+          chat.setCreatedAt(chatRoom.getCreatedAt());
         })
         .flatMap(savedChatRoom -> chatRepository.save(chat))
         .subscribe();
