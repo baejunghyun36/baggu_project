@@ -20,7 +20,7 @@ function TabBar({ tabNames, getIndex }) {
         <div
           onClick={() => changeTabHandler(id)}
           key={id}
-          className="w-full cursor-pointer"
+          className="w-full cursor-pointer "
         >
           <TabBarItem
             tabName={tabName}

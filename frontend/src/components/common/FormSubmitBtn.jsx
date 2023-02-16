@@ -3,7 +3,7 @@ import React from 'react';
 import tw, { styled } from 'twin.macro';
 
 const Btn = styled.div`
-  ${tw`w-full rounded-full flex justify-center items-center h-6`}
+  ${tw`w-full rounded-full flex justify-center items-center h-6 shadow`}
   ${props =>
     props.disabled ? tw`bg-grey1 text-grey2` : tw`bg-primary text-white`}
 

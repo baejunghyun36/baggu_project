@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import tw, { styled } from 'twin.macro';
 
 const ChipContainer = styled.div`
-  ${tw`w-fit h-[24px] p-1 py-[12px] text-sub-bold text-black rounded-full flex justify-center items-center`}
+  ${tw`w-fit h-[24px] p-1 py-[12px] text-sub-bold text-black rounded-full flex justify-center items-center shadow`}
   ${props =>
     props.tradeState === 1
       ? tw`bg-success text-black border border-black`

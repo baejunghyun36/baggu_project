@@ -10,12 +10,12 @@ import { useMutation } from 'react-query';
 import { get_user_item, put_user_dong } from 'api/apis/user';
 
 // Styled Component
-const Container = tw.div`w-full h-[60px] p-2 text-main-bold border-b bg-white`;
+const Container = tw.div`w-full h-[60px] p-2 text-main-bold border-b bg-white `;
 
-const BtnContainer = tw.div`flex flex-col justify-center items-center gap-1 p-4 border-b`;
+const BtnContainer = tw.div`flex flex-col justify-center items-center gap-1 p-4 border-b `;
 
 const Btn = styled.div`
-  ${tw`rounded-full border-1 border-black flex justify-center items-center w-60 p-1 last:bg-success`}
+  ${tw`rounded-full border-1 border-black flex justify-center items-center w-60 p-1 last:bg-success shadow-md`}
   svg {
     ${tw`fill-black mr-1`}
   }
