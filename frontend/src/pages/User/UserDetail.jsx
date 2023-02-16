@@ -22,7 +22,7 @@ import {
 import tw, { styled, css } from 'twin.macro';
 import HeadingBar from 'components/common/HeadingBar';
 import TagReviewList from 'components/common/TagReviewList';
-
+import ReceiveReviewList from 'components/common/ReceiveReviewList';
 // Styled Component
 const ListWrapper = styled.div`
   ${tw`overflow-scroll overflow-x-hidden flex flex-col mt-[60px]`}
@@ -30,27 +30,24 @@ const ListWrapper = styled.div`
     height: calc(100vh - 298.5px);
   `}
 `;
-
-// Main Component
+const Container = styled.div`
+  ${tw`flex justify-between items-center p-2 border-b border-grey1 h-[60px] w-full`}
+  & {
+    img:last-child {
+      ${props => (props.isCheck ? '' : tw`opacity-0`)}
+    }
+  }
+`;
 function UserDetail() {
-  // TabBar 관련 State
   const [page, setPage] = useState(0);
   const tabNames = ['등록물품', '바꾸내역', '받은후기'];
+  const [tagReviews, setTagReviews] = useState();
+  const [textReviews, setTextReviews] = useState();
   const getIndex = data => {
     setPage(data);
   };
 
-  // State
-  // const [items, setItems] = useState();
-  // const [trades, setTrades] = useState();
-  // const [tagReviews, setTagReviews] = useState();
-  // const [textReviews, setTextReviews] = useState();
-
-  // 유저 id
   const { id } = useParams();
-  // console.log('id', id);
-
-  // 유저정보 GET
   const { data: userInfo, isSuccess: isUserSuccess } = useQuery(
     ['getUser', { userIdx: id }],
     async () => await get_user(id)
@@ -58,65 +55,26 @@ function UserDetail() {
   const { data: userItems, isSuccess: isUserItemsSuccess } = useQuery(
     ['getUserItems', { userIdx: id }],
     async () => await get_user_item(id)
-    // { onSuccess: userItems => setItems(userItems) }
   );
-  // console.log('userItems', userItems);
-  // 유저의 바꾸내역 GET
+
   const { data: userTrades, isSuccess: isUserTradeSuccess } = useQuery(
     ['getUserTrades', { userIdx: id }],
     async () => await get_user_trade(id)
-
-    // onSuccess: data => {
-    //   setTrades(data);
-    // },
   );
-  console.log('userTrades', userTrades);
-  // 유저의 후기 GET
-  const { data: userReviews, isSuccess: isUserReviewSuccess } = useQuery(
+
+  const { data } = useQuery(
     ['getUserReviews', { userIdx: id }],
-    async () => await get_user_review(id)
-    // {
-    // onSuccess: data => {
-    // console.log('get user reviews', data);
-    // setTagReviews(data.reviewTag);
-    // setTextReviews(data.)
-    // },
-    // }
-  );
-  console.log('userReviews', userReviews);
-
-  /*
+    async () => await get_user_review(id),
     {
-        "reviewTag": {
-            "1": 1,
-            "2": 2,
-            "3": 1
-        },
-        "receiveReviewText": [
-            "좋은 물건 구해서 행복합니다"
-        ],
-        "requestReviewText": [
-            {
-                "targetItemIdx": 7,
-                "writeUserIdx": 1,
-                "reviewText": "좋아요!!!~",
-                "profileImg": "이미지링크"
-            },
-            {
-                "targetItemIdx": 15,
-                "writeUserIdx": 1,
-                "reviewText": "물건이 예쁩니다",
-                "profileImg": "이미지링크"
-            }
-        ]
+      onSuccess: data => {
+        console.log('get user reviews', data);
+        setTagReviews(data.reviewTag);
+        setTextReviews(data.receiveReviewText);
+      },
     }
-  */
-
-  // console.log('userItems', userItems);
-
+  );
   return (
     <div>
-      {/* 유저 이름 props하기 */}
       <TopBar2 pageTitle="유저 상세" />
       {isUserSuccess ? <UserInfo user={userInfo} /> : ''}
       <TabBar tabNames={tabNames} getIndex={getIndex} />
@@ -136,11 +94,26 @@ function UserDetail() {
             : ''}
         </div>
         <div className={`${page === 2 ? '' : 'hidden'}`}>
-          {isUserReviewSuccess ? (
-            <TagReviewList tags={userReviews.items} />
-          ) : (
-            <span>'받은 유저 후기가 없습니다.'</span>
-          )}
+          <Container>
+            <h3 className="text-h3">유저 후기</h3>
+          </Container>
+          <div>
+            {tagReviews ? (
+              <TagReviewList tags={tagReviews} />
+            ) : (
+              '받은 유저 후기가 없습니다.'
+            )}
+          </div>
+          <Container>
+            <h3 className="text-h3">거래 후기</h3>
+          </Container>
+          <div>
+            {textReviews ? (
+              <ReceiveReviewList reviews={textReviews} />
+            ) : (
+              '받은 거래 후기가 없습니다.'
+            )}
+          </div>
         </div>
       </ListWrapper>
     </div>
