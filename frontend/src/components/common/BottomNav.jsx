@@ -200,7 +200,11 @@ function BottomNav() {
       </Link>
       <Link to="/item/create" className="h-fit">
         <div className="flex flex-col items-center">
-          <img src={itemCreate} alt="button to create article" />
+          <img
+            src={itemCreate}
+            alt="button to create article"
+            className="rounded-full shadow-lg"
+          />
         </div>
       </Link>
       <Link to="/chat" className="h-fit">

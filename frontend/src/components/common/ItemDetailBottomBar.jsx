@@ -10,9 +10,9 @@ import tw, { styled } from 'twin.macro';
 
 // Styled Component
 const ButtonStyles = {
-  바꾸신청: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary`,
-  선택하기: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary`,
-  신청취소: tw`bg-negative text-white hover:bg-white hover:text-negative hover:border-1 hover:border-negative`,
+  바꾸신청: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary shadow`,
+  선택하기: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary shadow`,
+  신청취소: tw`bg-negative text-white hover:bg-white hover:text-negative hover:border-1 hover:border-negative shadow`,
 };
 const Button = styled.div`
   ${tw`w-fit h-5 flex text-main rounded-full items-center justify-center p-2 cursor-pointer`}

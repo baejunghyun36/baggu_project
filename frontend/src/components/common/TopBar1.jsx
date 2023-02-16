@@ -12,7 +12,7 @@ import tw, { styled } from 'twin.macro';
 import { notificationStore } from 'store/notication';
 
 // Styled Component
-const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border-grey1 h-[60px] w-full z-10`;
+const Container = tw.div`flex fixed justify-between p-2 border-b bg-white border-grey1 h-[60px] w-full z-10 `;
 
 const Notify = styled.div`
   ${tw`absolute right-0 rounded-full bg-secondary w-[12px] h-[12px]`}
