@@ -47,6 +47,7 @@ import { notificationStore } from 'store/notication';
 
 // API
 import requests from 'api/config';
+import { get_chatrooms, get_updated_chatroom } from 'api/apis/chat';
 
 // react-query
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -56,6 +57,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import tw, { styled, css } from 'twin.macro';
 import ChooseRequest from 'pages/ChooseRequest/ChooseRequest';
 import DeleteRequest from 'pages/ChooseRequest/ChooseRequest';
+import { chatStore } from 'store/chat';
 
 const queryClient = new QueryClient();
 
@@ -72,9 +74,99 @@ function App() {
   // 알림 리스트 전역 저장소
   const { addNotify } = notificationStore(state => state);
 
+  /// 채팅방리스트 SSE 구독 상태
+  const [isListeningToRoom, setIsListeningToRoom] = useState(false);
+  // 채팅방 변경사항 SSE 구독 상태
+  const [isListeningToRoomUpdate, setIsListeningToRoomUpdate] = useState(false);
+  // 채팅방리스트 전역 저장소
+  const {
+    chatRoomList,
+    totalUnreadMsg,
+    addChatRoom,
+    clearChatRoom,
+    updateChatRoom,
+  } = chatStore(state => state);
+
+  // 채팅
   useEffect(() => {
+    // 채팅방리스트 SSE
+    let chatRoomEvent = undefined;
+    // 채팅방 변경사항 SSE
+    let chatRoomUpdateEvent = undefined;
+
+    // 채팅방리스트 SSE 연결
+    if (isLoggedIn && !isListeningToRoom) {
+      chatRoomEvent = new EventSource(
+        `${requests.chat_base_url + requests.GET_CHATROOMS(userIdx)}`
+      );
+
+      // 최초 연결
+      chatRoomEvent.onopen = event => {
+        console.log('open : chatroom', event);
+      };
+
+      // 채팅방에 대한 새로운 변경사항 도착
+      chatRoomEvent.onmessage = event => {
+        const parsedData = JSON.parse(event.data);
+        console.log('new chatroom sse', parsedData);
+        addChatRoom(parsedData);
+      };
+
+      chatRoomEvent.onerror = event => {
+        console.log('error and closed');
+        chatRoomEvent.close();
+      };
+
+      setIsListeningToRoom(true);
+    }
+
+    // 채팅방 변경사항 SSE 연결
+    if (isLoggedIn && !isListeningToRoomUpdate) {
+      chatRoomUpdateEvent = new EventSource(
+        `${requests.chat_base_url + requests.GET_CHATROOMS_UPDATE(userIdx)}`
+      );
+
+      // 최초 연결
+      chatRoomUpdateEvent.onopen = event => {
+        console.log('open : 채팅방 변경사항');
+      };
+
+      // 변경사항 수신
+      chatRoomUpdateEvent.onmessage = async event => {
+        // 변경사항이 발생한 채팅방의 roomId
+        const roomId = JSON.parse(event.data).roomId;
+        /*
+        {
+          "chatId":"63da0f656408703b4fae5d21",
+          "msg":"뭐함?",
+          "receiverIdx":5,
+          "senderIdx":6,
+          "roomId":"63da08172a56c42cc9b85a61",
+          "createdAt":"2023-02-01T16:06:13.261"
+        }
+         */
+        // GET 요청으로 받은 데이터로 해당 채팅방 정보를 갈아끼움
+        await get_updated_chatroom(roomId).then(data => {
+          console.log('get updated chatroom :', data);
+          updateChatRoom(roomId, data);
+        });
+      };
+
+      chatRoomUpdateEvent.onerror = event => {
+        console.log('closed : 채팅방 변경사항');
+        chatRoomUpdateEvent.close();
+      };
+
+      setIsListeningToRoomUpdate(true);
+    }
+    // clean up function!
+    return;
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    // 알림 SSE
     let notifyEvent = undefined;
-    // console.log('app useEffect', isLoggedIn);
+
     // 1. 알림 SSE 연결
     if (isLoggedIn !== null && !listeningToNotify) {
       notifyEvent = new EventSource(
@@ -101,12 +193,14 @@ function App() {
       };
 
       setListeningToNotify(true);
-      return () => {
-        notifyEvent.close();
-        setListeningToNotify(false);
-        // console.log('useEffect ended & notify closed');
-      };
+      return;
+      //  () => {
+      //   notifyEvent.close();
+      //   setListeningToNotify(false);
+      //   // console.log('useEffect ended & notify closed');
+      // };
     }
+
     return;
   }, [isLoggedIn]);
 
