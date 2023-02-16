@@ -103,16 +103,7 @@ public class ChatController {
     chatRoom.setCreatedAt(LocalDateTime.now());
     chatRoom.setLastContent("채팅방이 개설되었습니다.");
 
-    Chat chat = new Chat();
-    chatRoomRepository.save(chatRoom)
-        .doOnSuccess(savedChatRoom -> {
-          String id = savedChatRoom.getRoomId().toString();
-          chat.setRoomId(id);
-          chat.setMsg(id);
-        })
-        .flatMap(savedChatRoom -> chatRepository.save(chat))
-        .subscribe();
-    return null;
+    return chatRoomRepository.save(chatRoom);
   }
 
   //최초 채팅방 리스트 불러오기 :: 유저가 채팅방 리스트 페이지로 오면 해당 유저의 채팅방 리스트 받아온다.
