@@ -36,7 +36,7 @@ const Summary = styled.div`
   ${tw`flex justify-center p-2 gap-3 border-b`}
   & {
     div {
-      ${tw`flex gap-2`}
+      ${tw`flex gap-2 `}
     }
   }
 `;
@@ -46,13 +46,13 @@ const Product = styled.div`
     css`
       background-image: url(${props.img});
     `}
-  ${tw`bg-cover bg-center w-[60px] h-[60px] rounded`}
+  ${tw`bg-cover bg-center w-[60px] h-[60px] rounded shadow`}
 `;
 
 const ButtonStyles = {
-  0: tw`bg-white text-secondary border-1 border-secondary hover:bg-secondary hover:text-white`,
-  1: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary`,
-  2: tw`bg-grey1 text-grey2`,
+  0: tw`bg-white text-secondary border-1 border-secondary hover:bg-secondary hover:text-white shadow`,
+  1: tw`bg-secondary text-white hover:bg-white hover:text-secondary hover:border-1 hover:border-secondary shadow`,
+  2: tw`bg-grey1 text-grey2 shadow`,
 };
 const Button = styled.div`
   ${tw`text-sub-bold rounded-full flex justify-center items-center h-5 w-fit p-2`}

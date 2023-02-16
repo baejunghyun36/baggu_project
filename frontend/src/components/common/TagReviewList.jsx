@@ -38,7 +38,7 @@ const TagStyles = {
 };
 const Tag = styled.div`
   ${props => TagStyles[props.type]}
-  ${tw`p-1 px-[12px] text-main text-white bg-secondary rounded-full border-1`}
+  ${tw`p-1 px-[12px] text-main text-white bg-secondary rounded-full border-1 shadow-md`}
 `;
 const Text = styled.span`
   ${tw`text-secondary px-[12px] text-main p-1`}

@@ -11,7 +11,7 @@ const Container = styled.div`
 const Wrapper = tw.div`flex p-2 border-b justify-between hover:bg-primary-hover`;
 
 const Avatar = styled.div`
-  ${tw`bg-primary rounded-full w-6 h-6 bg-cover bg-center mr-2`}
+  ${tw`bg-primary rounded-full w-6 h-6 bg-cover bg-center mr-2 shadow`}
   ${props => css`
     background-image: url(${props.img});
   `}
@@ -36,7 +36,7 @@ const Notification = styled.div`
   ${props => (props.unreadCnt ? tw`` : tw`hidden`)}
 `;
 const Product = styled.div`
-  ${tw`w-6 h-6 rounded bg-cover bg-center`}
+  ${tw`w-6 h-6 rounded bg-cover bg-center shadow`}
   ${props =>
     css`
       background-image: url(${props.img});

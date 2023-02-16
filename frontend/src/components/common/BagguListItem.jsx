@@ -44,7 +44,7 @@ const Info = styled.div`
 `;
 
 const Product = styled.div`
-  ${tw`w-10 h-10 rounded bg-cover bg-center`}
+  ${tw`w-10 h-10 rounded bg-cover bg-center shadow-md`}
   ${props =>
     css`
       background-image: url(${props.img});

@@ -41,7 +41,7 @@ function Myreview() {
   );
   return (
     <div>
-      <TopBar2 pageTitle="나의 후기" />
+      <TopBar2 title="나의 후기" />
       <div>
         {tagReviews ? (
           <TagReviewList tags={tagReviews} />
