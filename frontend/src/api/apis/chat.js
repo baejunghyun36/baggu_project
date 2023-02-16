@@ -1,6 +1,20 @@
 import requests from 'api/config';
 import { chatAuthApi } from '../axios';
 
+// 바꾸수락시 채팅서버에 POST
+export const post_chatroom = async data => {
+  try {
+    const response = await chatAuthApi.post('/baggu/chatRoom/', {
+      ...data,
+      reviewState: [0, 0],
+    });
+    console.log('바꾸수락시 채팅서버에 POST 응답 :', response);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 채팅방 리스트 GET
 export const get_chatrooms = async userIdx => {
   try {

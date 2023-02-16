@@ -14,7 +14,7 @@ export const post_notify = async data => {
         }
   */
   try {
-    await authInstance.post('/baggu/notify', data);
+    await notifyAuthApi.post('/baggu/notify', data);
   } catch (error) {
     throw error;
   }
