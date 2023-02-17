@@ -111,8 +111,8 @@ function App() {
       };
 
       chatRoomEvent.onerror = event => {
-        console.log('error and closed');
-        chatRoomEvent.close();
+        console.log('error : chatRoomEvent');
+        // chatRoomEvent.close();
       };
 
       setIsListeningToRoom(true);
@@ -159,8 +159,8 @@ function App() {
       };
 
       chatRoomUpdateEvent.onerror = event => {
-        console.log('closed : 채팅방 변경사항');
-        chatRoomUpdateEvent.close();
+        console.log('error : 채팅방 변경사항');
+        // chatRoomUpdateEvent.close();
       };
 
       setIsListeningToRoomUpdate(true);
@@ -192,8 +192,8 @@ function App() {
 
       // 에러 발생
       notifyEvent.onerror = event => {
-        console.log('closed : notify');
-        notifyEvent.close();
+        console.log('error : notify');
+        // notifyEvent.close();
       };
 
       setListeningToNotify(true);
