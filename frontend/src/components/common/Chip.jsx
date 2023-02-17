@@ -24,12 +24,12 @@ function Chip({ tradeState }) {
   return (
     <>
       <div className={`${tradeState === 1 ? '' : 'hidden'}`}>
-        <ChipContainer tradeState={state}>
+        <ChipContainer tradeState={tradeState}>
           <span>예약중</span>
         </ChipContainer>
       </div>
       <div className={`${tradeState === 2 ? '' : 'hidden'}`}>
-        <ChipContainer tradeState={state}>
+        <ChipContainer tradeState={tradeState}>
           <span>거래완료</span>
         </ChipContainer>
       </div>
