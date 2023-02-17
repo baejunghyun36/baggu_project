@@ -44,7 +44,7 @@ function ReceiveReviewList({ reviews }) {
         ? reviews.map(review => (
             <div key={review.targetItemIdx} className="justify-center">
               <Product img={review.targetItemFirstImgUrl} />
-              <Message>review.reviewText</Message>
+              <Message>{review.reviewText}</Message>
             </div>
           ))
         : ''}
