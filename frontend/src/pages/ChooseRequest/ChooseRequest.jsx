@@ -165,7 +165,7 @@ function ChooseRequest() {
             receiveUserIdx: selectedPersonIdx,
           });
         })
-        .then(() => navigate('/chat'));
+        .then(() => navigate('/'));
     }
   };
 
